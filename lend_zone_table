@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><script>window.__resources = {"icon_home": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2216%22%20height%3D%2217%22%20viewBox%3D%220%200%2016%2017%22%20fill%3D%22none%22%3E%0A%20%20%3Cpath%20d%3D%22M%208%200%20L%208.494%20-0.564%20C%208.211%20-0.812%207.789%20-0.812%207.506%20-0.564%20L%208%200%20Z%20M%200%207%20L%20-0.494%206.436%20C%20-0.657%206.578%20-0.75%206.784%20-0.75%207%20L%200%207%20Z%20M%2016%207%20L%2016.75%207%20C%2016.75%206.784%2016.657%206.578%2016.494%206.436%20L%2016%207%20Z%20M%2016%2017%20L%2016%2017.75%20C%2016.199%2017.75%2016.39%2017.671%2016.53%2017.53%20C%2016.671%2017.39%2016.75%2017.199%2016.75%2017%20L%2016%2017%20Z%20M%2011%2017%20L%2010.25%2017%20C%2010.25%2017.414%2010.586%2017.75%2011%2017.75%20L%2011%2017%20Z%20M%2010.121%2010.879%20L%2010.652%2010.348%20L%2010.652%2010.348%20L%2010.121%2010.879%20Z%20M%205%2017%20L%205%2017.75%20C%205.414%2017.75%205.75%2017.414%205.75%2017%20L%205%2017%20Z%20M%200%2017%20L%20-0.75%2017%20C%20-0.75%2017.414%20-0.414%2017.75%200%2017.75%20L%200%2017%20Z%20M%207.506%20-0.564%20L%20-0.494%206.436%20L%200.494%207.564%20L%208.494%200.564%20L%207.506%20-0.564%20Z%20M%2016.494%206.436%20L%208.494%20-0.564%20L%207.506%200.564%20L%2015.506%207.564%20L%2016.494%206.436%20Z%20M%2015.25%207%20L%2015.25%2017%20L%2016.75%2017%20L%2016.75%207%20L%2015.25%207%20Z%20M%2016%2016.25%20L%2011%2016.25%20L%2011%2017.75%20L%2016%2017.75%20L%2016%2016.25%20Z%20M%2011.75%2017%20L%2011.75%2013%20L%2010.25%2013%20L%2010.25%2017%20L%2011.75%2017%20Z%20M%2011.75%2013%20C%2011.75%2012.005%2011.355%2011.052%2010.652%2010.348%20L%209.591%2011.409%20C%2010.013%2011.831%2010.25%2012.403%2010.25%2013%20L%2011.75%2013%20Z%20M%2010.652%2010.348%20C%209.948%209.645%208.995%209.25%208%209.25%20L%208%2010.75%20C%208.597%2010.75%209.169%2010.987%209.591%2011.409%20L%2010.652%2010.348%20Z%20M%208%209.25%20C%207.005%209.25%206.052%209.645%205.348%2010.348%20L%206.409%2011.409%20C%206.831%2010.987%207.403%2010.75%208%2010.75%20L%208%209.25%20Z%20M%205.348%2010.348%20C%204.645%2011.052%204.25%2012.005%204.25%2013%20L%205.75%2013%20C%205.75%2012.403%205.987%2011.831%206.409%2011.409%20L%205.348%2010.348%20Z%20M%204.25%2013%20L%204.25%2017%20L%205.75%2017%20L%205.75%2013%20L%204.25%2013%20Z%20M%205%2016.25%20L%200%2016.25%20L%200%2017.75%20L%205%2017.75%20L%205%2016.25%20Z%20M%200.75%2017%20L%200.75%207%20L%20-0.75%207%20L%20-0.75%2017%20L%200.75%2017%20Z%22%20fill%3D%22currentColor%22%20fill-rule%3D%22nonzero%22%3E%3C/path%3E%0A%3C/svg%3E", "logoFull": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22180%22%20height%3D%2250%22%20viewBox%3D%220%200%20134.7%2030%22%20fill%3D%22none%22%20font-family%3D%22%26%2339%3BPingFang%20TC%26%2339%3B%2C%26%2339%3BNoto%20Sans%20TC%26%2339%3B%2Csans-serif%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%280%200%29%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%2030.643%200.055%20C%2030.467%200.025%2030.131%20-0.02%2029.764%200.01%20C%2027.042%200.131%2025.068%202.26%2025.068%204.932%20L%2025.068%2015.003%20C%2025.068%2015.51%2025.028%2016.022%2024.952%2016.524%20C%2024.661%2018.428%2023.832%2020.206%2022.546%2021.662%20C%2022.33%2021.909%2022.084%2022.155%2021.778%2022.436%20C%2021.226%2022.943%2020.633%2023.38%2020.015%2023.732%20C%2018.493%2024.611%2016.755%2025.073%2014.992%2025.073%20L%2014.902%2025.073%20C%2013.551%2025.053%2012.28%2024.787%2011.085%2024.279%20C%2010.698%2024.114%2010.321%2023.928%209.97%2023.727%20C%209.538%2023.481%209.126%2023.194%208.734%2022.888%20C%208.267%2022.516%207.83%2022.104%207.438%2021.657%20C%207.413%2021.627%207.393%2021.602%207.368%2021.572%20C%205.781%2019.714%204.917%2017.388%204.917%2014.997%20L%204.917%208.132%20C%204.917%206.389%206.334%204.952%208.081%204.927%20L%2025.108%204.927%20L%2025.108%203.189%20C%2025.108%201.431%2023.682%200%2021.919%200%20L%206.384%200%20C%206.057%200%205.741%200.025%205.424%200.07%20C%202.667%200.487%200.487%202.667%200.07%205.424%20C%200.025%205.736%200%206.057%200%206.384%20L%200%2015.038%20C%200%2018.664%201.291%2021.989%203.43%2024.576%20C%204.033%2025.299%204.701%2025.967%205.424%2026.57%20C%205.681%2026.786%205.952%2026.986%206.223%2027.182%20C%206.263%2027.212%206.303%2027.243%206.344%2027.268%20C%206.605%2027.454%206.876%2027.629%207.147%2027.795%20C%207.197%2027.825%207.248%2027.855%207.298%2027.885%20C%207.574%2028.051%207.855%2028.207%208.147%2028.358%20C%208.187%2028.378%208.232%2028.398%208.272%2028.418%20C%208.88%2028.724%209.513%2028.985%2010.166%2029.206%20C%2010.211%2029.221%2010.256%2029.237%2010.301%2029.252%20C%2010.613%2029.352%2010.934%2029.448%2011.256%2029.528%20C%2011.311%2029.543%2011.366%2029.558%2011.421%2029.568%20C%2011.748%2029.648%2012.074%2029.719%2012.411%2029.774%20C%2012.456%2029.779%2012.496%2029.789%2012.541%2029.794%20C%2012.893%2029.849%2013.245%2029.9%2013.601%2029.93%20C%2014.048%2029.97%2014.5%2029.99%2014.957%2029.99%20C%2018.614%2029.99%2021.964%2028.684%2024.571%2026.514%20C%2025.279%2025.927%2025.932%2025.274%2026.519%2024.566%20C%2028.689%2021.959%2029.995%2018.609%2029.995%2014.952%20L%2029.995%202.943%20C%2029.995%202.943%2029.89%200.929%2030.648%200.11%20C%2030.668%200.09%2030.663%200.06%2030.638%200.055%20L%2030.643%200.055%20Z%22%20fill%3D%22rgb%28230%2C0%2C57%29%22%20fill-rule%3D%22nonzero%22%3E%3C/path%3E%0A%20%20%20%20%3Cg%20transform%3D%22translate%287.539%206.605%29%22%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M%200%202.175%20L%200%207.037%20L%204.018%207.037%20C%205.188%207.037%206.133%206.062%206.133%204.862%20L%206.133%200%20L%202.115%200%20C%200.944%200%200%200.974%200%202.175%20Z%20M%204.455%201.582%20L%204.455%204.36%20C%204.455%204.962%203.983%205.45%203.395%205.45%20L%201.678%205.45%20L%201.678%202.672%20C%201.678%202.069%202.15%201.582%202.737%201.582%20L%204.455%201.582%20Z%22%20fill%3D%22%23ffffff%22%3E%3C/path%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M%202.366%209.282%20L%204.817%209.282%20L%204.817%203.24%20C%205.515%202.411%206.082%201.331%206.519%200%20L%204.018%200%20C%203.275%202.175%201.939%203.692%200%204.556%20L%200%205.987%20C%200.829%205.766%201.617%205.475%202.366%205.113%20L%202.366%209.277%20L%202.366%209.282%20Z%22%20fill%3D%22%23ffffff%22%20transform%3D%22translate%288.433%200%29%22%3E%3C/path%3E%0A%20%20%20%20%3C/g%3E%0A%20%20%3C/g%3E%0A%20%20%0A%20%20%3Ctext%20x%3D%2239.89%22%20y%3D%2222%22%20font-size%3D%2217%22%20font-weight%3D%22500%22%20fill%3D%22rgb%28230%2C0%2C57%29%22%20letter-spacing%3D%222%22%3E%E5%8F%A3%E8%A2%8B%E8%AD%89%E5%88%B8%3C/text%3E%0A%3C/svg%3E", "icon_search": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%3E%0A%20%20%3Cpath%20d%3D%22M%2015.775%2014.651%20L%2012.809%2011.707%20C%2013.96%2010.27%2014.518%208.446%2014.367%206.611%20C%2014.216%204.775%2013.369%203.067%2011.998%201.838%20C%2010.627%200.609%208.839%20-0.048%206.999%200.003%20C%205.159%200.053%203.409%200.807%202.108%202.109%20C%200.806%203.411%200.053%205.163%200.003%207.004%20C%20-0.048%208.845%200.609%2010.636%201.837%2012.007%20C%203.065%2013.379%204.772%2014.227%206.606%2014.378%20C%208.44%2014.529%2010.262%2013.971%2011.698%2012.819%20L%2014.64%2015.763%20C%2014.714%2015.838%2014.803%2015.898%2014.9%2015.938%20C%2014.998%2015.979%2015.102%2016%2015.208%2016%20C%2015.313%2016%2015.418%2015.979%2015.515%2015.938%20C%2015.613%2015.898%2015.701%2015.838%2015.775%2015.763%20C%2015.919%2015.614%2016%2015.415%2016%2015.207%20C%2016%2015%2015.919%2014.8%2015.775%2014.651%20L%2015.775%2014.651%20Z%20M%207.212%2012.819%20C%206.106%2012.819%205.023%2012.49%204.103%2011.875%20C%203.183%2011.259%202.465%2010.385%202.042%209.361%20C%201.618%208.338%201.507%207.212%201.723%206.125%20C%201.939%205.039%202.472%204.041%203.255%203.257%20C%204.038%202.474%205.035%201.941%206.121%201.725%20C%207.206%201.508%208.332%201.619%209.354%202.043%20C%2010.377%202.467%2011.251%203.185%2011.866%204.106%20C%2012.481%205.027%2012.809%206.11%2012.809%207.218%20C%2012.809%208.703%2012.219%2010.128%2011.17%2011.178%20C%2010.12%2012.229%208.697%2012.819%207.212%2012.819%20L%207.212%2012.819%20Z%22%20fill%3D%22currentColor%22%20fill-rule%3D%22nonzero%22%3E%3C/path%3E%0A%3C/svg%3E", "icon_plus": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%3E%0A%20%20%3Cpath%20d%3D%22M%2015%207%20L%209%207%20L%209%201%20C%209%200.735%208.895%200.48%208.707%200.293%20C%208.52%200.105%208.265%200%208%200%20C%207.735%200%207.48%200.105%207.293%200.293%20C%207.105%200.48%207%200.735%207%201%20L%207%207%20L%201%207%20C%200.735%207%200.48%207.105%200.293%207.293%20C%200.105%207.48%200%207.735%200%208%20C%200%208.265%200.105%208.52%200.293%208.707%20C%200.48%208.895%200.735%209%201%209%20L%207%209%20L%207%2015%20C%207%2015.265%207.105%2015.52%207.293%2015.707%20C%207.48%2015.895%207.735%2016%208%2016%20C%208.265%2016%208.52%2015.895%208.707%2015.707%20C%208.895%2015.52%209%2015.265%209%2015%20L%209%209%20L%2015%209%20C%2015.265%209%2015.52%208.895%2015.707%208.707%20C%2015.895%208.52%2016%208.265%2016%208%20C%2016%207.735%2015.895%207.48%2015.707%207.293%20C%2015.52%207.105%2015.265%207%2015%207%20Z%22%20fill%3D%22currentColor%22%20fill-rule%3D%22nonzero%22%3E%3C/path%3E%0A%3C/svg%3E"};</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>口袋證券 · 經營管理系統</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2030.66%2029.99%22%20fill%3D%22none%22%3E%0A%20%20%0A%20%20%3Cpath%20d%3D%22M%2030.643%200.055%20C%2030.467%200.025%2030.131%20-0.02%2029.764%200.01%20C%2027.042%200.131%2025.068%202.26%2025.068%204.932%20L%2025.068%2015.003%20C%2025.068%2015.51%2025.028%2016.022%2024.952%2016.524%20C%2024.661%2018.428%2023.832%2020.206%2022.546%2021.662%20C%2022.33%2021.909%2022.084%2022.155%2021.778%2022.436%20C%2021.226%2022.943%2020.633%2023.38%2020.015%2023.732%20C%2018.493%2024.611%2016.755%2025.073%2014.992%2025.073%20L%2014.902%2025.073%20C%2013.551%2025.053%2012.28%2024.787%2011.085%2024.279%20C%2010.698%2024.114%2010.321%2023.928%209.97%2023.727%20C%209.538%2023.481%209.126%2023.194%208.734%2022.888%20C%208.267%2022.516%207.83%2022.104%207.438%2021.657%20C%207.413%2021.627%207.393%2021.602%207.368%2021.572%20C%205.781%2019.714%204.917%2017.388%204.917%2014.997%20L%204.917%208.132%20C%204.917%206.389%206.334%204.952%208.081%204.927%20L%2025.108%204.927%20L%2025.108%203.189%20C%2025.108%201.431%2023.682%200%2021.919%200%20L%206.384%200%20C%206.057%200%205.741%200.025%205.424%200.07%20C%202.667%200.487%200.487%202.667%200.07%205.424%20C%200.025%205.736%200%206.057%200%206.384%20L%200%2015.038%20C%200%2018.664%201.291%2021.989%203.43%2024.576%20C%204.033%2025.299%204.701%2025.967%205.424%2026.57%20C%205.681%2026.786%205.952%2026.986%206.223%2027.182%20C%206.263%2027.212%206.303%2027.243%206.344%2027.268%20C%206.605%2027.454%206.876%2027.629%207.147%2027.795%20C%207.197%2027.825%207.248%2027.855%207.298%2027.885%20C%207.574%2028.051%207.855%2028.207%208.147%2028.358%20C%208.187%2028.378%208.232%2028.398%208.272%2028.418%20C%208.88%2028.724%209.513%2028.985%2010.166%2029.206%20C%2010.211%2029.221%2010.256%2029.237%2010.301%2029.252%20C%2010.613%2029.352%2010.934%2029.448%2011.256%2029.528%20C%2011.311%2029.543%2011.366%2029.558%2011.421%2029.568%20C%2011.748%2029.648%2012.074%2029.719%2012.411%2029.774%20C%2012.456%2029.779%2012.496%2029.789%2012.541%2029.794%20C%2012.893%2029.849%2013.245%2029.9%2013.601%2029.93%20C%2014.048%2029.97%2014.5%2029.99%2014.957%2029.99%20C%2018.614%2029.99%2021.964%2028.684%2024.571%2026.514%20C%2025.279%2025.927%2025.932%2025.274%2026.519%2024.566%20C%2028.689%2021.959%2029.995%2018.609%2029.995%2014.952%20L%2029.995%202.943%20C%2029.995%202.943%2029.89%200.929%2030.648%200.11%20C%2030.668%200.09%2030.663%200.06%2030.638%200.055%20L%2030.643%200.055%20Z%22%20fill%3D%22rgb%28230%2C0%2C57%29%22%20fill-rule%3D%22nonzero%22%3E%3C/path%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%287.539%206.605%29%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%200%202.175%20L%200%207.037%20L%204.018%207.037%20C%205.188%207.037%206.133%206.062%206.133%204.862%20L%206.133%200%20L%202.115%200%20C%200.944%200%200%200.974%200%202.175%20Z%20M%204.455%201.582%20L%204.455%204.36%20C%204.455%204.962%203.983%205.45%203.395%205.45%20L%201.678%205.45%20L%201.678%202.672%20C%201.678%202.069%202.15%201.582%202.737%201.582%20L%204.455%201.582%20Z%22%20fill%3D%22%23ffffff%22%20fill-rule%3D%22nonzero%22%20transform%3D%22translate%280%200%29%22%3E%3C/path%3E%0A%20%20%20%20%3Cpath%20d%3D%22M%202.366%209.282%20L%204.817%209.282%20L%204.817%203.24%20C%205.515%202.411%206.082%201.331%206.519%200%20L%204.018%200%20C%203.275%202.175%201.939%203.692%200%204.556%20L%200%205.987%20C%200.829%205.766%201.617%205.475%202.366%205.113%20L%202.366%209.277%20L%202.366%209.282%20Z%22%20fill%3D%22%23ffffff%22%20fill-rule%3D%22nonzero%22%20transform%3D%22translate%288.433%200%29%22%3E%3C/path%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E">
+  <style>/* ──────────────────────────────────────────────────────────────────
+   Pocket Securities · 口袋證券 — Design Tokens
+   Base type + colors (with semantic aliases)
+   Source of truth: 經營管理系統 (CMS) Figma file
+   ────────────────────────────────────────────────────────────────── */
+
+
+/* Webfonts: loaded via Google Fonts in <head> (see link tags). */
+/* Stack: PingFang TC → Noto Sans TC → Microsoft JhengHei → sans-serif */
+
+:root {
+  /* ── BRAND PALETTE ─────────────────────────────────────────── */
+  /* Pocket Securities is built on a coral-pink → crimson spectrum.
+     The "hot" red (#E60039) lives in the logo + critical accents.
+     The softer coral (#F95868 / #E95465) carries every primary
+     button and selected-state in the CMS.                          */
+
+  --brand-red:        rgb(230,   0,  57);  /* #E60039 · logo, header logo char */
+  --brand-coral:      rgb(249,  88, 104);  /* #F95868 · primary button fill */
+  --brand-coral-deep: rgb(233,  84, 101);  /* #E95465 · secondary border + text */
+  --brand-crimson:    rgb(202,  16,  57);  /* #CA1039 · pressed / strong states */
+  --brand-blush:      rgb(251, 227, 227);  /* #FBE3E3 · hover wash on coral btns */
+  --brand-blush-soft: rgb(255, 183, 183);  /* #FFB7B7 · disabled coral */
+  --brand-cream:      rgb(255, 242, 242);  /* #FFF2F2 · PAGE BACKGROUND ★ */
+
+  /* Secondary blue — used for utility actions (upload, etc.) */
+  --brand-blue:       rgb( 84, 117, 233);  /* #5475E9 · "上傳檔案" buttons */
+  --brand-blue-soft:  rgb( 87, 122, 242);  /* #577AF2 · variants */
+  --brand-blue-info:  rgb( 59, 130, 246);  /* #3B82F6 · info banners */
+
+  /* Tertiary purple — admin/system accents */
+  --brand-violet:     rgb( 90,  41, 195);  /* #5A29C3 · pill chips */
+
+  /* ── NEUTRALS ──────────────────────────────────────────────── */
+  --neutral-0:        rgb(255, 255, 255);  /* #FFFFFF · card surface */
+  --neutral-50:       rgb(247, 247, 247);  /* #F7F7F7 · subtle bg */
+  --neutral-100:      rgb(245, 245, 245);  /* #F5F5F5 · disabled bg */
+  --neutral-200:      rgb(238, 238, 239);  /* #EEEEEF · divider, input border idle */
+  --neutral-300:      rgb(224, 224, 224);  /* #E0E0E0 */
+  --neutral-400:      rgb(200, 201, 202);  /* #C8C9CA · input border, placeholder rule */
+  --neutral-500:      rgb(158, 158, 159);  /* #9E9E9F · placeholder text */
+  --neutral-600:      rgb(153, 153, 153);  /* #999999 */
+  --neutral-700:      rgb(113, 112, 113);  /* #717071 · helper / caption text */
+  --neutral-800:      rgb( 99,  99,  99);  /* #636363 · FOOTER BG (dark gray) */
+  --neutral-850:      rgb( 65,  65,  65);  /* #414141 */
+  --neutral-900:      rgb( 51,  51,  51);  /* #333333 */
+  --neutral-950:      rgb( 37,  37,  37);  /* #252525 · strong body */
+  --neutral-warm:     rgb( 62,  58,  57);  /* #3E3A39 · logo dark element */
+  --black:            rgb(  0,   0,   0);
+
+  /* ── SEMANTIC SHORTHAND ─────────────────────────────────────── */
+  --fg:               var(--black);        /* default text — pure black is brand-correct */
+  --fg-strong:        var(--black);
+  --fg-muted:         var(--neutral-700);  /* helper, dim labels */
+  --fg-subtle:        var(--neutral-500);  /* placeholders */
+  --fg-on-coral:      var(--neutral-0);
+  --fg-on-dark:       var(--neutral-0);
+  --fg-link:          var(--brand-coral-deep);
+  --fg-selected:      var(--brand-coral-deep); /* selected nav, active tab */
+
+  --bg-page:          var(--brand-cream);   /* admin pages */
+  --bg-surface:       var(--neutral-0);     /* cards, modals */
+  --bg-shell:         var(--neutral-0);     /* header, sidebar bg */
+  --bg-footer:        var(--neutral-800);
+  --bg-input:         var(--neutral-0);
+  --bg-input-disabled:var(--neutral-100);
+  --bg-tint:          var(--brand-blush);   /* hover wash for primary */
+  --bg-row-alt:       var(--neutral-50);    /* zebra rows */
+
+  --border:           var(--neutral-200);
+  --border-strong:    var(--neutral-400);
+  --border-input:     var(--black);         /* input borders are 1px solid black in this system */
+  --border-input-focus: var(--brand-coral-deep);
+  --border-accent:    var(--brand-coral-deep);
+
+  /* States */
+  --state-primary:    var(--brand-coral);
+  --state-primary-hover:  var(--brand-crimson);
+  --state-primary-press:  var(--brand-crimson);
+  --state-primary-disabled: var(--brand-blush-soft);
+  --state-danger:     var(--brand-red);
+  --state-success:    rgb( 31, 138,  91);   /* #1F8A5B — derived to match coral hue family */
+  --state-warning:    rgb(245, 158,  11);
+  --state-info:       var(--brand-blue-info);
+
+  /* Shadows — Pocket uses three flat elevations */
+  --shadow-header:    0 1px 1px 0 rgba(0,0,0,0.25);     /* header, top menu strip */
+  --shadow-sidebar:   1px 1px 4px 0 rgba(0,0,0,0.25);   /* left rail */
+  --shadow-card:      3px 5px 10px 0 rgba(0,0,0,0.10);  /* main content cards */
+  --shadow-pop:       0 8px 24px 0 rgba(0,0,0,0.16);    /* dropdowns, modals */
+
+  /* Radii — discrete: 6 / 8 / 10 / 15 */
+  --radius-xs:        4px;     /* checkbox, small chip */
+  --radius-sm:        6px;     /* inputs */
+  --radius-md:        8px;     /* buttons */
+  --radius-lg:        10px;    /* CARDS ★ */
+  --radius-pill:      15px;    /* nav menu items, pills */
+  --radius-full:      999px;   /* circular badges, switches */
+
+  /* Spacing — 4-pt scale with named anchors */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;   /* card padding default */
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Layout */
+  --layout-screen:    1280px;
+  --layout-header:    60px;    /* CMS header height */
+  --layout-sidebar:   248px;   /* CMS left rail */
+  --layout-content-max: 961px; /* main card width inside 1280 frame */
+
+  /* ── TYPOGRAPHY ─────────────────────────────────────────────── */
+  --font-sans:        "PingFang TC", "Noto Sans TC", "Microsoft JhengHei",
+                      "Heiti TC", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+                      Arial, sans-serif;
+  --font-num:         "Inter", "PingFang TC", "Noto Sans TC", sans-serif;
+  --font-mono:        ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Base type tokens (these match the dominant pairings in Figma) */
+  --type-display-size:   36px;   --type-display-weight: 700;  --type-display-lh: 1.0;
+  --type-h1-size:        32px;   --type-h1-weight:      700;  --type-h1-lh:      1.1;
+  --type-h2-size:        28px;   --type-h2-weight:      700;  --type-h2-lh:      1.15;
+  --type-h3-size:        21px;   --type-h3-weight:      600;  --type-h3-lh:      1.2;
+  --type-h4-size:        17px;   --type-h4-weight:      500;  --type-h4-lh:      1.3;
+  --type-body-size:      17px;   --type-body-weight:    400;  --type-body-lh:    1.5;
+  --type-body-sm-size:   15px;   --type-body-sm-weight: 400;  --type-body-sm-lh: 1.5;
+  --type-caption-size:   13px;   --type-caption-weight: 400;  --type-caption-lh: 1.4;
+  --type-label-size:     17px;   --type-label-weight:   400;  --type-label-lh:   1.0; /* form labels are 17/100% */
+  --type-button-size:    17px;   --type-button-weight:  500;  --type-button-lh:  1.0;
+  --type-button-sm-size: 16px;   --type-button-sm-weight: 700; --type-button-sm-lh: 1.0;
+  --type-nav-size:       17px;   --type-nav-weight:     500;  --type-nav-lh:     1.0;
+
+  /* Generic numeric (e.g. metrics, prices) gets Inter / tabular */
+  --type-num-size:       24px;   --type-num-weight:     600;
+}
+
+/* ── Semantic element helpers (utility classes, optional) ─────── */
+
+.h1, h1.pkt { font-family: var(--font-sans); font-size: var(--type-display-size); font-weight: var(--type-display-weight); line-height: var(--type-display-lh); color: var(--fg); letter-spacing: 0; }
+.h2, h2.pkt { font-family: var(--font-sans); font-size: var(--type-h2-size); font-weight: var(--type-h2-weight); line-height: var(--type-h2-lh); color: var(--fg); }
+.h3, h3.pkt { font-family: var(--font-sans); font-size: var(--type-h3-size); font-weight: var(--type-h3-weight); line-height: var(--type-h3-lh); color: var(--fg); }
+.h4, h4.pkt { font-family: var(--font-sans); font-size: var(--type-h4-size); font-weight: var(--type-h4-weight); line-height: var(--type-h4-lh); color: var(--fg); }
+.body, p.pkt { font-family: var(--font-sans); font-size: var(--type-body-size); font-weight: var(--type-body-weight); line-height: var(--type-body-lh); color: var(--fg); }
+.body-sm { font-family: var(--font-sans); font-size: var(--type-body-sm-size); line-height: var(--type-body-sm-lh); color: var(--fg-muted); }
+.caption { font-family: var(--font-sans); font-size: var(--type-caption-size); line-height: var(--type-caption-lh); color: var(--fg-muted); }
+.label   { font-family: var(--font-sans); font-size: var(--type-label-size); font-weight: var(--type-label-weight); color: var(--fg); }
+.num     { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+
+/* Reusable component anchors --------------------------------- */
+.card-pkt {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.btn-primary {
+  background: var(--state-primary);
+  color: var(--fg-on-coral);
+  border: none;
+  border-radius: var(--radius-md);
+  font: 500 17px/1 var(--font-sans);
+  height: 44px;
+  padding: 0 24px;
+  cursor: pointer;
+}
+.btn-primary:hover  { background: var(--state-primary-hover); }
+.btn-primary:disabled { background: var(--state-primary-disabled); cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--brand-coral-deep);
+  border: 1px solid var(--brand-coral-deep);
+  border-radius: var(--radius-md);
+  font: 500 17px/1 var(--font-sans);
+  height: 44px;
+  padding: 0 24px;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: var(--brand-blush); }
+</style>
+
+  <!-- Resources referenced from JSX strings (not directly in HTML attrs) -->
+  
+  
+  
+  
+
+  <style>
+/* ── CMS App shell (RWD) ───────────────────────────────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #FFF2F2;
+  font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  max-width: 100%;
+}
+
+.cms-shell {
+  width: 100%;
+  min-height: 100vh;
+  max-width: 100%;
+  background: rgb(255, 242, 242);
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  grid-template-rows: 60px 1fr;
+  grid-template-areas:
+    "header header"
+    "side main";
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  color: #000;
+}
+
+.cms-header {
+  grid-area: header;
+  height: 60px;
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  padding: 0 24px 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.cms-menu-btn {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cms-header__user {
+  font-family: "Noto Sans TC", "PingFang TC", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.cms-header__logout {
+  margin-left: 8px;
+  height: 35px;
+  padding: 0 18px;
+  background: #fff;
+  color: rgb(233, 84, 101);
+  border: 1px solid rgb(233, 84, 101);
+  border-radius: 8px;
+  font-family: "Noto Sans TC", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cms-sidebar {
+  grid-area: side;
+  width: 248px;
+  background: #fff;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  padding: 20px 20px 60px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 25;
+  overflow: auto;
+}
+
+.cms-main {
+  grid-area: main;
+  padding: 40px 36px 48px;
+  box-sizing: border-box;
+  overflow: auto;
+  min-width: 0;
+}
+
+.cms-backdrop {
+  display: none;
+}
+
+/* ── 現沖賣回補通知 ─────────────────────────────────────────────── */
+.dtb-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.dtb-page-title {
+  margin: 0 0 20px;
+  font-size: clamp(20px, 2.5vw, 24px);
+  font-weight: 700;
+  color: #000;
+}
+
+
+/* 大 TAB：資料夾式（現沖賣 / 借券回補） */
+.dtb-section-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid rgb(200, 201, 202);
+  margin: 0 0 0;
+  padding: 0;
+}
+
+.dtb-section-tab {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 10px 22px;
+  margin: 0 0 -1px;
+  border: 1px solid rgb(200, 201, 202);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: #fff;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgb(113, 112, 113);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dtb-section-tab + .dtb-section-tab {
+  margin-left: 0;
+}
+
+.dtb-section-tab.is-active {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 11px;
+  margin-bottom: -1px;
+  border-color: rgb(249, 88, 104);
+  background: rgb(249, 88, 104);
+  color: #fff;
+}
+
+.dtb-section-panel {
+  border: 1px solid rgb(200, 201, 202);
+  border-top: none;
+  padding: 20px 16px 8px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+/* 子 TAB：分段按鈕（名單、T日…） */
+.dtb-tabs {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.dtb-tab {
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-right: 1px solid rgb(200, 201, 202);
+  margin-left: 0;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  background: #fff;
+  color: #000;
+  border-radius: 0;
+}
+
+.dtb-tab:last-child {
+  border-right: none;
+}
+
+.dtb-tab:first-child {
+  border-radius: 7px 0 0 7px;
+}
+
+.dtb-tab:last-child {
+  border-radius: 0 7px 7px 0;
+}
+
+.dtb-tab.is-active {
+  position: relative;
+  z-index: 1;
+  border-right-color: rgb(249, 88, 104);
+  background: rgb(249, 88, 104);
+  color: #fff;
+}
+
+.dtb-tab.is-active + .dtb-tab {
+  border-left: 1px solid rgb(249, 88, 104);
+}
+
+.dtb-subpage {
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  padding: 48px 16px;
+  min-height: 320px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dtb-subpage__inner {
+  text-align: center;
+  max-width: 400px;
+}
+
+.dtb-subpage__heading {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+}
+
+.dtb-subpage__hint {
+  margin: 0;
+  font-size: 15px;
+  color: rgb(113, 112, 113);
+  line-height: 1.6;
+}
+
+.dtb-diff-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dtb-diff-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dtb-diff-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.dtb-diff-file__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.dtb-diff-file__name {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(84, 117, 233);
+  word-break: break-all;
+}
+
+.dtb-diff-file__meta {
+  font-size: 13px;
+  color: rgb(113, 112, 113);
+}
+
+.dtb-diff-toolbar__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.dtb-diff-rules {
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: rgb(251, 251, 252);
+}
+
+.dtb-diff-rules__summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.dtb-diff-rules__list {
+  margin: 12px 0 0;
+  padding-left: 1.2em;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgb(62, 58, 57);
+}
+
+
+.dtb-diff-rules--lg .dtb-diff-rules__summary {
+  font-size: 16px;
+}
+
+.dtb-diff-rules--lg .dtb-diff-rules__list {
+  font-size: 15px;
+}
+
+.dtb-diff-query-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.dtb-diff-query-bar__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.dtb-diff-query-bar__field-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dtb-diff-query-bar__sep {
+  font-size: 14px;
+  color: rgb(113, 112, 113);
+}
+
+.dtb-diff-query__input--date {
+  width: 120px;
+  max-width: none;
+}
+
+
+.dtb-diff-query-bar__hint {
+  font-size: 13px;
+  color: rgb(113, 112, 113);
+  white-space: nowrap;
+}
+
+.dtb-dt-picker {
+  position: relative;
+}
+
+.dtb-dt-picker__trigger-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dtb-dt-picker__trigger {
+  width: 280px;
+  height: 35px;
+  padding: 0 36px 0 12px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dtb-dt-picker__trigger::placeholder {
+  color: rgb(160, 160, 160);
+}
+
+.dtb-dt-picker__icon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.dtb-dt-picker__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 120;
+  background: #fff;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.dtb-dt-picker__body {
+  display: flex;
+  align-items: stretch;
+}
+
+.dtb-dt-picker__calendar {
+  padding: 12px;
+  border-right: 1px solid rgb(238, 238, 239);
+  min-width: 280px;
+}
+
+.dtb-dt-picker__cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dtb-dt-picker__nav {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  color: rgb(62, 58, 57);
+  padding: 4px 8px;
+}
+
+.dtb-dt-picker__weekdays,
+.dtb-dt-picker__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.dtb-dt-picker__weekday {
+  text-align: center;
+  font-size: 12px;
+  color: rgb(113, 112, 113);
+  padding: 4px 0;
+}
+
+.dtb-dt-picker__day {
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dtb-dt-picker__day--empty {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dtb-dt-picker__day:hover:not(:disabled) {
+  background: rgb(248, 248, 249);
+}
+
+.dtb-dt-picker__day.is-selected {
+  background: rgb(0, 120, 215);
+  color: #fff;
+  box-shadow: inset 0 0 0 2px #000;
+}
+
+.dtb-dt-picker__cal-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgb(238, 238, 239);
+}
+
+.dtb-dt-picker__link {
+  border: none;
+  background: transparent;
+  color: rgb(0, 120, 215);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.dtb-dt-picker__time {
+  display: flex;
+  gap: 0;
+  max-height: 320px;
+}
+
+.dtb-dt-picker__time-col {
+  width: 56px;
+  overflow-y: auto;
+  border-left: 1px solid rgb(238, 238, 239);
+  scrollbar-width: thin;
+}
+
+.dtb-dt-picker__time-col:first-child {
+  border-left: none;
+}
+
+.dtb-dt-picker__time-col--period {
+  width: 64px;
+}
+
+.dtb-dt-picker__time-item {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px 6px;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dtb-dt-picker__time-item:hover {
+  background: rgb(248, 248, 249);
+}
+
+.dtb-dt-picker__time-item.is-selected {
+  background: rgb(0, 120, 215);
+  color: #fff;
+}
+
+
+.dtb-diff-query-bar--actions-only {
+  justify-content: flex-end;
+}
+
+.dtb-diff-rules__note {
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgb(62, 58, 57);
+  list-style: none;
+}
+.dtb-diff-query-bar__actions {
+  margin-left: auto;
+}
+
+.dtb-diff-table-wrap {
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 8px;
+}
+
+.dtb-diff-table-wrap .dtb-diff-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+}
+
+.dtb-diff-table-wrap .dtb-th,
+.dtb-diff-table-wrap .dtb-td {
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--no {
+  width: 56px;
+  min-width: 56px;
+  text-align: center;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--date {
+  width: 100px;
+  min-width: 100px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--account,
+.dtb-diff-table-wrap .dtb-diff-col--code,
+.dtb-diff-table-wrap .dtb-diff-col--shares,
+.dtb-diff-table-wrap .dtb-diff-col--ext,
+.dtb-diff-table-wrap .dtb-diff-col--time {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--account {
+  width: 92px;
+  min-width: 92px;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--code {
+  width: 80px;
+  min-width: 80px;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--name {
+  width: 112px;
+  min-width: 112px;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--stock {
+  width: 96px;
+  min-width: 96px;
+  text-align: center;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--shares {
+  width: 72px;
+  min-width: 72px;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--amount {
+  width: 108px;
+  min-width: 108px;
+  text-align: right;
+  padding-right: 18px;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--phone {
+  width: 116px;
+  min-width: 116px;
+  text-align: center;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--mid {
+  width: 120px;
+  min-width: 120px;
+  text-align: center;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--reason {
+  width: 160px;
+  min-width: 160px;
+  text-align: left;
+  padding-left: 14px;
+  padding-right: 14px;
+  line-height: 1.45;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--reason-wide {
+  width: 200px;
+  min-width: 200px;
+  text-align: left;
+  padding-left: 14px;
+  padding-right: 14px;
+  line-height: 1.45;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.dtb-diff-table-wrap .dtb-diff-col--summary {
+  width: 280px;
+  min-width: 280px;
+  max-width: 320px;
+  text-align: left;
+  padding-left: 14px;
+  padding-right: 14px;
+  line-height: 1.45;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.dtb-diff-table-wrap .dtb-th.dtb-diff-col--name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dtb-diff-table-wrap .dtb-th.dtb-diff-col--reason,
+.dtb-diff-table-wrap .dtb-th.dtb-diff-col--reason-wide,
+.dtb-diff-table-wrap .dtb-th.dtb-diff-col--summary {
+  text-align: center;
+}
+.dtb-diff-query label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dtb-diff-query__input {
+  width: 100%;
+  max-width: 360px;
+  height: 35px;
+  padding: 0 12px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.dtb-diff-table-wrap {
+  overflow: auto;
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 8px;
+}
+
+.dtb-diff-empty {
+  margin: 0;
+  font-size: 14px;
+  color: rgb(113, 112, 113);
+  text-align: center;
+  padding: 24px;
+}
+
+
+.dtb-search {
+  position: relative;
+  width: 100%;
+  height: 35px;
+  border: 1px solid #000;
+  border-radius: 6px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 36px;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.dtb-search input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+}
+
+.dtb-search img {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dtb-list-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 16px;
+  row-gap: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.dtb-notify-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dtb-list-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+}
+
+.dtb-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px 8px 0 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dtb-table-wrap table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.dtb-table-wrap .dtb-th,
+.dtb-table-wrap .dtb-td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.dtb-table-wrap .dtb-th {
+  padding: 12px 16px;
+  background: rgb(251, 227, 227);
+  font-weight: 600;
+  color: #000;
+  font-size: 14px;
+  border-bottom: 1px solid rgb(238, 238, 239);
+  white-space: nowrap;
+}
+
+.dtb-table-wrap .dtb-td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgb(238, 238, 239);
+}
+
+.dtb-table-wrap .dtb-tr--even {
+  background: rgb(247, 247, 247);
+}
+
+.dtb-table-wrap .dtb-tr--odd {
+  background: #fff;
+}
+
+.dtb-table-wrap .dtb-th--check,
+.dtb-table-wrap .dtb-td--check {
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+  padding: 12px 8px;
+}
+
+.dtb-table__check-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dtb-table-wrap .dtb-td--num {
+  font-family: Inter, "PingFang TC", "Noto Sans TC", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+
+.dtb-lendable-freeze-notice {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: rgb(255, 242, 244);
+  border: 1px solid rgb(255, 183, 193);
+  color: rgb(230, 0, 57);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+}
+
+.dtb-view-btn {
+  height: 28px;
+  padding: 0 14px;
+  border: 1px solid rgb(249, 88, 104);
+  border-radius: 6px;
+  background: #fff;
+  color: rgb(249, 88, 104);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dtb-view-btn:hover {
+  background: rgb(251, 227, 227);
+}
+
+.dtb-table-wrap .dtb-th:last-of-type,
+.dtb-table-wrap .dtb-td--yuanta {
+  min-width: 120px;
+  white-space: nowrap;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  font-weight: 500;
+}
+
+.dtb-td--yuanta {
+  color: rgb(62, 58, 57);
+}
+
+
+.dtb-lender-link {
+  border: none;
+  background: transparent;
+  color: rgb(0, 120, 215);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+}
+
+.dtb-lender-link:hover {
+  color: rgb(233, 84, 101);
+}
+
+.dtb-lender-modal.dtb-edit-modal {
+  max-width: min(720px, calc(100vw - 32px));
+}
+
+.dtb-lender-form__apply-date {
+  margin: 0 0 8px;
+  text-align: right;
+  font-size: 14px;
+  color: rgb(62, 58, 57);
+}
+
+.dtb-lender-form__title {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.dtb-lender-form__divider {
+  border: none;
+  border-top: 1px solid rgb(220, 220, 221);
+  margin: 0 0 16px;
+}
+
+.dtb-lender-form__grid {
+  display: grid;
+  grid-template-columns: 120px 1fr 120px 1fr;
+  gap: 12px 16px;
+  align-items: start;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.dtb-lender-form__label {
+  color: rgb(62, 58, 57);
+  line-height: 1.4;
+}
+
+.dtb-lender-form__label small {
+  font-size: 12px;
+  color: rgb(113, 112, 113);
+  font-weight: 400;
+}
+
+.dtb-lender-form__value {
+  font-weight: 500;
+  color: #000;
+}
+
+.dtb-lender-form__notify {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px 16px;
+  align-items: start;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.dtb-lender-form__sign {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 32px;
+  font-size: 14px;
+  color: rgb(62, 58, 57);
+}
+
+.dtb-lender-form__sign span {
+  display: inline-block;
+  min-width: 6em;
+}
+
+.dtb-lendable-modal.dtb-edit-modal {
+  max-width: min(1180px, calc(100vw - 32px));
+}
+
+.dtb-lendable-modal .dtb-edit-modal__body {
+  padding: 20px 24px 16px;
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+}
+
+.dtb-lendable-modal__meta {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.dtb-lendable-query {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: rgb(248, 248, 249);
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 8px;
+}
+
+.dtb-lendable-query__title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.dtb-lendable-query__fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.dtb-lendable-query__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.dtb-lendable-query__field input,
+.dtb-lendable-query__field select {
+  height: 35px;
+  padding: 0 10px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.dtb-lendable-query__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.dtb-lendable-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.dtb-lendable-btn--primary {
+  background: rgb(249, 88, 104);
+  color: #fff;
+  border-color: rgb(249, 88, 104);
+}
+
+.dtb-lendable-btn--outline {
+  background: #fff;
+  color: rgb(249, 88, 104);
+  border-color: rgb(249, 88, 104);
+}
+
+.dtb-lendable-btn--ghost {
+  background: #fff;
+  color: #000;
+  border-color: rgb(200, 201, 202);
+}
+
+.dtb-lendable-result-label {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.dtb-lendable-notify-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dtb-lendable-notify-btn {
+  height: 35px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 6px;
+  background: rgb(200, 201, 202);
+  color: #fff;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: not-allowed;
+}
+
+.dtb-lendable-notify-btn.is-active {
+  background: rgb(84, 117, 233);
+  cursor: pointer;
+}
+
+.dtb-lendable-notify-btn.is-active:hover {
+  filter: brightness(0.95);
+}
+
+.dtb-lendable-notice {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  background: rgb(251, 227, 227);
+  color: rgb(233, 84, 101);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.dtb-lendable-result-label {
+  margin: 0 0 8px;
+}
+
+
+.dtb-lendable-table-wrap {
+  overflow: auto;
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 8px;
+  max-height: min(360px, 50vh);
+}
+
+.dtb-lendable-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 960px;
+}
+
+.dtb-lendable-th,
+.dtb-lendable-td {
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1px solid rgb(238, 238, 239);
+  vertical-align: middle;
+}
+
+.dtb-lendable-th {
+  background: rgb(248, 248, 249);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dtb-lendable-tr--even { background: #fff; }
+.dtb-lendable-tr--odd { background: rgb(251, 251, 252); }
+
+.dtb-lendable-th--check,
+.dtb-lendable-td--check {
+  width: 48px;
+}
+
+.dtb-lendable-td--num {
+  font-variant-numeric: tabular-nums;
+}
+
+.dtb-lendable-td--empty {
+  padding: 32px;
+  color: rgb(113, 112, 113);
+}
+
+
+.dtb-lendable-th--sortable {
+  padding: 0;
+  vertical-align: middle;
+}
+
+.dtb-lendable-sort {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dtb-lendable-sort:hover {
+  background: rgba(249, 88, 104, 0.06);
+}
+
+.dtb-lendable-sort__label {
+  flex: 1;
+  text-align: center;
+}
+
+.dtb-lendable-sort__arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.dtb-lendable-sort__arrow {
+  font-size: 9px;
+  color: rgb(180, 180, 180);
+  line-height: 1;
+}
+
+.dtb-lendable-sort__arrow.is-active {
+  color: rgb(249, 88, 104);
+}
+
+.dtb-lendable-select {
+  min-width: 72px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+}
+
+.dtb-lendable-input {
+  min-width: 72px;
+  width: 100%;
+  max-width: 96px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.dtb-lendable-input:focus {
+  border-color: rgb(233, 84, 101);
+}
+.dtb-lendable-th--field,
+.dtb-lendable-td--field {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.dtb-lendable-field {
+  display: inline-flex;
+  align-items: stretch;
+  width: 88px;
+  max-width: 88px;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+.dtb-lendable-field .dtb-lendable-input {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  text-align: right;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.dtb-lendable-field__suffix {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgb(200, 201, 202);
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  font-size: 13px;
+  background: rgb(248, 249, 250);
+  color: rgb(80, 82, 84);
+  flex-shrink: 0;
+}
+
+.dtb-lendable-field:focus-within .dtb-lendable-input,
+.dtb-lendable-field:focus-within .dtb-lendable-field__suffix {
+  border-color: rgb(233, 84, 101);
+}
+
+.dtb-lendable-field input[type=number]::-webkit-outer-spin-button,
+.dtb-lendable-field input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.dtb-lendable-field input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+
+
+.dtb-lendable-query--list .dtb-lendable-query__fields {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 768px) {
+  .dtb-lendable-query__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
+/* 分頁提示：緊接 TAB 下方、設定面板（含自動化通知管道）上方 */
+.dtb-tab-notice {
+  margin: 12px 0 16px;
+  padding: 10px 14px;
+  background: rgb(251, 227, 227);
+  color: rgb(233, 84, 101);
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+/* 自動化通知設定 */
+.dtb-auto-panel {
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  padding: 0 24px 28px;
+  margin-top: 4;
+  box-sizing: border-box;
+}
+
+.dtb-schedule-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgb(238, 238, 239);
+}
+
+.dtb-schedule-label,
+.dtb-types-label {
+  font-size: 15px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.dtb-schedule-label .req,
+.dtb-content-label .req {
+  color: rgb(230, 0, 57);
+}
+
+.dtb-time-picker {
+  position: relative;
+  width: 200px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.dtb-time-picker__trigger {
+  position: relative;
+  width: 100%;
+  height: 35px;
+  padding: 0 36px 0 12px;
+  border: 1px solid #000;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 15px;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  color: #000;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dtb-time-picker__value {
+  letter-spacing: 0.02em;
+}
+
+.dtb-time-picker__clock {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: rgb(113, 112, 113);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.dtb-time-picker__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  display: flex;
+  background: #fff;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.dtb-time-picker__col {
+  display: flex;
+  flex-direction: column;
+  max-height: 224px;
+  overflow-y: auto;
+  min-width: 72px;
+  border-right: 1px solid rgb(238, 238, 239);
+  scrollbar-width: thin;
+}
+
+.dtb-time-picker__col:last-child {
+  border-right: none;
+}
+
+.dtb-time-picker__item {
+  border: none;
+  background: #fff;
+  padding: 9px 20px;
+  font-size: 15px;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  color: #000;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.dtb-time-picker__item:hover:not(.is-active) {
+  background: rgb(247, 247, 247);
+}
+
+.dtb-time-picker__item.is-active {
+  background: rgb(84, 117, 233);
+  color: #fff;
+  font-weight: 600;
+}
+
+.dtb-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.dtb-content-section {
+  padding-top: 24px;
+}
+
+.dtb-content-label {
+  font-size: 15px;
+  color: #000;
+  display: block;
+  margin-bottom: 16px;
+}
+.dtb-content-groups {
+  display: flex;
+  flex-direction: column;
+}
+
+.dtb-content-group + .dtb-content-group {
+  border-top: 1px solid rgb(200, 201, 202);
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
+.dtb-content-group__label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 12px;
+}
+
+.dtb-content-group__grid {
+  display: grid;
+  gap: 12px;
+}
+
+.dtb-content-group__grid--borrower {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.dtb-content-group__grid--lender {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* T+1 每組 1 張卡：借券人／出借人統一為相同欄寬 */
+.dtb-content-groups--t1 .dtb-content-group__grid--borrower,
+.dtb-content-groups--t1 .dtb-content-group__grid--lender {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+
+.dtb-content-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dtb-content-grid--t0 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.dtb-content-grid--t1 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+
+.dtb-content-card {
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dtb-content-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgb(238, 238, 239);
+  background: #fff;
+  gap: 8px;
+}
+
+.dtb-content-card__head span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dtb-content-card__edit {
+  border: none;
+  background: transparent;
+  color: rgb(233, 84, 101);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  white-space: nowrap;
+}
+
+.dtb-content-card__body {
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #000;
+  background: rgb(251, 227, 227);
+  flex: 1;
+  min-height: 120px;
+}
+
+.dtb-auto-warn {
+  text-align: center;
+  color: rgb(230, 0, 57);
+  font-size: 14px;
+  font-weight: 500;
+  margin: 32px 0 20px;
+}
+
+.dtb-auto-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+
+/* 自動化通知內容 · 編輯彈窗 */
+
+.dtb-edit-overlay--stack {
+  z-index: 110;
+}
+
+.dtb-lendable-notify-confirm {
+  max-width: 560px;
+}
+
+.dtb-lendable-notify-confirm__body {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 40px;
+  padding-bottom: 36px;
+}
+
+.dtb-lendable-notify-confirm__body .dtb-confirm-modal__message {
+  margin: 0;
+}
+
+.dtb-lendable-notify-preview__text {
+  margin: 0;
+  min-height: 128px;
+  cursor: text;
+}
+
+.dtb-lendable-notify-confirm__body .dtb-edit-modal__textarea {
+  pointer-events: auto;
+}
+
+.dtb-edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.dtb-edit-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+}
+
+.dtb-edit-modal__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 12px 48px;
+  background: rgb(249, 88, 104);
+  color: #fff;
+}
+
+.dtb-edit-modal__title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dtb-edit-modal__close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+
+.dtb-schedule-row--channels-only {
+  flex-wrap: wrap;
+}
+
+.dtb-edit-modal__schedule {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.dtb-edit-modal__schedule > .dtb-edit-modal__label {
+  margin-bottom: 0;
+}
+
+.dtb-edit-times {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.dtb-edit-times__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dtb-edit-times__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dtb-edit-times__row .dtb-time-picker {
+  flex: 1;
+  width: auto;
+  max-width: none;
+}
+
+.dtb-edit-times__remove {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: rgb(233, 84, 101);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 6px 4px;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  white-space: nowrap;
+}
+
+.dtb-edit-times__remove:disabled {
+  color: rgb(113, 112, 113);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.dtb-edit-times__add {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 28px;
+  border: 1px solid rgb(233, 84, 101);
+  border-radius: 999px;
+  background: #fff;
+  color: rgb(233, 84, 101);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.dtb-edit-times__add:hover {
+  background: rgb(251, 227, 227);
+}
+
+.dtb-edit-times__add-icon {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.dtb-content-card__meta {
+  font-size: 12px;
+  color: rgb(113, 112, 113);
+  margin: 0 0 8px;
+}
+
+.dtb-content-card__text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.dtb-edit-modal__body {
+  padding: 28px 32px 8px;
+}
+
+.dtb-edit-modal__label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+}
+
+.dtb-edit-modal__input {
+  width: 100%;
+  height: 44px;
+  margin-bottom: 20px;
+  padding: 10px 16px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  color: #000;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.dtb-edit-modal__input:focus {
+  border-color: rgb(233, 84, 101);
+}
+
+.dtb-edit-modal__textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 14px 16px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.55;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  color: #000;
+  resize: vertical;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.dtb-edit-modal__textarea:focus {
+  border-color: rgb(233, 84, 101);
+}
+
+.dtb-edit-modal__actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 32px 32px;
+}
+
+.dtb-edit-modal__btn {
+  min-width: 120px;
+  height: 44px;
+  padding: 0 28px;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.dtb-edit-modal__btn--cancel {
+  background: #fff;
+  color: rgb(233, 84, 101);
+  border: 1px solid rgb(233, 84, 101);
+}
+
+
+.dtb-confirm-modal {
+  max-width: 480px;
+}
+
+.dtb-confirm-modal__body {
+  padding: 48px 32px 40px;
+  text-align: center;
+}
+
+.dtb-confirm-modal__message {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  line-height: 1.5;
+}
+
+.dtb-edit-modal__btn--confirm {
+  background: rgb(249, 88, 104);
+  color: #fff;
+  border: none;
+}
+
+@media (max-width: 480px) {
+  .dtb-edit-modal__body {
+    padding: 20px 20px 8px;
+  }
+
+  .dtb-edit-modal__actions {
+    flex-direction: column;
+    padding: 20px 20px 24px;
+  }
+
+  .dtb-edit-modal__btn {
+    width: 100%;
+  }
+}
+
+/* ── Breakpoints ───────────────────────────────────────────────── */
+
+/* 內容預覽：中大屏 */
+@media (max-width: 1280px) {
+  .cms-main {
+    padding: 32px 24px 40px;
+  }
+
+  .dtb-content-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .cms-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px auto 1fr;
+    grid-template-areas:
+      "header"
+      "side"
+      "main";
+  }
+
+  .cms-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cms-header {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .cms-header__user {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40vw;
+  }
+
+  .cms-sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: min(280px, 88vw);
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .cms-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .cms-backdrop {
+    display: block;
+    position: fixed;
+    inset: 60px 0 0 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 24;
+    cursor: pointer;
+  }
+
+  .cms-main {
+    padding: 24px 16px 32px;
+  }
+
+  .dtb-content-group__grid--borrower,
+  .dtb-content-group__grid--lender {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dtb-schedule-row {
+    align-items: flex-start;
+  }
+
+  .dtb-channels {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .dtb-list-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .dtb-list-meta {
+    align-items: flex-start;
+    text-align: left;
+    order: -1;
+  }
+
+  .dtb-notify-btns {
+    width: 100%;
+  }
+
+  .dtb-section-tabs {
+    width: 100%;
+  }
+
+  .dtb-section-tab {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-height: 36px;
+  }
+
+  .dtb-section-panel {
+    padding: 16px 12px 8px;
+  }
+
+  .dtb-tabs {
+    display: flex;
+    width: 100%;
+  }
+
+  .dtb-tab {
+    flex: 0 0 auto;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .dtb-subpage {
+    padding: 32px 16px;
+    min-height: 240px;
+  }
+
+  .dtb-auto-panel {
+    padding: 0 16px 24px;
+  }
+
+  .dtb-schedule-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .dtb-time-picker {
+    width: 100%;
+  }
+
+  .dtb-channels {
+    flex: none;
+    width: 100%;
+  }
+
+  .dtb-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dtb-content-group__grid--borrower,
+  .dtb-content-group__grid--lender {
+    grid-template-columns: 1fr;
+  }
+
+  .dtb-auto-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dtb-auto-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .cms-header__user {
+    display: none;
+  }
+
+  .dtb-page-title {
+    margin-bottom: 16px;
+  }
+}
+  </style></head>
+<body>
+  <div id="root"></div>
+  
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" src="js/shell.js"></script>
+  <script type="text/babel" src="js/components.jsx"></script>
+  <script type="text/babel" src="js/screens.js"></script>
+  <script type="text/babel">
+    function App() {
+      const [state, setState] = React.useState({
+        loggedIn: true,
+        route: 'ops/day-trading-buyback',
+        modal: null,
+        notice: null,
+      });
+
+      const navigate = id => setState(s => ({ ...s, route: id, notice: null }));
+      const logout = () => setState({ loggedIn: false, route: 'home', modal: null, notice: null });
+
+      if (!state.loggedIn) return <Login setState={setState}/>;
+
+      const ScreenMap = {
+        'home':         Dashboard,
+        'review/open':  ReviewQueue,
+        'review/happy': ReviewQueue,
+        'ops/discount': CampaignList,
+        'ops/upload':   UploadForm,
+        'ops/day-trading-buyback': DayTradingBuyback,
+        'push':         PushCompose,
+      };
+      const Screen = ScreenMap[state.route] ?? Dashboard;
+
+      return (
+        <div data-screen-label={`CMS · ${state.route}`}>
+          <Shell active={state.route} onNavigate={navigate} onLogout={logout}>
+            <Screen state={state} setState={setState}/>
+          </Shell>
+
+          <Modal
+            open={state.modal === 'confirm-upload'}
+            onClose={() => setState(s => ({ ...s, modal: null }))}
+            title="確認送出？"
+            actions={
+              <>
+                <Button variant="secondary" onClick={() => setState(s => ({ ...s, modal: null }))}>取消</Button>
+                <Button variant="primary" onClick={() => setState(s => ({ ...s, modal: null, route: 'ops/discount', notice: '名單已上傳並進入簽核流程。' }))}>確認送出</Button>
+              </>
+            }
+          >
+            送出後將通知所有 287 位用戶，<br/>此操作無法復原。
+          </Modal>
+
+          <Modal
+            open={state.modal === 'confirm-push'}
+            onClose={() => setState(s => ({ ...s, modal: null }))}
+            title="送出簽核？"
+            actions={
+              <>
+                <Button variant="secondary" onClick={() => setState(s => ({ ...s, modal: null }))}>取消</Button>
+                <Button variant="primary" onClick={() => setState(s => ({ ...s, modal: null, route: 'home', notice: '推播已送至簽核流程。' }))}>確認送簽</Button>
+              </>
+            }
+          >
+            「{state._pushTitle}」<br/>將送至營運主管簽核，預計 1–2 工作日內生效。
+          </Modal>
+
+          <Modal
+            open={state.modal === 'detail'}
+            onClose={() => setState(s => ({ ...s, modal: null }))}
+            title="申請明細"
+            actions={
+              <>
+                <Button variant="secondary" onClick={() => setState(s => ({ ...s, modal: null }))}>關閉</Button>
+                <Button variant="primary" onClick={() => setState(s => ({ ...s, modal: null }))}>通過審核</Button>
+              </>
+            }
+          >
+            這是一個範例彈窗，<br/>實際的申請明細包含個資、開戶資料、Happy Call 紀錄。
+          </Modal>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body></html>
