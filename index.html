@@ -1852,6 +1852,110 @@ body {
   pointer-events: auto;
 }
 
+.dtb-list-notify-confirm__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.dtb-list-notify-confirm__row .dtb-edit-modal__label {
+  margin: 0;
+}
+
+.dtb-list-notify-confirm__content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dtb-list-notify-confirm__content .dtb-edit-modal__label {
+  margin: 0;
+}
+
+.dtb-edit-modal.dtb-list-notify-modal {
+  width: auto;
+  min-width: 380px;
+  max-width: min(480px, calc(100vw - 32px));
+}
+
+.dtb-list-notify-modal .dtb-edit-modal__body {
+  padding: 20px 24px 4px;
+}
+
+.dtb-list-notify-modal .dtb-edit-modal__schedule {
+  margin-bottom: 12px;
+}
+
+.dtb-list-notify-modal .dtb-edit-modal__label {
+  margin-bottom: 8px;
+}
+
+.dtb-list-notify-modal .dtb-edit-modal__input {
+  margin-bottom: 14px;
+}
+
+.dtb-list-notify-modal .dtb-edit-modal__textarea {
+  min-height: 0;
+  height: auto;
+  resize: none;
+  overflow-y: auto;
+  max-height: 200px;
+  field-sizing: content;
+}
+
+.dtb-list-notify-modal .dtb-edit-modal__actions {
+  padding: 16px 24px 20px;
+  gap: 16px;
+}
+
+.dtb-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 16px 12px;
+  flex-wrap: wrap;
+}
+
+.dtb-pagination__btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgb(233, 84, 101);
+  background: #fff;
+  color: rgb(233, 84, 101);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: "PingFang TC", "Noto Sans TC", sans-serif;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-sizing: border-box;
+  transition: background 120ms ease;
+}
+
+.dtb-pagination__btn:hover:not(:disabled):not(.dtb-pagination__btn--active) {
+  background: rgb(251, 227, 227);
+}
+
+.dtb-pagination__btn--active {
+  background: rgb(249, 88, 104);
+  border-color: rgb(249, 88, 104);
+  color: #fff;
+  cursor: default;
+}
+
+.dtb-pagination__btn:disabled {
+  border-color: rgb(200, 201, 202);
+  color: rgb(200, 201, 202);
+  background: #fff;
+  cursor: not-allowed;
+}
+
 .dtb-edit-overlay {
   position: fixed;
   inset: 0;
@@ -2651,15 +2755,22 @@ function Textarea({ value, onChange, placeholder, rows = 4, width = 540 }) {
   );
 }
 
-function Checkbox({ checked, onChange, label }) {
+function Checkbox({ checked, onChange, label, disabled = false }) {
   return (
-    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 17 }}>
+    <label style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 8,
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      fontSize: 17,
+      opacity: disabled ? 0.45 : 1,
+    }}>
       <span style={{
         width: 18,
         height: 18,
         borderRadius: 4,
         background: checked ? PKT.coral : '#fff',
-        border: `1.5px solid ${checked ? PKT.coral : '#000'}`,
+        border: `1.5px solid ${checked ? PKT.coral : (disabled ? PKT.borderStrong : '#000')}`,
         display: 'inline-grid',
         placeItems: 'center',
         flex: '0 0 18px',
@@ -2673,7 +2784,13 @@ function Checkbox({ checked, onChange, label }) {
           }}/>
         )}
       </span>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ display: 'none' }} />
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={disabled ? undefined : onChange}
+        style={{ display: 'none' }}
+      />
       {label}
     </label>
   );
@@ -2878,10 +2995,103 @@ function Breadcrumb({ items }) {
   );
 }
 
+const TABLE_PAGE_SIZE = 10;
+
+function getPaginationPages(current, total) {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  let start = Math.max(1, current - 2);
+  let end = Math.min(total, current + 2);
+  if (current <= 3) {
+    start = 1;
+    end = 5;
+  } else if (current >= total - 2) {
+    start = total - 4;
+    end = total;
+  }
+  const pages = [];
+  for (let i = start; i <= end; i += 1) pages.push(i);
+  return pages;
+}
+
+function paginateSlice(items, page, pageSize = TABLE_PAGE_SIZE) {
+  const totalItems = items.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize) || 1);
+  const safePage = Math.min(Math.max(1, page), totalPages);
+  const start = (safePage - 1) * pageSize;
+  return {
+    items: items.slice(start, start + pageSize),
+    page: safePage,
+    totalPages,
+    totalItems,
+  };
+}
+
+function TablePagination({ page, totalItems, pageSize = TABLE_PAGE_SIZE, onPageChange }) {
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize) || 1);
+  if (totalPages <= 1) return null;
+  const safePage = Math.min(Math.max(1, page), totalPages);
+  const go = next => onPageChange(Math.min(totalPages, Math.max(1, next)));
+  const pageNums = getPaginationPages(safePage, totalPages);
+
+  return (
+    <nav className="dtb-pagination" aria-label="分頁">
+      <button
+        type="button"
+        className="dtb-pagination__btn"
+        disabled={safePage <= 1}
+        onClick={() => go(1)}
+        aria-label="第一頁"
+      >
+        «
+      </button>
+      <button
+        type="button"
+        className="dtb-pagination__btn"
+        disabled={safePage <= 1}
+        onClick={() => go(safePage - 1)}
+        aria-label="上一頁"
+      >
+        ‹
+      </button>
+      {pageNums.map(n => (
+        <button
+          key={n}
+          type="button"
+          className={'dtb-pagination__btn' + (n === safePage ? ' dtb-pagination__btn--active' : '')}
+          onClick={() => go(n)}
+          aria-current={n === safePage ? 'page' : undefined}
+        >
+          {n}
+        </button>
+      ))}
+      <button
+        type="button"
+        className="dtb-pagination__btn"
+        disabled={safePage >= totalPages}
+        onClick={() => go(safePage + 1)}
+        aria-label="下一頁"
+      >
+        ›
+      </button>
+      <button
+        type="button"
+        className="dtb-pagination__btn"
+        disabled={safePage >= totalPages}
+        onClick={() => go(totalPages)}
+        aria-label="最後一頁"
+      >
+        »
+      </button>
+    </nav>
+  );
+}
+
 Object.assign(window, {
   Card, PageTitle, Button, FieldRow, Input, Select, Textarea,
   Checkbox, Radio, Switch, StatusPill, SearchInput, Toolbar,
-  Table, Modal, StatCard, Breadcrumb,
+  Table, Modal, StatCard, Breadcrumb, TablePagination, paginateSlice, TABLE_PAGE_SIZE,
 });
 
 </script>
@@ -3873,6 +4083,11 @@ function DayTradingBuyback({ state, setState }) {
   const [viewLendable, setViewLendable] = React.useState(null);
   const [viewLenderRow, setViewLenderRow] = React.useState(null);
   const [lenderTabIdx, setLenderTabIdx] = React.useState(0);
+  const [listPage, setListPage] = React.useState(1);
+  const [diffPage, setDiffPage] = React.useState(1);
+  const [borrowerInfoPage, setBorrowerInfoPage] = React.useState(1);
+  const [taxPage, setTaxPage] = React.useState(1);
+  const [lendablePage, setLendablePage] = React.useState(1);
 
   const BORROW_FREEZE_THRESHOLD = 100000;
   const isListRowFrozen = r => Number(r.borrowAmount) > BORROW_FREEZE_THRESHOLD;
@@ -3887,7 +4102,11 @@ function DayTradingBuyback({ state, setState }) {
   const LEND_DONE_NOTIFY_FALLBACK = '口袋證券已為您成功出借XX股票X張X%，股票將於強制買回之次三營業日返還至您的集保帳戶，若隔日強制買回未成交，則會以您原出借費率續借，無法提前返還。';
   const [lendableNotice, setLendableNotice] = React.useState(null);
   const [lendableNotifyConfirm, setLendableNotifyConfirm] = React.useState(null);
-  const [lendableNotifyDraft, setLendableNotifyDraft] = React.useState('');
+  const [lendableNotifyDraft, setLendableNotifyDraft] = React.useState({
+    title: '',
+    text: '',
+    times: ['15:30'],
+  });
   const [lendableSort, setLendableSort] = React.useState({ key: null, dir: 'asc' });
   const [lendableRateAlertOpen, setLendableRateAlertOpen] = React.useState(false);
 
@@ -3897,7 +4116,7 @@ function DayTradingBuyback({ state, setState }) {
 
   const closeLendableNotifyConfirm = () => {
     setLendableNotifyConfirm(null);
-    setLendableNotifyDraft('');
+    setLendableNotifyDraft({ title: '', text: '', times: ['15:30'] });
   };
 
   const parseLendableShareMax = text => {
@@ -3981,6 +4200,7 @@ function DayTradingBuyback({ state, setState }) {
     setLendableRateAlertOpen(false);
     closeLendableNotifyConfirm();
     setLendableSort({ key: null, dir: 'asc' });
+    setLendablePage(1);
   };
 
   const openLendableModal = row => {
@@ -3997,6 +4217,7 @@ function DayTradingBuyback({ state, setState }) {
     closeLendableNotifyConfirm();
     setLendableEdits(edits);
     setLendableSort({ key: null, dir: 'asc' });
+    setLendablePage(1);
   };
 
   const lendablePoolForParent = viewLendable
@@ -4048,6 +4269,9 @@ function DayTradingBuyback({ state, setState }) {
     });
     return list;
   })();
+
+  React.useEffect(() => { setLendablePage(1); }, [lendableApplied, viewLendable?.key]);
+  const lendablePaginated = paginateSlice(lendableSortedRows, lendablePage);
 
   const toggleLendableSort = sortKey => {
     setLendableSort(s => {
@@ -4130,6 +4354,18 @@ function DayTradingBuyback({ state, setState }) {
     return Math.max(0, total - borrowed);
   };
 
+  const LIST_NOTIFY_BUCKET_LABELS = {
+    borrower: '借券人通知提醒（尚未完成借券）',
+    done_under: '完成借券通知（小於10萬元）',
+    done_over: '完成借券通知（10萬元以上）',
+  };
+
+  const getListNotifyBucket = row => {
+    if (listMissingShares(row) > 0) return 'borrower';
+    if (Number(row.borrowAmount) > BORROW_FREEZE_THRESHOLD) return 'done_over';
+    return 'done_under';
+  };
+
   const needsYuantaSend = row => listMissingShares(row) > 0;
 
   const yuantaSendLabel = row => '缺少 ' + listMissingShares(row) + '張';
@@ -4142,9 +4378,18 @@ function DayTradingBuyback({ state, setState }) {
   };
 
   const allRows = [
-    { key: '1', stock: '天二 6834',   shares: '1張', needBorrow: 1, borrowed: 1, account: '0393528', name: '溫朝淵', id: 'J122365376', lendable: ['王小明', '陳美玲'], phone: '0910668111', borrowAmount: 85000 },
+    { key: '1', stock: '天二 6834', shares: '1張', needBorrow: 1, borrowed: 1, account: '0393528', name: '溫朝淵', id: 'J122365376', lendable: ['王小明', '陳美玲'], phone: '0910668111', borrowAmount: 85000 },
     { key: '2', stock: '日電貿 3090', shares: '7張', needBorrow: 7, borrowed: 3, account: '0561237', name: '李承鍵', id: 'Q124253472', lendable: ['林志豪'], phone: '0905725693', borrowAmount: 125000 },
-    { key: '3', stock: '華容 5328',   shares: '1張', needBorrow: 1, borrowed: 0, account: '0955416', name: '許群士', id: 'A132019847', lendable: [], phone: '0908728910', borrowAmount: 42000 },
+    { key: '3', stock: '華容 5328', shares: '1張', needBorrow: 1, borrowed: 0, account: '0955416', name: '許群士', id: 'A132019847', lendable: [], phone: '0908728910', borrowAmount: 42000 },
+    { key: '4', stock: '台積電 2330', shares: '2張', needBorrow: 2, borrowed: 2, account: '0123456', name: '王建國', id: 'A100000001', lendable: ['李大明'], phone: '0911111111', borrowAmount: 95000 },
+    { key: '5', stock: '聯發科 2454', shares: '1張', needBorrow: 1, borrowed: 0, account: '0234567', name: '林雅婷', id: 'B200000002', lendable: [], phone: '0922222222', borrowAmount: 38000 },
+    { key: '6', stock: '鴻海 2317', shares: '3張', needBorrow: 3, borrowed: 3, account: '0345678', name: '張志豪', id: 'C300000003', lendable: ['陳小美'], phone: '0933333333', borrowAmount: 112000 },
+    { key: '7', stock: '富邦金 2881', shares: '2張', needBorrow: 2, borrowed: 1, account: '0456789', name: '吳佩珊', id: 'D400000004', lendable: ['黃先生'], phone: '0944444444', borrowAmount: 56000 },
+    { key: '8', stock: '中信金 2891', shares: '1張', needBorrow: 1, borrowed: 1, account: '0567890', name: '劉俊宏', id: 'E500000005', lendable: [], phone: '0955555555', borrowAmount: 72000 },
+    { key: '9', stock: '廣達 2382', shares: '4張', needBorrow: 4, borrowed: 0, account: '0678901', name: '蔡宜君', id: 'F600000006', lendable: [], phone: '0966666666', borrowAmount: 48000 },
+    { key: '10', stock: '仁寶 2324', shares: '2張', needBorrow: 2, borrowed: 2, account: '0789012', name: '鄭宇軒', id: 'G700000007', lendable: ['周小姐'], phone: '0977777777', borrowAmount: 88000 },
+    { key: '11', stock: '英業達 2356', shares: '1張', needBorrow: 1, borrowed: 0, account: '0890123', name: '許家豪', id: 'H800000008', lendable: [], phone: '0988888888', borrowAmount: 35000 },
+    { key: '12', stock: '華碩 2357', shares: '1張', needBorrow: 1, borrowed: 1, account: '0901234', name: '謝欣怡', id: 'I900000009', lendable: ['林先生'], phone: '0999999999', borrowAmount: 105000 },
   ];
 
   const LIST_COLUMNS = ['未回補股票', '股數', '台股帳號', '姓名', 'ID', '出借的客戶', '聯絡電話', '是否凍結', '送元大'];
@@ -4168,21 +4413,74 @@ function DayTradingBuyback({ state, setState }) {
     return true;
   });
 
-  const selectedCount = rows.filter(r => selected[r.key]).length;
+  React.useEffect(() => { setListPage(1); }, [listApplied]);
+  const listPaginated = paginateSlice(rows, listPage);
+  const diffPaginated = paginateSlice(DIFF_FORM_ROWS, diffPage);
+  const borrowerPaginated = paginateSlice(BORROWER_INFO_ROWS, borrowerInfoPage);
+  const taxPaginated = paginateSlice(SERP3A_ROWS, taxPage);
+
+  const selectedRows = rows.filter(r => selected[r.key]);
+  const selectedCount = selectedRows.length;
   const hasSelection = selectedCount > 0;
 
+  const activeListNotifyBucket = hasSelection ? getListNotifyBucket(selectedRows[0]) : null;
+
+  const isListRowNotifySelectable = row => {
+    if (!activeListNotifyBucket) return true;
+    return getListNotifyBucket(row) === activeListNotifyBucket;
+  };
+
+  const listNotifySelectionMixed = () => {
+    const buckets = new Set(selectedRows.map(getListNotifyBucket));
+    return buckets.size > 1;
+  };
+
+  const syncListSelectAll = sel => {
+    const bucket = (() => {
+      const picked = rows.filter(r => sel[r.key]);
+      return picked.length ? getListNotifyBucket(picked[0]) : null;
+    })();
+    const scope = bucket ? rows.filter(r => getListNotifyBucket(r) === bucket) : rows;
+    setSelectAll(scope.length > 0 && scope.every(r => sel[r.key]));
+  };
+
+  const rejectListMixedSelection = () => {
+    setListNotice('不可混選不同通知類型，請僅勾選相同類型客戶（借券人提醒／完成借券＜10萬／完成借券≥10萬）。');
+  };
+
   const toggleAll = () => {
-    const next = !selectAll;
-    setSelectAll(next);
+    if (selectAll) {
+      setSelectAll(false);
+      setSelected({});
+      return;
+    }
+    const bucket = activeListNotifyBucket || (rows[0] ? getListNotifyBucket(rows[0]) : null);
+    if (!bucket) return;
+    const compatible = rows.filter(r => getListNotifyBucket(r) === bucket);
     const nextSel = {};
-    if (next) rows.forEach(r => { nextSel[r.key] = true; });
+    compatible.forEach(r => { nextSel[r.key] = true; });
     setSelected(nextSel);
+    syncListSelectAll(nextSel);
+    if (compatible.length < rows.length) {
+      setListNotice(
+        `已勾選 ${compatible.length} 筆「${LIST_NOTIFY_BUCKET_LABELS[bucket]}」；其餘 ${rows.length - compatible.length} 筆類型不同，無法一併勾選。`
+      );
+    }
   };
 
   const toggleRow = key => {
+    const row = rows.find(r => r.key === key);
     setSelected(s => {
+      if (!s[key] && row) {
+        const picked = rows.filter(r => s[r.key]);
+        const bucket = picked.length ? getListNotifyBucket(picked[0]) : null;
+        if (bucket && getListNotifyBucket(row) !== bucket) {
+          rejectListMixedSelection();
+          return s;
+        }
+      }
       const next = { ...s, [key]: !s[key] };
-      setSelectAll(rows.length > 0 && rows.every(r => next[r.key]));
+      syncListSelectAll(next);
       return next;
     });
   };
@@ -4288,6 +4586,33 @@ function DayTradingBuyback({ state, setState }) {
     setT2SubmitConfirmOpen(false);
   };
 
+  React.useEffect(() => {
+    const raw = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    if (!raw) return;
+    const aliases = {
+      tday: ['lendCover', 't0'],
+      tplus1: ['lendCover', 't1'],
+      tplus2: ['lendCover', 't2'],
+    };
+    if (aliases[raw]) {
+      const [section, child] = aliases[raw];
+      setSectionTab(section);
+      setTab(child);
+      return;
+    }
+    const parts = raw.split('/').filter(Boolean);
+    const sectionKey = parts[0] === 'lend-cover' ? 'lendCover' : parts[0] === 'day-sell' ? 'daySell' : parts[0];
+    if (sectionKey === 'lendCover') {
+      setSectionTab('lendCover');
+      if (parts[1] && DTB_LEND_COVER_TABS.some(t => t.id === parts[1])) setTab(parts[1]);
+      return;
+    }
+    if (sectionKey === 'daySell') {
+      setSectionTab('daySell');
+      if (parts[1] && DTB_DAY_SELL_TABS.some(t => t.id === parts[1])) setTab(parts[1]);
+    }
+  }, []);
+
   const sectionTabBtn = ({ id, label }) => (
     <button
       key={id}
@@ -4321,30 +4646,6 @@ function DayTradingBuyback({ state, setState }) {
         <p className="dtb-subpage__hint">此頁面為原型示意，實際功能待接軌系統資料。</p>
       </div>
     </div>
-  );
-
-  const notifyBtn = label => (
-    <button
-      key={label}
-      type="button"
-      disabled={!hasSelection}
-      onClick={() => hasSelection && setListNotice(`已對 ${selectedCount} 筆發送「${label}」。`)}
-      style={{
-        height: 35,
-        padding: '0 16px',
-        border: 'none',
-        borderRadius: 6,
-        background: hasSelection ? PKT.blue : PKT.borderStrong,
-        color: '#fff',
-        fontFamily: '"PingFang TC", "Noto Sans TC", sans-serif',
-        fontSize: 14,
-        fontWeight: 500,
-        cursor: hasSelection ? 'pointer' : 'not-allowed',
-        opacity: hasSelection ? 1 : 0.85,
-      }}
-    >
-      {label}
-    </button>
   );
 
   const channelOptions = [
@@ -4396,8 +4697,44 @@ function DayTradingBuyback({ state, setState }) {
   const [editDraft, setEditDraft] = React.useState(null);
   const [submitConfirmOpen, setSubmitConfirmOpen] = React.useState(false);
   const [listNotice, setListNotice] = React.useState(null);
+  const [listNotifyConfirm, setListNotifyConfirm] = React.useState(null);
+  const [listNotifyDraft, setListNotifyDraft] = React.useState({
+    title: '',
+    text: '',
+    times: ['13:40'],
+  });
   const [autoSavedNotice, setAutoSavedNotice] = React.useState(null);
 
+  const canSendListNotify = hasSelection && !listNotifySelectionMixed();
+
+  const listNotifyTextareaRows = Math.min(
+    7,
+    Math.max(3, String(listNotifyDraft.text || '').split('\n').length + 1)
+  );
+
+  const notifyBtn = label => (
+    <button
+      key={label}
+      type="button"
+      disabled={!canSendListNotify}
+      onClick={() => canSendListNotify && openListNotifyConfirm(label)}
+      style={{
+        height: 35,
+        padding: '0 16px',
+        border: 'none',
+        borderRadius: 6,
+        background: canSendListNotify ? PKT.blue : PKT.borderStrong,
+        color: '#fff',
+        fontFamily: '"PingFang TC", "Noto Sans TC", sans-serif',
+        fontSize: 14,
+        fontWeight: 500,
+        cursor: canSendListNotify ? 'pointer' : 'not-allowed',
+        opacity: canSendListNotify ? 1 : 0.85,
+      }}
+    >
+      {label}
+    </button>
+  );
 
   const T0_CONTENT_GROUPS = [
     { id: 'borrower', label: '借券人', keys: ['borrower', 'done_under', 'done_over'] },
@@ -4443,13 +4780,81 @@ function DayTradingBuyback({ state, setState }) {
     () => defaultT0Contents.map(c => ({ ...c }))
   );
 
-  const getLendDoneNotifyText = () =>
-    t0ContentPreviews.find(c => c.key === 'lend_done')?.text || LEND_DONE_NOTIFY_FALLBACK;
+  const getT0ContentByKey = key => t0ContentPreviews.find(c => c.key === key);
+
+  const personalizeListNotifyText = (templateText, row) => {
+    const stockLabel = String(row?.stock || '').trim() || 'XX股票';
+    const shortName = stockLabel.replace(/\s+\d+$/, '').trim() || stockLabel;
+    return String(templateText || '')
+      .replace(/XX股票/g, shortName)
+      .replace(/XXAAA/g, shortName);
+  };
+
+  const personalizeLendableNotifyText = (templateText, row, edit) => {
+    const stockLabel = String(row?.stock || viewLendable?.stock || '').trim() || 'XX股票';
+    const shortName = stockLabel.replace(/\s+\d+$/, '').trim() || stockLabel;
+    const sharesRaw = edit?.shares ?? row?.shares ?? '';
+    const shareLabel = String(sharesRaw).includes('張')
+      ? String(sharesRaw)
+      : (sharesRaw ? `${sharesRaw}張` : 'X張');
+    const rateRaw = edit?.rate ?? row?.rate ?? '';
+    const rateLabel = String(rateRaw).includes('%')
+      ? String(rateRaw)
+      : (rateRaw ? `${rateRaw}%` : 'X%');
+    return String(templateText || '')
+      .replace(/XX股票/g, shortName)
+      .replace(/X張/g, shareLabel)
+      .replace(/X%/g, rateLabel);
+  };
+
+  const resolveListNotifyTemplate = selectedRows => {
+    const bucket = getListNotifyBucket(selectedRows[0]);
+    return getT0ContentByKey(bucket);
+  };
+
+  const openListNotifyConfirm = channelLabel => {
+    const picked = rows.filter(r => selected[r.key]);
+    if (listNotifySelectionMixed()) {
+      rejectListMixedSelection();
+      return;
+    }
+    const col = resolveListNotifyTemplate(picked);
+    const primary = picked[0] || rows[0];
+    const times = normalizeContentTimes(col || { times: ['13:40'] });
+    setListNotifyDraft({
+      title: col?.title || '借券人通知提醒',
+      text: personalizeListNotifyText(col?.text, primary),
+      times,
+    });
+    setListNotifyConfirm({ channel: channelLabel });
+  };
+
+  const closeListNotifyConfirm = () => setListNotifyConfirm(null);
 
   const openLendableNotifyConfirm = channel => {
-    setLendableNotifyDraft(getLendDoneNotifyText());
+    const picked = lendableSortedRows.filter(r => lendableSelected[r.key]);
+    const col = getT0ContentByKey('lend_done');
+    const primary = picked[0] || lendableSortedRows[0];
+    const edit = primary
+      ? (lendableEdits[primary.key] || { rate: primary.rate, shares: primary.shares })
+      : {};
+    const times = normalizeContentTimes(col || { times: ['15:30'] });
+    setLendableNotifyDraft({
+      title: col?.title || '出借完成',
+      text: personalizeLendableNotifyText(
+        col?.text || LEND_DONE_NOTIFY_FALLBACK,
+        primary,
+        edit
+      ),
+      times,
+    });
     setLendableNotifyConfirm({ channel });
   };
+
+  const lendableNotifyTextareaRows = Math.min(
+    7,
+    Math.max(3, String(lendableNotifyDraft.text || '').split('\n').length + 1)
+  );
 
   const lendableNotifyBtn = label => (
     <button
@@ -4908,14 +5313,19 @@ function DayTradingBuyback({ state, setState }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r, ri) => (
+                  {listPaginated.items.map((r, ri) => (
                     <tr
                       key={r.key}
                       className={ri % 2 ? 'dtb-tr--odd' : 'dtb-tr--even'}
                     >
                       <td className="dtb-td dtb-td--check">
                         <div className="dtb-table__check-wrap">
-                          <Checkbox checked={!!selected[r.key]} onChange={() => toggleRow(r.key)} label="" />
+                          <Checkbox
+                            checked={!!selected[r.key]}
+                            disabled={!selected[r.key] && !isListRowNotifySelectable(r)}
+                            onChange={() => toggleRow(r.key)}
+                            label=""
+                          />
                         </div>
                       </td>
                       <td className="dtb-td">{r.stock}</td>
@@ -4944,6 +5354,11 @@ function DayTradingBuyback({ state, setState }) {
                 </tbody>
               </table>
             </div>
+            <TablePagination
+              page={listPaginated.page}
+              totalItems={rows.length}
+              onPageChange={setListPage}
+            />
           </>
         )}
 
@@ -5306,7 +5721,7 @@ function DayTradingBuyback({ state, setState }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {DIFF_FORM_ROWS.map((r, ri) => (
+                    {diffPaginated.items.map((r, ri) => (
                       <tr key={r.no + r.diffDate + r.account} className={ri % 2 ? 'dtb-tr--odd' : 'dtb-tr--even'}>
                         {DIFF_FORM_TABLE_COLUMNS.map(col => (
                           <td
@@ -5325,6 +5740,11 @@ function DayTradingBuyback({ state, setState }) {
                   </tbody>
                 </table>
             </div>
+            <TablePagination
+              page={diffPaginated.page}
+              totalItems={DIFF_FORM_ROWS.length}
+              onPageChange={setDiffPage}
+            />
           </div>
         )}
 
@@ -5350,8 +5770,8 @@ function DayTradingBuyback({ state, setState }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {BORROWER_INFO_ROWS.map((r, ri) => (
-                    <tr key={r.no + r.borrowerAccount + r.stock} className={ri % 2 ? 'dtb-tr--odd' : 'dtb-tr--even'}>
+                  {borrowerPaginated.items.map((r, ri) => (
+                    <tr key={r.borrowerAccount + r.stock + r.date} className={ri % 2 ? 'dtb-tr--odd' : 'dtb-tr--even'}>
                       {BORROWER_INFO_TABLE_COLUMNS.map(col => {
                         if (col.key === 'lenderName') {
                           const label = lenderNameCellLabel(r);
@@ -5383,6 +5803,11 @@ function DayTradingBuyback({ state, setState }) {
                 </tbody>
               </table>
             </div>
+            <TablePagination
+              page={borrowerPaginated.page}
+              totalItems={BORROWER_INFO_ROWS.length}
+              onPageChange={setBorrowerInfoPage}
+            />
           </div>
         )}
 
@@ -5401,7 +5826,7 @@ function DayTradingBuyback({ state, setState }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {SERP3A_ROWS.map((r, ri) => (
+                  {taxPaginated.items.map((r, ri) => (
                     <tr
                       key={r.account + r.orderNo + r.matchNo + ri}
                       className={ri % 2 ? 'dtb-tr--odd' : 'dtb-tr--even'}
@@ -5428,12 +5853,102 @@ function DayTradingBuyback({ state, setState }) {
                 </tbody>
               </table>
             </div>
+            <TablePagination
+              page={taxPaginated.page}
+              totalItems={SERP3A_ROWS.length}
+              onPageChange={setTaxPage}
+            />
           </div>
         )}
           </>
         )}
         </div>
       </Card>
+
+      {listNotifyConfirm && (
+        <div
+          className="dtb-edit-overlay"
+          onClick={closeListNotifyConfirm}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-list-notify-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-list-notify-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-list-notify-modal-title" className="dtb-edit-modal__title">
+                {listNotifyConfirm.channel}
+              </span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={closeListNotifyConfirm}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body">
+              <div className="dtb-edit-modal__schedule">
+                <label className="dtb-edit-modal__label">
+                  <span className="req">*</span>自動通知時間：
+                </label>
+                <EditTimesList
+                  times={listNotifyDraft.times}
+                  onChange={times => setListNotifyDraft(d => ({ ...d, times }))}
+                />
+              </div>
+              <label className="dtb-edit-modal__label" htmlFor="dtb-list-notify-title">
+                <span className="req">*</span>通知標題：
+              </label>
+              <input
+                id="dtb-list-notify-title"
+                type="text"
+                className="dtb-edit-modal__input"
+                value={listNotifyDraft.title}
+                onChange={e => setListNotifyDraft(d => ({ ...d, title: e.target.value }))}
+              />
+              <label className="dtb-edit-modal__label" htmlFor="dtb-list-notify-text">
+                <span className="req">*</span>通知內容：
+              </label>
+              <textarea
+                id="dtb-list-notify-text"
+                className="dtb-edit-modal__textarea"
+                value={listNotifyDraft.text}
+                onChange={e => setListNotifyDraft(d => ({ ...d, text: e.target.value }))}
+                rows={listNotifyTextareaRows}
+                aria-label="通知內容"
+              />
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={closeListNotifyConfirm}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                onClick={() => {
+                  const ch = listNotifyConfirm.channel;
+                  const timeLabels = (listNotifyDraft.times || []).map(formatTimeLabel).join('、');
+                  closeListNotifyConfirm();
+                  setListNotice(
+                    `已對 ${selectedCount} 筆排程於 ${timeLabels || '—'} 以「${listNotifyDraft.title}」發送「${ch}」。`
+                  );
+                }}
+              >
+                確認發送
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {viewLenderRow && (() => {
         const lenderTabs = lendersFromBorrowerRow(viewLenderRow);
@@ -5645,7 +6160,7 @@ function DayTradingBuyback({ state, setState }) {
                         </td>
                       </tr>
                     ) : (
-                      lendableSortedRows.map((r, ri) => {
+                      lendablePaginated.items.map((r, ri) => {
                         const shareMax = parseLendableShareMax(r.lendableShares);
                         const edit = lendableEdits[r.key] || {
                           rate: r.rate,
@@ -5730,6 +6245,11 @@ function DayTradingBuyback({ state, setState }) {
                   </tbody>
                 </table>
               </div>
+              <TablePagination
+                page={lendablePaginated.page}
+                totalItems={lendableSortedRows.length}
+                onPageChange={setLendablePage}
+              />
             </div>
             <div className="dtb-edit-modal__actions">
               <button
@@ -5790,14 +6310,14 @@ function DayTradingBuyback({ state, setState }) {
             role="presentation"
           >
             <div
-              className="dtb-edit-modal dtb-confirm-modal dtb-lendable-notify-confirm"
+              className="dtb-edit-modal dtb-list-notify-modal"
               onClick={e => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
-              aria-labelledby="dtb-lendable-notify-confirm-title"
+              aria-labelledby="dtb-lendable-notify-modal-title"
             >
               <div className="dtb-edit-modal__head">
-                <span id="dtb-lendable-notify-confirm-title" className="dtb-edit-modal__title">
+                <span id="dtb-lendable-notify-modal-title" className="dtb-edit-modal__title">
                   {lendableNotifyConfirm.channel}
                 </span>
                 <button
@@ -5809,17 +6329,35 @@ function DayTradingBuyback({ state, setState }) {
                   ×
                 </button>
               </div>
-              <div className="dtb-edit-modal__body dtb-confirm-modal__body dtb-lendable-notify-confirm__body">
-                <p className="dtb-confirm-modal__message">
-                  是否對已勾選 {lendableSelectedCount} 筆客戶發送「{lendableNotifyConfirm.channel}」？
-                </p>
+              <div className="dtb-edit-modal__body">
+                <div className="dtb-edit-modal__schedule">
+                  <label className="dtb-edit-modal__label">
+                    <span className="req">*</span>自動通知時間：
+                  </label>
+                  <EditTimesList
+                    times={lendableNotifyDraft.times}
+                    onChange={times => setLendableNotifyDraft(d => ({ ...d, times }))}
+                  />
+                </div>
+                <label className="dtb-edit-modal__label" htmlFor="dtb-lendable-notify-title">
+                  <span className="req">*</span>通知標題：
+                </label>
+                <input
+                  id="dtb-lendable-notify-title"
+                  type="text"
+                  className="dtb-edit-modal__input"
+                  value={lendableNotifyDraft.title}
+                  onChange={e => setLendableNotifyDraft(d => ({ ...d, title: e.target.value }))}
+                />
+                <label className="dtb-edit-modal__label" htmlFor="dtb-lendable-notify-text">
+                  <span className="req">*</span>通知內容：
+                </label>
                 <textarea
-                  className="dtb-edit-modal__textarea dtb-lendable-notify-preview__text"
-                  value={lendableNotifyDraft}
-                  onChange={e => setLendableNotifyDraft(e.target.value)}
-                  onClick={e => e.stopPropagation()}
-                  onMouseDown={e => e.stopPropagation()}
-                  rows={5}
+                  id="dtb-lendable-notify-text"
+                  className="dtb-edit-modal__textarea"
+                  value={lendableNotifyDraft.text}
+                  onChange={e => setLendableNotifyDraft(d => ({ ...d, text: e.target.value }))}
+                  rows={lendableNotifyTextareaRows}
                   aria-label="通知內容"
                 />
               </div>
@@ -5836,8 +6374,11 @@ function DayTradingBuyback({ state, setState }) {
                   className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
                   onClick={() => {
                     const ch = lendableNotifyConfirm.channel;
+                    const timeLabels = (lendableNotifyDraft.times || []).map(formatTimeLabel).join('、');
                     closeLendableNotifyConfirm();
-                    setLendableNotice(`已對 ${lendableSelectedCount} 筆發送「${ch}」。`);
+                    setLendableNotice(
+                      `已對 ${lendableSelectedCount} 筆排程於 ${timeLabels || '—'} 以「${lendableNotifyDraft.title}」發送「${ch}」。`
+                    );
                   }}
                 >
                   確認發送
