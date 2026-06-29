@@ -2546,6 +2546,60 @@ input[type=number] {
   line-height: 1.5;
 }
 
+.dtb-diff-delete-confirm {
+  max-width: min(760px, calc(100vw - 32px));
+}
+
+.dtb-tax-email-confirm {
+  max-width: min(680px, calc(100vw - 32px));
+}
+
+.dtb-diff-delete-confirm .dtb-confirm-modal__body {
+  padding: 32px;
+}
+
+.dtb-tax-email-confirm .dtb-confirm-modal__body {
+  padding: 32px;
+}
+
+.dtb-diff-delete-summary,
+.dtb-tax-email-summary {
+  margin-top: 18px;
+  overflow-x: auto;
+  border: 1px solid rgb(238, 238, 239);
+  border-radius: 10px;
+}
+
+.dtb-diff-delete-summary table,
+.dtb-tax-email-summary table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: center;
+}
+
+.dtb-diff-delete-summary th,
+.dtb-diff-delete-summary td,
+.dtb-tax-email-summary th,
+.dtb-tax-email-summary td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgb(238, 238, 239);
+  white-space: nowrap;
+}
+
+.dtb-diff-delete-summary th,
+.dtb-tax-email-summary th {
+  background: rgb(251, 227, 227);
+  color: #000;
+  font-weight: 600;
+}
+
+.dtb-diff-delete-summary tr:last-child td,
+.dtb-tax-email-summary tr:last-child td {
+  border-bottom: 0;
+}
+
 .dtb-edit-modal__btn--confirm {
   background: rgb(249, 88, 104);
   color: #fff;
@@ -4128,14 +4182,13 @@ const DIFF_FORM_RULES = [
 const DIFF_FORM_EXPORT_KEYS = [
   'no', 'diffDate', 'account', 'name', 'stockCode', 'stockName', 'shares', 'amount',
   'controlReason', 'freezeDate', 'unfreezeDate', 'notifyMethod', 'downgradeReason',
-  'processStatus', 'contactSummary', 'notifyDate', 'notifyTime', 'ext', 'reapplyDate',
-  'controlSetDate', 'controlUnsetDate', 'phone',
+  'processStatus', 'contactSummary', 'notifyDate', 'notifyTime', 'ext', 'reapplyDate', 'phone',
 ];
 
 const DIFF_FORM_EXPORT_HEADERS = [
   '編號', '券差日期', '證券帳號', '姓名', '股票代號', '股票名稱', '券差張數', '券差應收付金額',
   '控管原因', '券差凍結日期', '帳戶解控日期', '通知方式', '調降原因', '處理狀態', '聯繫摘要',
-  '通知日期', '時間', '分機', '可申請額度日期', '帳戶設控日期', '帳戶解控日期', '客戶電話',
+  '通知日期', '時間', '分機', '可申請額度日期', '客戶電話',
 ];
 
 const DIFF_FORM_MAIN_KEYS = [
@@ -4145,10 +4198,11 @@ const DIFF_FORM_MAIN_KEYS = [
 const DIFF_FORM_DETAIL_KEYS = DIFF_FORM_EXPORT_KEYS.filter(key => !DIFF_FORM_MAIN_KEYS.includes(key));
 
 const DIFF_FORM_DATE_KEYS = [
-  'diffDate', 'freezeDate', 'unfreezeDate', 'notifyDate', 'reapplyDate', 'controlSetDate', 'controlUnsetDate',
+  'diffDate', 'freezeDate', 'unfreezeDate', 'notifyDate', 'reapplyDate',
 ];
 
 const DIFF_FORM_TIME_KEYS = ['notifyTime'];
+const DIFF_CONTROL_REASON_OPTIONS = ['成交金額超過10萬', '-'];
 
 const DIFF_FORM_COL_CLASS = {
   no: 'dtb-diff-col--no',
@@ -4170,8 +4224,6 @@ const DIFF_FORM_COL_CLASS = {
   notifyTime: 'dtb-diff-col--time',
   ext: 'dtb-diff-col--ext',
   reapplyDate: 'dtb-diff-col--date',
-  controlSetDate: 'dtb-diff-col--date',
-  controlUnsetDate: 'dtb-diff-col--date',
   phone: 'dtb-diff-col--phone',
 };
 
@@ -4245,6 +4297,20 @@ const defaultDiffQuery = rows => {
     stockName: '',
   };
 };
+
+const parseDiffAmountNumber = value => Number(String(value || '').replace(/[^\d.-]/g, '')) || 0;
+
+const normalizeDiffControlReason = row => (
+  parseDiffAmountNumber(row?.amount) > 100000
+    ? '成交金額超過10萬'
+    : '-'
+);
+
+const normalizeDiffRow = row => ({
+  ...row,
+  controlReason: normalizeDiffControlReason(row),
+  freezeDate: row?.diffDate || '',
+});
 
 const BORROWER_INFO_PREVIEW_FILE = '借券excel表邑丞.csv';
 
@@ -4888,7 +4954,7 @@ const SERP3A_TABLE_COLUMNS = SERP3A_EXPORT_KEYS.map((key, i) => ({
   key,
   title: SERP3A_EXPORT_HEADERS[i],
   numeric: SERP3A_NUMERIC_KEYS.has(key),
-}));
+})).filter(col => col.key !== 'matchNo');
 
 const SERP3A_ROWS = [
   { calcDate: '115/04/21', companyCode: '0', account: '023498-8', clientName: '張茂程', category: '出借', tradeDate: '115/04/16', orderNo: '0', matchNo: '0', sellAmount: '3,040', buyAmount: '304', borrowFee: '0', lendBorrowFee: '0', negotiatedFee: '0', otherFee: '0', penalty: '0', netAmount: '-2,736' },
@@ -5008,7 +5074,7 @@ const downloadTextFile = (content, filename) => {
   URL.revokeObjectURL(url);
 };
 
-const DTB_LIST_QUERY_EMPTY = { stock: '', account: '', name: '', id: '', phone: '', frozen: '', yuanta: '' };
+const DTB_LIST_QUERY_EMPTY = { stock: '', account: '', name: '', id: '', phone: '', frozen: '', yuanta: '', downgrade: '' };
 
 const DTB_SECTION_TABS = [
   { id: 'daySell', label: '現沖賣' },
@@ -5045,7 +5111,7 @@ function DayTradingBuyback({ state, setState }) {
   const [borrowerInfoPage, setBorrowerInfoPage] = React.useState(1);
   const [taxPage, setTaxPage] = React.useState(1);
   const [lendablePage, setLendablePage] = React.useState(1);
-  const [diffRowsData, setDiffRowsData] = React.useState(() => DIFF_FORM_ROWS.map(r => ({ ...r })));
+  const [diffRowsData, setDiffRowsData] = React.useState(() => DIFF_FORM_ROWS.map(r => normalizeDiffRow(r)));
   const [diffQuery, setDiffQuery] = React.useState(() => defaultDiffQuery(DIFF_FORM_ROWS));
   const [diffApplied, setDiffApplied] = React.useState(() => defaultDiffQuery(DIFF_FORM_ROWS));
   const [diffSelectedKey, setDiffSelectedKey] = React.useState(null);
@@ -5085,6 +5151,13 @@ function DayTradingBuyback({ state, setState }) {
 
   const BORROW_FREEZE_THRESHOLD = 100000;
   const isListRowFrozen = r => Number(r.borrowAmount) > BORROW_FREEZE_THRESHOLD;
+  const isListRowDowngraded = r => Number(r.borrowCount14d || 1) >= 2 || Number(r.borrowAmount) > BORROW_FREEZE_THRESHOLD;
+  const listDowngradeReason = r => {
+    const reasons = [];
+    if (Number(r.borrowCount14d || 1) >= 2) reasons.push('兩周內兩次借券');
+    if (Number(r.borrowAmount) > BORROW_FREEZE_THRESHOLD) reasons.push('單次券差費用超過100,000元');
+    return reasons.length ? reasons.join('、') + '，調降額度50%' : '未達調降條件';
+  };
 
   const [lendableQuery, setLendableQuery] = React.useState({ id: '', account: '', stock: '' });
   const [lendableApplied, setLendableApplied] = React.useState({ id: '', account: '', stock: '' });
@@ -5414,7 +5487,7 @@ function DayTradingBuyback({ state, setState }) {
 
   const needsYuantaSend = row => listMissingShares(row) > 0;
 
-  const yuantaSendLabel = row => '缺少 ' + listMissingShares(row) + '張';
+  const yuantaSendLabel = row => listMissingShares(row) + '張';
 
   const runListSearch = () => setListApplied({ ...listQuery });
 
@@ -5433,7 +5506,7 @@ function DayTradingBuyback({ state, setState }) {
     { key: '4', stock: '台積電 2330', shares: '2張', needBorrow: 2, borrowed: 2, account: '0123456', name: '王建國', id: 'A100000001', lendable: ['李大明'], phone: '0911111111', borrowAmount: 95000 },
     { key: '5', stock: '聯發科 2454', shares: '1張', needBorrow: 1, borrowed: 0, account: '0234567', name: '林雅婷', id: 'B200000002', lendable: ['周小姐'], phone: '0922222222', borrowAmount: 38000 },
     { key: '6', stock: '鴻海 2317', shares: '3張', needBorrow: 3, borrowed: 3, account: '0345678', name: '張志豪', id: 'C300000003', lendable: ['陳小美'], phone: '0933333333', borrowAmount: 112000 },
-    { key: '7', stock: '富邦金 2881', shares: '2張', needBorrow: 2, borrowed: 1, account: '0456789', name: '吳佩珊', id: 'D400000004', lendable: ['黃先生'], phone: '0944444444', borrowAmount: 56000 },
+    { key: '7', stock: '富邦金 2881', shares: '2張', needBorrow: 2, borrowed: 1, account: '0456789', name: '吳佩珊', id: 'D400000004', lendable: ['黃先生'], phone: '0944444444', borrowAmount: 56000, borrowCount14d: 2 },
     { key: '8', stock: '中信金 2891', shares: '1張', needBorrow: 1, borrowed: 1, account: '0567890', name: '劉俊宏', id: 'E500000005', lendable: ['林小姐'], phone: '0955555555', borrowAmount: 72000 },
     { key: '9', stock: '廣達 2382', shares: '4張', needBorrow: 4, borrowed: 0, account: '0678901', name: '蔡宜君', id: 'F600000006', lendable: ['郭先生'], phone: '0966666666', borrowAmount: 48000 },
     { key: '10', stock: '仁寶 2324', shares: '2張', needBorrow: 2, borrowed: 2, account: '0789012', name: '鄭宇軒', id: 'G700000007', lendable: ['周小姐'], phone: '0977777777', borrowAmount: 88000 },
@@ -5442,7 +5515,7 @@ function DayTradingBuyback({ state, setState }) {
     { key: '13', stock: '緯創 3231', shares: '5張', needBorrow: 5, borrowed: 2, account: '1012345', name: '郭書瑋', id: 'J100000010', lendable: ['陳小姐'], phone: '0910000010', borrowAmount: 68000 },
     { key: '14', stock: '華邦電 2344', shares: '2張', needBorrow: 2, borrowed: 0, account: '1123456', name: '潘俊橙', id: 'K200000011', lendable: ['謝小姐'], phone: '0920000011', borrowAmount: 41000 },
     { key: '15', stock: '長榮 2603', shares: '3張', needBorrow: 3, borrowed: 3, account: '1234567', name: '蔡政倫', id: 'L300000012', lendable: ['許先生'], phone: '0930000012', borrowAmount: 132000 },
-    { key: '16', stock: '萬海 2615', shares: '2張', needBorrow: 2, borrowed: 1, account: '1345678', name: '張歆怡', id: 'M400000013', lendable: ['王小姐'], phone: '0940000013', borrowAmount: 59000 },
+    { key: '16', stock: '萬海 2615', shares: '2張', needBorrow: 2, borrowed: 1, account: '1345678', name: '張歆怡', id: 'M400000013', lendable: ['王小姐'], phone: '0940000013', borrowAmount: 59000, borrowCount14d: 2 },
     { key: '17', stock: '陽明 2609', shares: '6張', needBorrow: 6, borrowed: 6, account: '1456789', name: '洪秉豪', id: 'N500000014', lendable: ['黃先生'], phone: '0950000014', borrowAmount: 99000 },
     { key: '18', stock: '中砂 1560', shares: '1張', needBorrow: 1, borrowed: 0, account: '1567890', name: '黃奕程', id: 'O600000015', lendable: ['趙小姐'], phone: '0960000015', borrowAmount: 76000 },
     { key: '19', stock: '訊聯 1784', shares: '4張', needBorrow: 4, borrowed: 2, account: '1678901', name: '徐筱曼', id: 'P700000016', lendable: ['李先生'], phone: '0970000016', borrowAmount: 52000 },
@@ -5456,9 +5529,10 @@ function DayTradingBuyback({ state, setState }) {
     { key: 'name', title: '姓名' },
     { key: 'id', title: 'ID' },
     { key: 'lendable', title: '出借的客戶', sortValue: r => lendableDetailsForRow(r).length },
-    { key: 'phone', title: '聯絡電話' },
-    { key: 'frozen', title: '是否凍結', sortValue: r => isListRowFrozen(r) ? 1 : 0 },
     { key: 'yuanta', title: '元大借券', sortValue: r => listMissingShares(r) },
+    { key: 'phone', title: '連絡電話' },
+    { key: 'frozen', title: '是否凍結', sortValue: r => isListRowFrozen(r) ? 1 : 0 },
+    { key: 'downgrade', title: '是否調降', sortValue: r => isListRowDowngraded(r) ? 1 : 0 },
   ];
 
   const rows = allRows.filter(r => {
@@ -5477,6 +5551,8 @@ function DayTradingBuyback({ state, setState }) {
     if (q.frozen === 'no' && isListRowFrozen(r)) return false;
     if (q.yuanta === 'yes' && !needsYuantaSend(r)) return false;
     if (q.yuanta === 'no' && needsYuantaSend(r)) return false;
+    if (q.downgrade === 'yes' && !isListRowDowngraded(r)) return false;
+    if (q.downgrade === 'no' && isListRowDowngraded(r)) return false;
     return true;
   });
 
@@ -5500,16 +5576,16 @@ function DayTradingBuyback({ state, setState }) {
       setDiffNotice('請先選擇一筆資料再編輯。');
       return;
     }
-    setDiffDraft({ ...row });
+    setDiffDraft(normalizeDiffRow(row));
     setDiffEditMode('edit');
     setDiffNotice(null);
   };
   const saveDiffDraft = () => {
     if (!diffDraft) return;
-    const normalized = DIFF_FORM_EXPORT_KEYS.reduce((acc, key) => {
+    const normalized = normalizeDiffRow(DIFF_FORM_EXPORT_KEYS.reduce((acc, key) => {
       acc[key] = String(diffDraft[key] ?? '').trim();
       return acc;
-    }, {});
+    }, {}));
     if (diffEditMode === 'add') {
       setDiffRowsData(list => [...list, normalized]);
       setDiffSelectedKey(diffRowKey(normalized));
@@ -5566,7 +5642,7 @@ function DayTradingBuyback({ state, setState }) {
   const openDiffDetailModal = row => {
     setDiffSelectedKey(diffRowKey(row));
     setDiffDetailKey(diffRowKey(row));
-    setDiffDetailDraft({ ...row });
+    setDiffDetailDraft(normalizeDiffRow(row));
   };
   const closeDiffDetailModal = () => {
     setDiffDetailKey(null);
@@ -5574,7 +5650,7 @@ function DayTradingBuyback({ state, setState }) {
   };
   const saveDiffDetailDraft = () => {
     if (!diffDetailDraft || !diffDetailKey) return;
-    setDiffRowsData(list => list.map(r => (diffRowKey(r) === diffDetailKey ? { ...r, ...diffDetailDraft } : r)));
+    setDiffRowsData(list => list.map(r => (diffRowKey(r) === diffDetailKey ? normalizeDiffRow({ ...r, ...diffDetailDraft }) : r)));
     setDiffNotice('已儲存券差明細資料。');
     closeDiffDetailModal();
   };
@@ -5634,34 +5710,14 @@ function DayTradingBuyback({ state, setState }) {
   const diffPaginated = paginateSlice(sortedDiffRows, diffPage, DIFF_PAGE_SIZE);
   const borrowerPaginated = paginateSlice(sortedBorrowerRows, borrowerInfoPage);
   const taxPaginated = paginateSlice(sortedTaxRows, taxPage);
+  const diffDeleteRows = diffRowsData.filter(r => diffChecked[diffRowKey(r)]);
 
   const selectedRows = rows.filter(r => selected[r.key]);
   const selectedCount = selectedRows.length;
   const hasSelection = selectedCount > 0;
 
-  const activeListNotifyBucket = hasSelection ? getListNotifyBucket(selectedRows[0]) : null;
-
-  const isListRowNotifySelectable = row => {
-    if (!activeListNotifyBucket) return true;
-    return getListNotifyBucket(row) === activeListNotifyBucket;
-  };
-
-  const listNotifySelectionMixed = () => {
-    const buckets = new Set(selectedRows.map(getListNotifyBucket));
-    return buckets.size > 1;
-  };
-
   const syncListSelectAll = sel => {
-    const bucket = (() => {
-      const picked = rows.filter(r => sel[r.key]);
-      return picked.length ? getListNotifyBucket(picked[0]) : null;
-    })();
-    const scope = bucket ? rows.filter(r => getListNotifyBucket(r) === bucket) : rows;
-    setSelectAll(scope.length > 0 && scope.every(r => sel[r.key]));
-  };
-
-  const rejectListMixedSelection = () => {
-    setListNotice('不可混選不同通知類型，請僅勾選相同類型客戶（借券人提醒／完成借券＜10萬／完成借券≥10萬）。');
+    setSelectAll(rows.length > 0 && rows.every(r => sel[r.key]));
   };
 
   const toggleAll = () => {
@@ -5670,31 +5726,15 @@ function DayTradingBuyback({ state, setState }) {
       setSelected({});
       return;
     }
-    const bucket = activeListNotifyBucket || (rows[0] ? getListNotifyBucket(rows[0]) : null);
-    if (!bucket) return;
-    const compatible = rows.filter(r => getListNotifyBucket(r) === bucket);
     const nextSel = {};
-    compatible.forEach(r => { nextSel[r.key] = true; });
+    rows.forEach(r => { nextSel[r.key] = true; });
     setSelected(nextSel);
     syncListSelectAll(nextSel);
-    if (compatible.length < rows.length) {
-      setListNotice(
-        `已勾選 ${compatible.length} 筆「${LIST_NOTIFY_BUCKET_LABELS[bucket]}」；其餘 ${rows.length - compatible.length} 筆類型不同，無法一併勾選。`
-      );
-    }
+    setListNotice(`已勾選 ${rows.length} 筆現沖賣名單資料。`);
   };
 
   const toggleRow = key => {
-    const row = rows.find(r => r.key === key);
     setSelected(s => {
-      if (!s[key] && row) {
-        const picked = rows.filter(r => s[r.key]);
-        const bucket = picked.length ? getListNotifyBucket(picked[0]) : null;
-        if (bucket && getListNotifyBucket(row) !== bucket) {
-          rejectListMixedSelection();
-          return s;
-        }
-      }
       const next = { ...s, [key]: !s[key] };
       syncListSelectAll(next);
       return next;
@@ -5774,6 +5814,7 @@ function DayTradingBuyback({ state, setState }) {
 
   const taxRowKey = row => `${row.calcDate}-${row.account}-${row.orderNo}-${row.matchNo}`;
   const selectedTaxKeys = Object.keys(taxSelected).filter(key => taxSelected[key]);
+  const selectedTaxRows = sortedTaxRows.filter(row => taxSelected[taxRowKey(row)]);
   const toggleTaxRow = key => {
     setTaxSelected(s => ({ ...s, [key]: !s[key] }));
   };
@@ -5829,6 +5870,7 @@ function DayTradingBuyback({ state, setState }) {
     setTab(id);
     setEditDraft(null);
     setSubmitConfirmOpen(false);
+    setContentSavePrompt(null);
     setT0EditDraft(null);
     setT0SubmitConfirmOpen(false);
     setT1EditDraft(null);
@@ -5842,6 +5884,7 @@ function DayTradingBuyback({ state, setState }) {
     setTab(id === 'daySell' ? 'list' : 't0');
     setEditDraft(null);
     setSubmitConfirmOpen(false);
+    setContentSavePrompt(null);
     setT0EditDraft(null);
     setT0SubmitConfirmOpen(false);
     setT1EditDraft(null);
@@ -5968,8 +6011,9 @@ function DayTradingBuyback({ state, setState }) {
     times: ['13:40'],
   });
   const [autoSavedNotice, setAutoSavedNotice] = React.useState(null);
+  const [contentSavePrompt, setContentSavePrompt] = React.useState(null);
 
-  const canSendListNotify = hasSelection && !listNotifySelectionMixed();
+  const canSendListNotify = hasSelection;
 
   const listNotifyTextareaRows = Math.min(
     7,
@@ -5996,7 +6040,7 @@ function DayTradingBuyback({ state, setState }) {
         opacity: canSendListNotify ? 1 : 0.85,
       }}
     >
-      {label}
+      補發{label}
     </button>
   );
 
@@ -6071,23 +6115,29 @@ function DayTradingBuyback({ state, setState }) {
       .replace(/X%/g, rateLabel);
   };
 
-  const resolveListNotifyTemplate = selectedRows => {
-    const bucket = getListNotifyBucket(selectedRows[0]);
-    return getT0ContentByKey(bucket);
+  const listNotifyBucketSummary = picked => {
+    const counts = picked.reduce((acc, row) => {
+      const bucket = getListNotifyBucket(row);
+      acc[bucket] = (acc[bucket] || 0) + 1;
+      return acc;
+    }, {});
+    return Object.entries(counts)
+      .map(([bucket, count]) => `${LIST_NOTIFY_BUCKET_LABELS[bucket]}：${count} 筆`)
+      .join('\n');
   };
 
   const openListNotifyConfirm = channelLabel => {
     const picked = rows.filter(r => selected[r.key]);
-    if (listNotifySelectionMixed()) {
-      rejectListMixedSelection();
-      return;
-    }
-    const col = resolveListNotifyTemplate(picked);
-    const primary = picked[0] || rows[0];
+    const col = getT0ContentByKey(getListNotifyBucket(picked[0] || rows[0]));
     const times = normalizeContentTimes(col || { times: ['13:40'] });
     setListNotifyDraft({
-      title: col?.title || '借券人通知提醒',
-      text: personalizeListNotifyText(col?.text, primary),
+      title: '現沖賣名單補發訊息',
+      text: [
+        `本次共勾選 ${picked.length} 筆現沖賣名單資料。`,
+        '系統將依每筆客戶狀態套用對應通知內容並補發。',
+        '',
+        listNotifyBucketSummary(picked),
+      ].join('\n'),
       times,
     });
     setListNotifyConfirm({ channel: channelLabel });
@@ -6197,6 +6247,7 @@ function DayTradingBuyback({ state, setState }) {
     setContentPreviews(cloneContentList(b.contents));
     setEditDraft(null);
     setSubmitConfirmOpen(false);
+    setContentSavePrompt(null);
     setAutoSavedNotice('自動化通知設定已復原。');
   };
 
@@ -6206,6 +6257,7 @@ function DayTradingBuyback({ state, setState }) {
     setT0ContentPreviews(cloneContentList(b.contents));
     setT0EditDraft(null);
     setT0SubmitConfirmOpen(false);
+    setContentSavePrompt(null);
     setT0SavedNotice('T日自動化通知設定已復原。');
   };
 
@@ -6228,6 +6280,7 @@ function DayTradingBuyback({ state, setState }) {
     setT1ContentPreviews(cloneContentList(b.contents));
     setT1EditDraft(null);
     setT1SubmitConfirmOpen(false);
+    setContentSavePrompt(null);
     setT1SavedNotice('T+1日手動通知發送設定已復原。');
   };
 
@@ -6243,8 +6296,8 @@ function DayTradingBuyback({ state, setState }) {
     { id: 'lender', label: '出借人', keys: ['lender_t2'] },
   ];
   const defaultT2Contents = [
-    { key: 'borrower_t2', title: 'T+2 借券人明細', times: ['10:00'], text: '【口袋證券】T+2 借券回補提醒：券差費用與回補狀態請依 email 明細確認，如有疑問請洽客服 0809-089-001。' },
-    { key: 'lender_t2', title: 'T+2 出借人明細', times: ['10:00'], text: '【口袋證券】T+2 出借結算通知：相關款項與明細已更新，如有疑問請洽客服 0809-089-001。' },
+    { key: 'borrower_t2', title: '借券人明細', times: ['10:00'], text: '【口袋證券】T+2 借券回補提醒：券差費用與回補狀態請依 email 明細確認，如有疑問請洽客服 0809-089-001。' },
+    { key: 'lender_t2', title: '出借人明細', times: ['10:00'], text: '【口袋證券】T+2 出借結算通知：相關款項與明細已更新，如有疑問請洽客服 0809-089-001。' },
   ];
 
   const [t2Settings, setT2Settings] = React.useState({
@@ -6272,6 +6325,7 @@ function DayTradingBuyback({ state, setState }) {
     setT2ContentPreviews(cloneContentList(b.contents));
     setT2EditDraft(null);
     setT2SubmitConfirmOpen(false);
+    setContentSavePrompt(null);
     setT2SavedNotice('T+2日自動化通知設定已復原。');
   };
 
@@ -6280,6 +6334,27 @@ function DayTradingBuyback({ state, setState }) {
       settings: cloneT0Settings(t2Settings),
       contents: cloneContentList(t2ContentPreviews),
     };
+  };
+
+  const submitNotificationSettings = scope => {
+    setContentSavePrompt(null);
+    if (scope === 'auto') {
+      setSubmitConfirmOpen(false);
+      setAutoSavedNotice('自動化通知已設定完成');
+      commitAutoSessionBaseline();
+      return;
+    }
+    if (scope === 't0') {
+      setT0SubmitConfirmOpen(false);
+      setT0SavedNotice('T日自動化通知設定已儲存。');
+      commitT0SessionBaseline();
+      return;
+    }
+    if (scope === 't2') {
+      setT2SubmitConfirmOpen(false);
+      setT2SavedNotice('T+2日自動化通知設定已儲存。');
+      commitT2SessionBaseline();
+    }
   };
 
   const openT2ContentEdit = col => {
@@ -6295,6 +6370,7 @@ function DayTradingBuyback({ state, setState }) {
 
   const confirmT2ContentEdit = () => {
     if (!t2EditDraft) return;
+    const savedTitle = lendCoverContentHeadTitle(t2EditDraft);
     const times = (t2EditDraft.times || ['10:00']).slice();
     const title = (t2EditDraft.title || '').trim();
     setT2ContentPreviews(list =>
@@ -6307,6 +6383,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setT2EditDraft(null);
+    setContentSavePrompt({ scope: 't2', title: savedTitle });
   };
 
   const openT1ContentEdit = col => {
@@ -6346,6 +6423,7 @@ function DayTradingBuyback({ state, setState }) {
       settings: cloneT0Settings(nextSettings),
       contents: cloneContentList(nextContents),
     };
+    setT1SubmitConfirmOpen(false);
     setT1EditDraft(null);
     setT1SavedNotice(`${sentTitle}已送出。`);
   };
@@ -6375,10 +6453,31 @@ function DayTradingBuyback({ state, setState }) {
     setEditDraft({ key: col.key, title: col.title, text: col.text });
   };
 
+  const contentEditChannelTitle = draft => ({
+    email: 'email',
+    push: 'App推播',
+    sms: '簡訊',
+    popup: 'App彈窗',
+    marquee: 'App跑馬燈',
+  }[draft?.key] || draft?.title || '編輯');
+
+  const lendCoverContentHeadTitle = draft => ({
+    borrower: '借券人通知提醒',
+    done_under: '完成借券通知(小於10萬)',
+    done_over: '完成借券通知(10萬以上)',
+    lend_inquiry: '借券詢問通知',
+    lend_done: '出借完成',
+    borrower_detail: '券差費用通知',
+    payer_detail: '股票借券利息通知',
+    borrower_t2: '借券人明細',
+    lender_t2: '出借人明細',
+  }[draft?.key] || draft?.title || '編輯');
+
   const closeContentEdit = () => setEditDraft(null);
 
   const confirmContentEdit = () => {
     if (!editDraft) return;
+    const savedTitle = contentEditChannelTitle(editDraft);
     const title = (editDraft.title || '').trim();
     setContentPreviews(list =>
       list.map(c => (c.key === editDraft.key ? {
@@ -6388,6 +6487,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setEditDraft(null);
+    setContentSavePrompt({ scope: 'auto', title: savedTitle });
   };
 
   const openT0ContentEdit = col => {
@@ -6403,6 +6503,7 @@ function DayTradingBuyback({ state, setState }) {
 
   const confirmT0ContentEdit = () => {
     if (!t0EditDraft) return;
+    const savedTitle = lendCoverContentHeadTitle(t0EditDraft);
     const times = (t0EditDraft.times || ['13:02']).slice();
     const title = (t0EditDraft.title || '').trim();
     setT0ContentPreviews(list =>
@@ -6415,6 +6516,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setT0EditDraft(null);
+    setContentSavePrompt({ scope: 't0', title: savedTitle });
   };
 
   const toggleChannel = (row, key) => {
@@ -6522,7 +6624,18 @@ function DayTradingBuyback({ state, setState }) {
                   />
                 </label>
                 <label className="dtb-lendable-query__field">
-                  <span>聯絡電話</span>
+                  <span>元大借券</span>
+                  <select
+                    value={listQuery.yuanta}
+                    onChange={e => setListQuery(q => ({ ...q, yuanta: e.target.value }))}
+                  >
+                    <option value="">全部</option>
+                    <option value="yes">是</option>
+                    <option value="no">否</option>
+                  </select>
+                </label>
+                <label className="dtb-lendable-query__field">
+                  <span>連絡電話</span>
                   <input
                     type="text"
                     value={listQuery.phone}
@@ -6542,10 +6655,10 @@ function DayTradingBuyback({ state, setState }) {
                   </select>
                 </label>
                 <label className="dtb-lendable-query__field">
-                  <span>元大借券</span>
+                  <span>是否調降</span>
                   <select
-                    value={listQuery.yuanta}
-                    onChange={e => setListQuery(q => ({ ...q, yuanta: e.target.value }))}
+                    value={listQuery.downgrade}
+                    onChange={e => setListQuery(q => ({ ...q, downgrade: e.target.value }))}
                   >
                     <option value="">全部</option>
                     <option value="yes">是</option>
@@ -6615,7 +6728,6 @@ function DayTradingBuyback({ state, setState }) {
                         <div className="dtb-table__check-wrap">
                           <Checkbox
                             checked={!!selected[r.key]}
-                            disabled={!selected[r.key] && !isListRowNotifySelectable(r)}
                             onChange={() => toggleRow(r.key)}
                             label=""
                           />
@@ -6635,12 +6747,15 @@ function DayTradingBuyback({ state, setState }) {
                           查看
                         </button>
                       </td>
+                      <td className="dtb-td dtb-td--yuanta" title={'需借 ' + (r.needBorrow != null ? r.needBorrow : parseShareCount(r.shares)) + ' 張 − 已借 ' + (r.borrowed != null ? r.borrowed : 0) + ' 張'}>
+                        {yuantaSendLabel(r)}
+                      </td>
                       <td className="dtb-td dtb-td--num">{r.phone}</td>
                       <td className="dtb-td">
                         {isListRowFrozen(r) ? '是' : '否'}
                       </td>
-                      <td className="dtb-td dtb-td--yuanta" title={'需借 ' + (r.needBorrow != null ? r.needBorrow : parseShareCount(r.shares)) + ' 張 − 已借 ' + (r.borrowed != null ? r.borrowed : 0) + ' 張'}>
-                        {yuantaSendLabel(r)}
+                      <td className="dtb-td" title={listDowngradeReason(r)}>
+                        {isListRowDowngraded(r) ? '是' : '否'}
                       </td>
                     </tr>
                   ))}
@@ -6671,7 +6786,7 @@ function DayTradingBuyback({ state, setState }) {
                 {contentPreviews.map(col => (
                   <div key={col.key} className="dtb-content-card">
                     <div className="dtb-content-card__head">
-                      <span>{col.title}</span>
+                      <span>{contentEditChannelTitle(col)}</span>
                       <button
                         type="button"
                         className="dtb-content-card__edit"
@@ -6681,7 +6796,8 @@ function DayTradingBuyback({ state, setState }) {
                       </button>
                     </div>
                     <div className="dtb-content-card__body">
-                      {col.text}
+                      <p className="dtb-content-card__meta">通知標題：{col.title || '—'}</p>
+                      <div className="dtb-content-card__text">{col.text}</div>
                     </div>
                   </div>
                 ))}
@@ -6761,7 +6877,7 @@ function DayTradingBuyback({ state, setState }) {
                         return (
                           <div key={col.key} className="dtb-content-card">
                             <div className="dtb-content-card__head">
-                              <span>{col.title}</span>
+                              <span>{lendCoverContentHeadTitle(col)}</span>
                               <button
                                 type="button"
                                 className="dtb-content-card__edit"
@@ -6771,6 +6887,7 @@ function DayTradingBuyback({ state, setState }) {
                               </button>
                             </div>
                             <div className="dtb-content-card__body">
+                              <p className="dtb-content-card__meta">通知標題：{col.title || '—'}</p>
                               <p className="dtb-content-card__meta">{formatContentTimesMeta(col)}</p>
                               <div className="dtb-content-card__text">{col.text}</div>
                             </div>
@@ -6829,7 +6946,7 @@ function DayTradingBuyback({ state, setState }) {
                         return (
                           <div key={col.key} className="dtb-content-card">
                             <div className="dtb-content-card__head">
-                              <span>{col.title}</span>
+                              <span>{lendCoverContentHeadTitle(col)}</span>
                               <button
                                 type="button"
                                 className="dtb-content-card__edit"
@@ -6839,6 +6956,7 @@ function DayTradingBuyback({ state, setState }) {
                               </button>
                             </div>
                             <div className="dtb-content-card__body">
+                              <p className="dtb-content-card__meta">通知標題：{col.title || '—'}</p>
                               <p className="dtb-content-card__meta">{formatContentTimesMeta(col)}</p>
                               <div className="dtb-content-card__text">{col.text}</div>
                             </div>
@@ -6896,7 +7014,7 @@ function DayTradingBuyback({ state, setState }) {
                         return (
                           <div key={col.key} className="dtb-content-card">
                             <div className="dtb-content-card__head">
-                              <span>{col.title}</span>
+                              <span>{lendCoverContentHeadTitle(col)}</span>
                               <button
                                 type="button"
                                 className="dtb-content-card__edit"
@@ -6906,6 +7024,7 @@ function DayTradingBuyback({ state, setState }) {
                               </button>
                             </div>
                             <div className="dtb-content-card__body">
+                              <p className="dtb-content-card__meta">通知標題：{col.title || '—'}</p>
                               <p className="dtb-content-card__meta">{formatContentTimesMeta(col)}</p>
                               <div className="dtb-content-card__text">{col.text}</div>
                             </div>
@@ -6999,7 +7118,22 @@ function DayTradingBuyback({ state, setState }) {
               <div className="dtb-diff-query-panel__actions">
                 <Button variant="secondary" size="small" onClick={clearDiffSearch}>清除</Button>
                 <Button variant="utility" size="small" onClick={runDiffSearch}>查詢</Button>
-                <Button variant="secondary" size="small" onClick={deleteDiffRow}>刪除</Button>
+                <Button
+                  variant="primary"
+                  size="small"
+                  disabled={!diffDeleteRows.length}
+                  onClick={deleteDiffRow}
+                  style={{
+                    minWidth: 96,
+                    fontWeight: 700,
+                    background: diffDeleteRows.length ? 'rgb(255, 242, 242)' : '#fff',
+                    color: '#000',
+                    border: diffDeleteRows.length ? '2px solid rgb(233, 84, 101)' : '2px solid rgb(158, 159, 159)',
+                    boxShadow: diffDeleteRows.length ? '0 4px 10px rgba(233, 84, 101, 0.16)' : 'none',
+                  }}
+                >
+                  刪除
+                </Button>
               </div>
             </div>
 
@@ -7012,7 +7146,11 @@ function DayTradingBuyback({ state, setState }) {
                     {DIFF_FORM_DATE_KEYS.includes(key) ? (
                       <DatePicker
                         value={diffDraft[key] || ''}
-                        onChange={v => setDiffDraft(d => ({ ...d, [key]: v }))}
+                        onChange={v => setDiffDraft(d => ({
+                          ...d,
+                          [key]: v,
+                          ...(key === 'diffDate' ? { freezeDate: v } : {}),
+                        }))}
                       />
                     ) : (
                       <input
@@ -7368,11 +7506,11 @@ function DayTradingBuyback({ state, setState }) {
                   const timeLabels = (listNotifyDraft.times || []).map(formatTimeLabel).join('、');
                   closeListNotifyConfirm();
                   setListNotice(
-                    `已對 ${selectedCount} 筆排程於 ${timeLabels || '—'} 以「${listNotifyDraft.title}」發送「${ch}」。`
+                    `已補發 ${selectedCount} 筆現沖賣名單通知，排程於 ${timeLabels || '—'} 以「${ch}」送出；系統已依客戶狀態套用對應通知內容。`
                   );
                 }}
               >
-                確認發送
+                確認補發
               </button>
             </div>
           </div>
@@ -7625,68 +7763,11 @@ function DayTradingBuyback({ state, setState }) {
                             <td className="dtb-lendable-td">{r.stock}</td>
                             <td className="dtb-lendable-td">{r.lendableShares}</td>
                             <td className="dtb-lendable-td dtb-lendable-td--num">{r.contactAt}</td>
-                            <td className="dtb-lendable-td dtb-lendable-td--field">
-                              <div className="dtb-lendable-field">
-                                <input
-                                  type="number"
-                                  className="dtb-lendable-input"
-                                  min={LENDABLE_RATE_MIN}
-                                  max={LENDABLE_RATE_MAX}
-                                  step={LENDABLE_RATE_STEP}
-                                  inputMode="numeric"
-                                  value={parseLendableRateDigits(edit.rate)}
-                                  placeholder="1"
-                                  title={`可填 ${LENDABLE_RATE_MIN}～${LENDABLE_RATE_MAX}%，每次調整 ${LENDABLE_RATE_STEP}%`}
-                                  onChange={e => {
-                                    const v = e.target.value;
-                                    if (v === '') {
-                                      setLendableEdit(r.key, 'rate', '');
-                                      return;
-                                    }
-                                    const normalized = normalizeLendableRateInput(v);
-                                    setLendableEdit(
-                                      r.key,
-                                      'rate',
-                                      normalized === null ? formatLendableRate(v) : formatLendableRate(String(normalized))
-                                    );
-                                  }}
-                                  onBlur={e => commitLendableRateOnBlur(r.key, e.target.value, r, edit)}
-                                />
-                                <span className="dtb-lendable-field__suffix" aria-hidden="true">%</span>
-                              </div>
+                            <td className="dtb-lendable-td dtb-lendable-td--num">
+                              {edit.rate || r.rate || '—'}
                             </td>
-                            <td className="dtb-lendable-td dtb-lendable-td--field">
-                              <div className="dtb-lendable-field">
-                                <input
-                                  type="number"
-                                  className="dtb-lendable-input"
-                                  min="1"
-                                  max={shareMax}
-                                  step="1"
-                                  inputMode="numeric"
-                                  value={parseLendableShareDigits(edit.shares)}
-                                  placeholder="1"
-                                  title={`可填 1～${shareMax}（未回補共 ${parentUnreturnedShares(viewLendable)} 張）`}
-                                  onChange={e => {
-                                    const v = e.target.value;
-                                    const cap = shareCapForLendableRow(r, lendablePoolForParent, lendableEdits, viewLendable);
-                                    setLendableEdit(
-                                      r.key,
-                                      'shares',
-                                      v === '' ? '' : formatLendableShares(v, cap)
-                                    );
-                                  }}
-                                  onBlur={e => {
-                                    const cap = shareCapForLendableRow(r, lendablePoolForParent, lendableEdits, viewLendable);
-                                    setLendableEdit(
-                                      r.key,
-                                      'shares',
-                                      clampSharesForRecord(e.target.value, cap)
-                                    );
-                                  }}
-                                />
-                                <span className="dtb-lendable-field__suffix" aria-hidden="true">張</span>
-                              </div>
+                            <td className="dtb-lendable-td dtb-lendable-td--num">
+                              {edit.shares || r.shares || '—'}
                             </td>
                           </tr>
                         );
@@ -7842,56 +7923,6 @@ function DayTradingBuyback({ state, setState }) {
 
 
 
-      {t1SubmitConfirmOpen && (
-        <div
-          className="dtb-edit-overlay dtb-edit-overlay--stack"
-          onClick={() => setT1SubmitConfirmOpen(false)}
-          role="presentation"
-        >
-          <div
-            className="dtb-edit-modal dtb-confirm-modal"
-            onClick={e => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="dtb-t1-submit-modal-title"
-          >
-            <div className="dtb-edit-modal__head">
-              <span id="dtb-t1-submit-modal-title" className="dtb-edit-modal__title">確認送出</span>
-              <button
-                type="button"
-                className="dtb-edit-modal__close"
-                onClick={() => setT1SubmitConfirmOpen(false)}
-                aria-label="關閉"
-              >
-                ×
-              </button>
-            </div>
-            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
-              <p className="dtb-confirm-modal__message">此通知設定為手動通知發送內容，是否確認送出?</p>
-            </div>
-            <div className="dtb-edit-modal__actions">
-              <button
-                type="button"
-                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
-                onClick={() => setT1SubmitConfirmOpen(false)}
-              >
-                取消
-              </button>
-              <button
-                type="button"
-                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
-                onClick={() => {
-                  setT1SubmitConfirmOpen(false);
-                  confirmT1ContentEdit();
-                }}
-              >
-                確認送出
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {diffDetailDraft && (
         <div
           className="dtb-edit-overlay"
@@ -7924,7 +7955,25 @@ function DayTradingBuyback({ state, setState }) {
                 {DIFF_FORM_DETAIL_KEYS.map(key => (
                   <label key={key} className="dtb-diff-query">
                     <span>{DIFF_FORM_EXPORT_HEADERS[DIFF_FORM_EXPORT_KEYS.indexOf(key)]}</span>
-                    {DIFF_FORM_DATE_KEYS.includes(key) ? (
+                    {key === 'controlReason' ? (
+                      <select
+                        className="dtb-diff-query__input"
+                        value={diffDetailDraft[key] || '-'}
+                        onChange={e => setDiffDetailDraft(d => ({ ...d, [key]: e.target.value }))}
+                      >
+                        {DIFF_CONTROL_REASON_OPTIONS.map(option => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    ) : key === 'freezeDate' ? (
+                      <input
+                        type="text"
+                        className="dtb-diff-query__input"
+                        value={diffDetailDraft.diffDate || ''}
+                        disabled
+                        readOnly
+                      />
+                    ) : DIFF_FORM_DATE_KEYS.includes(key) ? (
                       <DatePicker
                         value={diffDetailDraft[key] || ''}
                         onChange={v => setDiffDetailDraft(d => ({ ...d, [key]: v }))}
@@ -7973,7 +8022,7 @@ function DayTradingBuyback({ state, setState }) {
           role="presentation"
         >
           <div
-            className="dtb-edit-modal dtb-confirm-modal"
+            className="dtb-edit-modal dtb-confirm-modal dtb-diff-delete-confirm"
             onClick={e => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -7992,8 +8041,32 @@ function DayTradingBuyback({ state, setState }) {
             </div>
             <div className="dtb-edit-modal__body dtb-confirm-modal__body">
               <p className="dtb-confirm-modal__message">
-                是否確認刪除已勾選的 {Object.keys(diffChecked).filter(key => diffChecked[key]).length} 筆券差表單資料？
+                是否確認刪除已勾選的 {diffDeleteRows.length} 筆券差表單資料？
               </p>
+              <div className="dtb-diff-delete-summary">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>券差日期</th>
+                      <th>證券帳號</th>
+                      <th>姓名</th>
+                      <th>股票代號</th>
+                      <th>股票名稱</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {diffDeleteRows.map(row => (
+                      <tr key={diffRowKey(row)}>
+                        <td>{row.diffDate || '—'}</td>
+                        <td>{row.account || '—'}</td>
+                        <td>{row.name || '—'}</td>
+                        <td>{row.stockCode || '—'}</td>
+                        <td>{row.stockName || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div className="dtb-edit-modal__actions">
               <button
@@ -8022,7 +8095,7 @@ function DayTradingBuyback({ state, setState }) {
           role="presentation"
         >
           <div
-            className="dtb-edit-modal dtb-confirm-modal"
+            className="dtb-edit-modal dtb-confirm-modal dtb-tax-email-confirm"
             onClick={e => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -8043,6 +8116,28 @@ function DayTradingBuyback({ state, setState }) {
               <p className="dtb-confirm-modal__message">
                 是否確認傳送已勾選的 {selectedTaxKeys.length} 筆借券明細 Email？
               </p>
+              <div className="dtb-tax-email-summary">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>客戶帳號</th>
+                      <th>客戶名稱</th>
+                      <th>類別</th>
+                      <th>成交日期</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedTaxRows.map(row => (
+                      <tr key={taxRowKey(row)}>
+                        <td>{row.account || '—'}</td>
+                        <td>{row.clientName || '—'}</td>
+                        <td>{row.category || '—'}</td>
+                        <td>{row.tradeDate || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div className="dtb-edit-modal__actions">
               <button
@@ -8206,11 +8301,109 @@ function DayTradingBuyback({ state, setState }) {
                 className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
                 onClick={() => {
                   setSubmitConfirmOpen(false);
-                  setAutoSavedNotice('自動化通知設定已儲存。');
+                  setAutoSavedNotice('自動化通知已設定完成');
                   commitAutoSessionBaseline();
                 }}
               >
                 確認
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {t1SubmitConfirmOpen && (
+        <div
+          className="dtb-edit-overlay dtb-edit-overlay--stack"
+          onClick={() => setT1SubmitConfirmOpen(false)}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-confirm-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-t1-submit-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-t1-submit-modal-title" className="dtb-edit-modal__title">確認送出</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={() => setT1SubmitConfirmOpen(false)}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+              <p className="dtb-confirm-modal__message">此通知設定為手動通知發送內容，是否確認送出?</p>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={() => setT1SubmitConfirmOpen(false)}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                onClick={confirmT1ContentEdit}
+              >
+                確認送出
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {contentSavePrompt && (
+        <div
+          className="dtb-edit-overlay dtb-edit-overlay--stack"
+          onClick={() => setContentSavePrompt(null)}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-confirm-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-content-save-prompt-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-content-save-prompt-title" className="dtb-edit-modal__title">提示</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={() => setContentSavePrompt(null)}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+              <p className="dtb-confirm-modal__message">
+                「{contentSavePrompt.title}」內容已儲存，請記得送出設定
+              </p>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={() => setContentSavePrompt(null)}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                onClick={() => submitNotificationSettings(contentSavePrompt.scope)}
+              >
+                送出設定
               </button>
             </div>
           </div>
@@ -8228,7 +8421,7 @@ function DayTradingBuyback({ state, setState }) {
             aria-labelledby="dtb-t1-edit-modal-title"
           >
             <div className="dtb-edit-modal__head">
-              <span id="dtb-t1-edit-modal-title" className="dtb-edit-modal__title">手動通知發送</span>
+              <span id="dtb-t1-edit-modal-title" className="dtb-edit-modal__title">{lendCoverContentHeadTitle(t1EditDraft)}</span>
               <button
                 type="button"
                 className="dtb-edit-modal__close"
@@ -8317,7 +8510,7 @@ function DayTradingBuyback({ state, setState }) {
             aria-labelledby="dtb-t2-edit-modal-title"
           >
             <div className="dtb-edit-modal__head">
-              <span id="dtb-t2-edit-modal-title" className="dtb-edit-modal__title">編輯</span>
+              <span id="dtb-t2-edit-modal-title" className="dtb-edit-modal__title">{lendCoverContentHeadTitle(t2EditDraft)}</span>
               <button
                 type="button"
                 className="dtb-edit-modal__close"
@@ -8370,7 +8563,7 @@ function DayTradingBuyback({ state, setState }) {
                 className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
                 onClick={confirmT2ContentEdit}
               >
-                確認
+                儲存
               </button>
             </div>
           </div>
@@ -8387,7 +8580,7 @@ function DayTradingBuyback({ state, setState }) {
             aria-labelledby="dtb-t0-edit-modal-title"
           >
             <div className="dtb-edit-modal__head">
-              <span id="dtb-t0-edit-modal-title" className="dtb-edit-modal__title">編輯</span>
+              <span id="dtb-t0-edit-modal-title" className="dtb-edit-modal__title">{lendCoverContentHeadTitle(t0EditDraft)}</span>
               <button
                 type="button"
                 className="dtb-edit-modal__close"
@@ -8440,7 +8633,7 @@ function DayTradingBuyback({ state, setState }) {
                 className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
                 onClick={confirmT0ContentEdit}
               >
-                確認
+                儲存
               </button>
             </div>
           </div>
@@ -8457,7 +8650,7 @@ function DayTradingBuyback({ state, setState }) {
             aria-labelledby="dtb-edit-modal-title"
           >
             <div className="dtb-edit-modal__head">
-              <span id="dtb-edit-modal-title" className="dtb-edit-modal__title">編輯</span>
+              <span id="dtb-edit-modal-title" className="dtb-edit-modal__title">{contentEditChannelTitle(editDraft)}</span>
               <button
                 type="button"
                 className="dtb-edit-modal__close"
@@ -8501,7 +8694,7 @@ function DayTradingBuyback({ state, setState }) {
                 className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
                 onClick={confirmContentEdit}
               >
-                確認
+                儲存
               </button>
             </div>
           </div>
