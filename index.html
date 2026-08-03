@@ -33,8 +33,8 @@
   --brand-blush-soft: rgb(255, 183, 183);  /* #FFB7B7 · disabled coral */
   --brand-cream:      rgb(255, 242, 242);  /* #FFF2F2 · PAGE BACKGROUND ★ */
 
-  /* Secondary blue — used for utility actions (upload, etc.) */
-  --brand-blue:       rgb( 84, 117, 233);  /* #5475E9 · "上傳檔案" buttons */
+  /* Secondary blue — reserved for static links / example downloads */
+  --brand-blue:       rgb( 84, 117, 233);  /* #5475E9 · static link accents */
   --brand-blue-soft:  rgb( 87, 122, 242);  /* #577AF2 · variants */
   --brand-blue-info:  rgb( 59, 130, 246);  /* #3B82F6 · info banners */
 
@@ -496,13 +496,24 @@ body {
 .dtb-diff-file__name {
   font-size: 14px;
   font-weight: 500;
-  color: rgb(84, 117, 233);
+  color: rgb(0, 120, 215);
   word-break: break-all;
 }
 
 .dtb-diff-file__meta {
   font-size: 13px;
   color: rgb(113, 112, 113);
+}
+
+.dtb-static-link {
+  border: none;
+  background: transparent;
+  color: rgb(0, 120, 215);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
 }
 
 .dtb-diff-toolbar__actions {
@@ -578,7 +589,7 @@ body {
 .dtb-diff-name-btn {
   border: none;
   background: transparent;
-  color: rgb(84, 117, 233);
+  color: rgb(0, 120, 215);
   font: inherit;
   font-weight: 600;
   text-decoration: underline;
@@ -589,9 +600,17 @@ body {
 .dtb-diff-query-panel__actions {
   grid-column: 1 / -1;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.dtb-diff-list-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 12px;
 }
 
 .dtb-diff-edit-panel {
@@ -632,7 +651,7 @@ body {
 .dtb-diff-edit-panel__actions {
   grid-column: 1 / -1;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -787,11 +806,11 @@ body {
 }
 
 .dtb-dt-picker__day:hover:not(:disabled) {
-  background: rgb(239, 244, 255);
+  background: rgb(251, 227, 227);
 }
 
 .dtb-dt-picker__day.is-selected {
-  background: rgb(0, 120, 215);
+  background: rgb(249, 88, 104);
   color: #fff;
   box-shadow: inset 0 0 0 2px #000;
 }
@@ -856,13 +875,13 @@ body {
 }
 
 .dtb-dt-picker__time-item.is-selected {
-  background: rgb(0, 120, 215);
+  background: rgb(249, 88, 104);
   color: #fff;
 }
 
 
 .dtb-diff-query-bar--actions-only {
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .dtb-diff-rules__note {
@@ -874,7 +893,11 @@ body {
   list-style: none;
 }
 .dtb-diff-query-bar__actions {
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: 0;
 }
 
 .dtb-diff-table-wrap {
@@ -1505,7 +1528,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .dtb-lendable-btn {
@@ -1526,8 +1549,8 @@ body {
 }
 
 .dtb-lendable-btn--outline {
-  background: #fff;
-  color: rgb(249, 88, 104);
+  background: rgb(249, 88, 104);
+  color: #fff;
   border-color: rgb(249, 88, 104);
 }
 
@@ -1563,7 +1586,7 @@ body {
 }
 
 .dtb-lendable-notify-btn.is-active {
-  background: rgb(84, 117, 233);
+  background: rgb(249, 88, 104);
   cursor: pointer;
 }
 
@@ -1977,7 +2000,7 @@ input[type=number] {
 }
 
 .dtb-time-picker__item.is-active {
-  background: rgb(84, 117, 233);
+  background: rgb(249, 88, 104);
   color: #fff;
   font-weight: 600;
 }
@@ -3171,8 +3194,9 @@ function Button({ children, variant = 'primary', size = 'large', disabled, onCli
       color: disabled ? PKT.blushSoft : PKT.coralDeep,
       border: `1px solid ${disabled ? PKT.blushSoft : PKT.coralDeep}`,
     },
+    /* Deprecated alias: do not use blue for actions; keep same as primary */
     utility: {
-      background: disabled ? PKT.borderStrong : PKT.blue,
+      background: disabled ? PKT.blushSoft : PKT.coral,
       color: '#fff', border: 'none',
     },
     ghost: {
@@ -3812,9 +3836,8 @@ function ReviewQueue({ state, setState }) {
               }}>{t.label}</button>
             ))}
           </div>
-          <div style={{ flex: 1 }}/>
           <SearchInput placeholder="搜尋姓名、身分證、手機"/>
-          <Button variant="utility" size="small">匯出 CSV</Button>
+          <Button variant="primary" size="small">匯出 CSV</Button>
         </div>
 
         <Table
@@ -3866,9 +3889,24 @@ function UploadForm({ state, setState }) {
               { value: 'gift',      label: '贈品名單' },
             ]}/>
           </FieldRow>
-          <FieldRow label="上傳檔案" required hint="※上傳檔案需存為「CSV UTF-8 (逗號分隔) (*.csv)」的格式　下載範例檔">
+          <FieldRow
+            label="上傳檔案"
+            required
+            hint={(
+              <>
+                ※上傳檔案需存為「CSV UTF-8 (逗號分隔) (*.csv)」的格式　
+                <a
+                  className="dtb-static-link"
+                  href={'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent('客戶帳號,活動名稱\n')}
+                  download="上傳名單範例.csv"
+                >
+                  下載範例檔
+                </a>
+              </>
+            )}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <Button variant="utility" size="small" onClick={() => setForm({ ...form, file: 'group-list-20240207.csv' })}>上傳檔案</Button>
+              <Button variant="primary" size="small" onClick={() => setForm({ ...form, file: 'group-list-20240207.csv' })}>上傳檔案</Button>
               {form.file && (
                 <span style={{ fontSize: 15, color: '#000' }}>{form.file}</span>
               )}
@@ -6547,7 +6585,7 @@ function DayTradingBuyback({ state, setState }) {
         padding: '0 16px',
         border: 'none',
         borderRadius: 6,
-        background: canSendListNotify ? PKT.blue : PKT.borderStrong,
+        background: canSendListNotify ? PKT.coral : PKT.borderStrong,
         color: '#fff',
         fontFamily: '"PingFang TC", "Noto Sans TC", sans-serif',
         fontSize: 14,
@@ -7555,14 +7593,6 @@ function DayTradingBuyback({ state, setState }) {
               </ol>
             </details>
 
-            <div className="dtb-diff-query-bar dtb-diff-query-bar--actions-only">
-              <div className="dtb-diff-query-bar__actions">
-                <Button variant="utility" size="small" onClick={exportDiffCsv}>
-                  匯出
-                </Button>
-              </div>
-            </div>
-
             {diffNotice && noticeBanner(diffNotice)}
 
             <div className="dtb-diff-query-panel">
@@ -7598,23 +7628,8 @@ function DayTradingBuyback({ state, setState }) {
               ))}
               <div className="dtb-diff-query-panel__actions">
                 <Button variant="secondary" size="small" onClick={clearDiffSearch}>清除</Button>
-                <Button variant="utility" size="small" onClick={runDiffSearch}>查詢</Button>
-                <Button
-                  variant="primary"
-                  size="small"
-                  disabled={!diffDeleteRows.length}
-                  onClick={deleteDiffRow}
-                  style={{
-                    minWidth: 96,
-                    fontWeight: 700,
-                    background: diffDeleteRows.length ? 'rgb(255, 242, 242)' : '#fff',
-                    color: '#000',
-                    border: diffDeleteRows.length ? '2px solid rgb(233, 84, 101)' : '2px solid rgb(158, 159, 159)',
-                    boxShadow: diffDeleteRows.length ? '0 4px 10px rgba(233, 84, 101, 0.16)' : 'none',
-                  }}
-                >
-                  刪除
-                </Button>
+                <Button variant="primary" size="small" onClick={runDiffSearch}>查詢</Button>
+                <Button variant="primary" size="small" onClick={exportDiffCsv}>匯出</Button>
               </div>
             </div>
 
@@ -7652,6 +7667,18 @@ function DayTradingBuyback({ state, setState }) {
                 </div>
               </div>
             )}
+
+            <div className="dtb-diff-list-actions">
+              <Button
+                variant="primary"
+                size="small"
+                disabled={!diffDeleteRows.length}
+                onClick={deleteDiffRow}
+                style={{ minWidth: 96, fontWeight: 700 }}
+              >
+                刪除
+              </Button>
+            </div>
 
             <div className="dtb-table-wrap dtb-diff-table-wrap">
                 <table className="dtb-table dtb-diff-table">
@@ -7740,14 +7767,6 @@ function DayTradingBuyback({ state, setState }) {
 
         {tab === 'borrowerInfo' && (
           <div className="dtb-diff-panel">
-            <div className="dtb-diff-query-bar dtb-diff-query-bar--actions-only">
-              <div className="dtb-diff-query-bar__actions">
-                <Button variant="utility" size="small" onClick={exportBorrowerCsv}>
-                  匯出
-                </Button>
-              </div>
-            </div>
-
             <div className="dtb-lendable-query dtb-lendable-query--list">
               <span className="dtb-lendable-query__title">查詢條件</span>
               <div className="dtb-lendable-query__fields">
@@ -7785,6 +7804,9 @@ function DayTradingBuyback({ state, setState }) {
                 </button>
                 <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runBorrowerSearch}>
                   查詢
+                </button>
+                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportBorrowerCsv}>
+                  匯出
                 </button>
               </div>
             </div>
@@ -7881,14 +7903,8 @@ function DayTradingBuyback({ state, setState }) {
               ))}
               <div className="dtb-diff-query-panel__actions">
                 <Button variant="secondary" size="small" onClick={clearTaxSearch}>清除</Button>
-                <Button variant="utility" size="small" onClick={runTaxSearch}>查詢</Button>
-              </div>
-            </div>
-            <div className="dtb-diff-query-bar dtb-diff-query-bar--actions-only">
-              <div className="dtb-diff-query-bar__actions">
-                <Button variant="utility" size="small" onClick={openTaxEmailConfirm}>
-                  傳送Email
-                </Button>
+                <Button variant="primary" size="small" onClick={runTaxSearch}>查詢</Button>
+                <Button variant="primary" size="small" onClick={openTaxEmailConfirm}>傳送Email</Button>
               </div>
             </div>
             {taxEmailNotice && noticeBanner(taxEmailNotice)}
@@ -8189,7 +8205,7 @@ function DayTradingBuyback({ state, setState }) {
                   <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runLendableSearch}>
                     查詢
                   </button>
-                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--outline" onClick={exportLendableCsv}>
+                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportLendableCsv}>
                     匯出
                   </button>
                 </div>
