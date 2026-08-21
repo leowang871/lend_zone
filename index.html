@@ -2979,6 +2979,7 @@ input[type=number] {
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.26.9/babel.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
 <script type="text/babel" data-cms="shell">
 // Pocket Securities CMS — Shell components (header + sidebar)
@@ -6289,6 +6290,186 @@ function DayTradingBuyback({ state, setState }) {
     });
   };
 
+  const buildDaySellSheetAoA = listRows => {
+    const unmetHeaders = ['未回補股票', '股數', '台股帳號', '姓名', 'ID', '元大借券', '連絡電話', '是否凍結', '是否調降'];
+    const lendHeaders = ['ID', '姓名', '台股帳號', '連絡電話', '股票', '股票張數', '聯絡紀錄', '費率', '張數'];
+    const unmetLines = listRows.map(r => [
+      r.stock,
+      r.shares,
+      r.account,
+      r.name,
+      r.id,
+      yuantaSendLabel(r),
+      r.phone,
+      isListRowFrozen(r) ? '是' : '否',
+      isListRowDowngraded(r) ? '是' : '否',
+    ]);
+    const lendLines = listRows.flatMap(parent => lendableDetailsForRow(parent)).map(r => [
+      r.id,
+      r.name,
+      r.account,
+      r.phone,
+      r.stock,
+      r.lendableShares,
+      r.contactAt,
+      r.rate,
+      r.shares,
+    ]);
+    return [
+      ['現沖賣未回補名單'],
+      [],
+      unmetHeaders,
+      ...unmetLines,
+      [],
+      ['出券名單'],
+      [],
+      lendHeaders,
+      ...lendLines,
+    ];
+  };
+
+  const sanitizeExcelSheetName = raw => {
+    let name = String(raw || '未命名')
+      .replace(/[\\/?*[\]:]/g, '_')
+      .trim() || '未命名';
+    if (name.length > 31) name = name.slice(0, 31);
+    return name;
+  };
+
+  const todaySlashDate = () => {
+    const d = new Date();
+    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+  };
+
+  /** 對齊 docs/手續費率設訂單.pdf：客戶券差借券手續費費率設定表單(借券人) */
+  const buildFeeRateFormAoA = listRow => {
+    const gapQty = parseShareCount(listRow.shares);
+    const missing = listMissingShares(listRow);
+    const lenders = lendableDetailsForRow(listRow);
+    const sourceRows = lenders.map(l => [
+      listRow.stock,
+      l.name,
+      l.lendableShares,
+      l.account,
+      l.shares,
+      l.rate,
+    ]);
+    if (missing > 0) {
+      sourceRows.push([listRow.stock, '元大證金', `${missing}張`, '', `${missing}張`, '']);
+    }
+    const dateStr = todaySlashDate();
+    return [
+      ['客戶券差借券手續費費率設定表單(借券人)'],
+      [],
+      ['客戶姓名', listRow.name, '客戶帳號', listRow.account],
+      ['證券代號名稱', listRow.stock, '券差數量', gapQty],
+      ['啟用日期', dateStr, '借券人手續費費率(1%需寫上0.01)', '0.01'],
+      ['借券最低手續費', '2,000', '券差發生日期', dateStr],
+      ['通知紀錄', `電話：${listRow.phone || ''}`],
+      [],
+      ['證券代號名稱', '借券來源', '來源張數', '帳號', '出借張數', '出借費率'],
+      ...sourceRows,
+      [],
+      ['券差借券手續費'],
+      ['酌減收取原因：'],
+      ['□ 市場行情、流動性等非客戶因素，導致券差發生，給與減收'],
+      ['□ 業務考量，給與減收'],
+      ['□ 其他因素'],
+      [],
+      ['申請人：', '', '結算建檔人員：', ''],
+      ['業務主管：', '', '結算主管：', ''],
+    ];
+  };
+
+  const exportFeeRateForms = () => {
+    if (typeof XLSX === 'undefined') {
+      setListNotice('匯出元件尚未載入，請重新整理後再試。');
+      return;
+    }
+    if (!hasSelection) {
+      setListNotice('請先勾選要匯出手續費率單的案件。');
+      return;
+    }
+    const exportRows = selectedRows;
+    // 姓名＋股票標的 → 一個 sheet；同名同標的併入同一 sheet（不加後綴）
+    const byPair = new Map();
+    exportRows.forEach(r => {
+      const person = String(r.name || '').trim() || '未命名';
+      const stock = String(r.stock || '').trim() || '未命名';
+      const key = `${person}\u0000${stock}`;
+      if (!byPair.has(key)) byPair.set(key, []);
+      byPair.get(key).push(r);
+    });
+    const bySheetName = new Map();
+    byPair.forEach((pairRows, key) => {
+      const sep = key.indexOf('\u0000');
+      const person = key.slice(0, sep);
+      const stock = key.slice(sep + 1);
+      const sheetName = sanitizeExcelSheetName(`${person}${stock}`);
+      const merged = bySheetName.has(sheetName)
+        ? bySheetName.get(sheetName).concat(pairRows)
+        : pairRows;
+      bySheetName.set(sheetName, merged);
+    });
+    const wb = XLSX.utils.book_new();
+    bySheetName.forEach((sheetRows, sheetName) => {
+      // 同 sheet 多筆時逐筆表單上下排列
+      const aoa = [];
+      sheetRows.forEach((row, idx) => {
+        if (idx > 0) aoa.push([]);
+        aoa.push(...buildFeeRateFormAoA(row));
+      });
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    });
+    XLSX.writeFile(wb, `手續費率設訂單_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    setListNotice(`已依勾選匯出 ${exportRows.length} 筆手續費率單（${bySheetName.size} 個 sheet：姓名＋標的）。`);
+  };
+
+  const exportDaySellListCsv = () => {
+    if (typeof XLSX === 'undefined') {
+      setListNotice('匯出元件尚未載入，請重新整理後再試。');
+      return;
+    }
+    const exportRows = hasSelection ? selectedRows : rows;
+    if (!exportRows.length) {
+      setListNotice('目前沒有可匯出的名單資料。');
+      return;
+    }
+    // 一人多標的／一標的多人 → 各為獨立 sheet；同標的同姓名併同一 sheet（不加後綴）
+    const byPair = new Map();
+    exportRows.forEach(r => {
+      const stock = String(r.stock || '').trim() || '未命名';
+      const person = String(r.name || '').trim() || '未命名';
+      const key = `${stock}\u0000${person}`;
+      if (!byPair.has(key)) byPair.set(key, []);
+      byPair.get(key).push(r);
+    });
+    const bySheetName = new Map();
+    byPair.forEach((pairRows, key) => {
+      const sep = key.indexOf('\u0000');
+      const stock = key.slice(0, sep);
+      const person = key.slice(sep + 1);
+      const sheetName = sanitizeExcelSheetName(`${stock}${person}`);
+      if (bySheetName.has(sheetName)) {
+        bySheetName.set(sheetName, bySheetName.get(sheetName).concat(pairRows));
+      } else {
+        bySheetName.set(sheetName, pairRows);
+      }
+    });
+    const wb = XLSX.utils.book_new();
+    bySheetName.forEach((sheetRows, sheetName) => {
+      const ws = XLSX.utils.aoa_to_sheet(buildDaySellSheetAoA(sheetRows));
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    });
+    XLSX.writeFile(wb, `現沖賣名單_匯出_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    setListNotice(
+      hasSelection
+        ? `已匯出勾選的 ${exportRows.length} 筆（${bySheetName.size} 個 sheet：標的＋姓名）。`
+        : `已批次匯出查詢結果 ${exportRows.length} 筆（${bySheetName.size} 個 sheet：標的＋姓名）。`
+    );
+  };
+
   const notifyChannels = [
     'Email通知',
     'App推播通知',
@@ -7174,6 +7355,12 @@ function DayTradingBuyback({ state, setState }) {
                 </button>
                 <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runListSearch}>
                   查詢
+                </button>
+                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportDaySellListCsv}>
+                  匯出名單
+                </button>
+                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportFeeRateForms}>
+                  匯出手續費率單
                 </button>
               </div>
             </div>
