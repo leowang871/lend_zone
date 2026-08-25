@@ -2145,6 +2145,14 @@ input[type=number] {
   flex-wrap: wrap;
 }
 
+.dtb-auto-actions--single {
+  align-items: center;
+}
+
+.dtb-auto-actions--single button {
+  min-width: 200px;
+}
+
 
 /* 自動化通知內容 · 編輯彈窗 */
 
@@ -2960,6 +2968,15 @@ input[type=number] {
 
   .dtb-auto-actions button {
     width: 100%;
+  }
+
+  .dtb-auto-actions--single {
+    align-items: center;
+  }
+
+  .dtb-auto-actions--single button {
+    width: auto;
+    min-width: 200px;
   }
 }
 
@@ -6239,7 +6256,7 @@ function DayTradingBuyback({ state, setState }) {
     if (tradeDateEnd && tradeDate > tradeDateEnd) return false;
     if (accountQ && !String(r.account || '').includes(accountQ)) return false;
     if (clientNameQ && !String(r.clientName || '').includes(clientNameQ)) return false;
-    if (categoryQ && !String(r.category || '').includes(categoryQ)) return false;
+    if (categoryQ && String(r.category || '') !== categoryQ) return false;
     return true;
   });
   const sortedListRows = sortRowsBy(rows, listSort, LIST_COLUMNS);
@@ -7006,6 +7023,10 @@ function DayTradingBuyback({ state, setState }) {
 
   const submitNotificationSettings = scope => {
     setSubmitConfirmScope(null);
+    if (scope === 'listRate') {
+      setListNotice('設定費率已送出。');
+      return;
+    }
     if (scope === 'auto') {
       setAutoSettings(cloneAutoSettings(autoSettingsDraft));
       setContentPreviewsCommitted(cloneContentList(contentPreviews));
@@ -7015,19 +7036,19 @@ function DayTradingBuyback({ state, setState }) {
     if (scope === 't0') {
       setT0Settings(cloneT0Settings(t0SettingsDraft));
       setT0ContentPreviewsCommitted(cloneContentList(t0ContentPreviews));
-      setT0SavedNotice('T日自動化通知設定已儲存。');
+      setT0SavedNotice('「T日」已設定完成');
       return;
     }
     if (scope === 't1') {
       setT1Settings(cloneT0Settings(t1SettingsDraft));
       setT1ContentPreviewsCommitted(cloneContentList(t1ContentPreviews));
-      setT1SavedNotice('T+1日自動化通知設定已儲存。');
+      setT1SavedNotice('「T+1日」已設定完成');
       return;
     }
     if (scope === 't2') {
       setT2Settings(cloneT0Settings(t2SettingsDraft));
       setT2ContentPreviewsCommitted(cloneContentList(t2ContentPreviews));
-      setT2SavedNotice('T+2日自動化通知設定已儲存。');
+      setT2SavedNotice('「T+2日」已設定完成');
     }
   };
 
@@ -7060,7 +7081,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setT2EditDraft(null);
-    setT2SavedNotice(`「${savedTitle}」內容已儲存`);
+    setT2SavedNotice(`「${savedTitle}」內容已儲存，請記得送出設定`);
   };
 
   const openT1ContentEdit = col => {
@@ -7092,7 +7113,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setT1EditDraft(null);
-    setT1SavedNotice(`「${savedTitle}」內容已儲存`);
+    setT1SavedNotice(`「${savedTitle}」內容已儲存，請記得送出設定`);
   };
 
 
@@ -7164,7 +7185,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setEditDraft(null);
-    setAutoSavedNotice(`「${savedTitle}」內容已儲存`);
+    setAutoSavedNotice(`「${savedTitle}」內容已儲存，請記得送出設定`);
   };
 
   const openT0ContentEdit = col => {
@@ -7199,7 +7220,7 @@ function DayTradingBuyback({ state, setState }) {
       } : c))
     );
     setT0EditDraft(null);
-    setT0SavedNotice(`「${savedTitle}」內容已儲存`);
+    setT0SavedNotice(`「${savedTitle}」內容已儲存，請記得送出設定`);
   };
 
   const toggleChannel = (row, key) => {
@@ -7457,6 +7478,19 @@ function DayTradingBuyback({ state, setState }) {
               pageSize={LIST_PAGE_SIZE}
               onPageChange={setListPage}
             />
+            <p className="dtb-auto-warn">
+              ※送出設定費率將直接設定費率，請謹慎操作
+            </p>
+            <div className="dtb-auto-actions dtb-auto-actions--single">
+              <Button
+                variant="primary"
+                size="large"
+                style={{ height: 48, padding: '0 40px', minWidth: 200 }}
+                onClick={() => setSubmitConfirmScope('listRate')}
+              >
+                送出設定費率
+              </Button>
+            </div>
           </>
         )}
 
@@ -7784,7 +7818,6 @@ function DayTradingBuyback({ state, setState }) {
 
             <div className="dtb-diff-query-panel">
               <div className="dtb-diff-panel-title">查詢條件</div>
-              <p className="dtb-diff-panel-hint">券差日期預設以查詢日回推三個月，資料保留至 2021/12。</p>
               {[
                 ['diffDateStart', '券差日期起', '起日'],
                 ['diffDateEnd', '券差日期迄', '迄日'],
@@ -8065,7 +8098,7 @@ function DayTradingBuyback({ state, setState }) {
                 ['calcDateEnd', '計算日期迄', '迄日'],
                 ['account', '客戶帳號', '輸入客戶帳號'],
                 ['clientName', '客戶名稱', '輸入客戶名稱'],
-                ['category', '類別', '輸入類別'],
+                ['category', '類別', ''],
                 ['tradeDateStart', '成交日期起', '起日'],
                 ['tradeDateEnd', '成交日期迄', '迄日'],
               ].map(([key, label, placeholder]) => (
@@ -8077,6 +8110,16 @@ function DayTradingBuyback({ state, setState }) {
                       placeholder={placeholder}
                       onChange={v => setTaxQuery(q => ({ ...q, [key]: v }))}
                     />
+                  ) : key === 'category' ? (
+                    <select
+                      className="dtb-diff-query__input"
+                      value={taxQuery.category}
+                      onChange={e => setTaxQuery(q => ({ ...q, category: e.target.value }))}
+                    >
+                      <option value="">全部</option>
+                      <option value="借券">借券</option>
+                      <option value="出借">出借</option>
+                    </select>
                   ) : (
                     <input
                       type="text"
@@ -8875,7 +8918,9 @@ function DayTradingBuyback({ state, setState }) {
             aria-labelledby="dtb-submit-settings-modal-title"
           >
             <div className="dtb-edit-modal__head">
-              <span id="dtb-submit-settings-modal-title" className="dtb-edit-modal__title">自動化通知設定</span>
+              <span id="dtb-submit-settings-modal-title" className="dtb-edit-modal__title">
+                {submitConfirmScope === 'listRate' ? '送出設定費率' : '自動化通知設定'}
+              </span>
               <button
                 type="button"
                 className="dtb-edit-modal__close"
