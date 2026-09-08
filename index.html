@@ -5653,7 +5653,7 @@ const downloadTextFile = (content, filename) => {
   URL.revokeObjectURL(url);
 };
 
-const DTB_LIST_QUERY_EMPTY = { stock: '', account: '', name: '', id: '', phone: '', frozen: '', yuanta: '', downgrade: '' };
+const DTB_LIST_QUERY_EMPTY = { stock: '', account: '', name: '', id: '', phone: '', frozen: '', downgrade: '' };
 
 const DTB_SECTION_TABS = [
   { id: 'daySell', label: '現沖賣' },
@@ -6173,8 +6173,6 @@ function DayTradingBuyback({ state, setState }) {
     if (phoneQ && !r.phone.includes(phoneQ)) return false;
     if (q.frozen === 'yes' && !isListRowFrozen(r)) return false;
     if (q.frozen === 'no' && isListRowFrozen(r)) return false;
-    if (q.yuanta === 'yes' && !needsYuantaSend(r)) return false;
-    if (q.yuanta === 'no' && needsYuantaSend(r)) return false;
     if (q.downgrade === 'yes' && !isListRowDowngraded(r)) return false;
     if (q.downgrade === 'no' && isListRowDowngraded(r)) return false;
     return true;
@@ -7427,17 +7425,6 @@ function DayTradingBuyback({ state, setState }) {
                     onChange={e => setListQuery(q => ({ ...q, id: e.target.value }))}
                     placeholder="身分證字號"
                   />
-                </label>
-                <label className="dtb-lendable-query__field">
-                  <span>元大借券</span>
-                  <select
-                    value={listQuery.yuanta}
-                    onChange={e => setListQuery(q => ({ ...q, yuanta: e.target.value }))}
-                  >
-                    <option value="">全部</option>
-                    <option value="yes">是</option>
-                    <option value="no">否</option>
-                  </select>
                 </label>
                 <label className="dtb-lendable-query__field">
                   <span>連絡電話</span>
