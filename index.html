@@ -597,6 +597,67 @@ body {
   padding: 0;
 }
 
+.dtb-hold-compare-result {
+  font-weight: 700;
+}
+.dtb-hold-compare-result--ok {
+  color: rgb(22, 163, 74);
+}
+.dtb-hold-compare-result--ng {
+  color: rgb(220, 38, 38);
+}
+
+.dtb-hold-detail-modal {
+  width: min(640px, 94vw);
+  max-height: 86vh;
+}
+.dtb-hold-detail-modal .dtb-edit-modal__body {
+  overflow: auto;
+}
+.dtb-hold-detail-meta {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: rgb(113, 112, 113);
+}
+.dtb-hold-detail-table-wrap {
+  overflow: auto;
+  border: 1px solid rgb(226, 226, 226);
+  border-radius: 8px;
+}
+.dtb-hold-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.dtb-hold-detail-table th,
+.dtb-hold-detail-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgb(238, 238, 238);
+  text-align: left;
+  white-space: nowrap;
+}
+.dtb-hold-detail-table th {
+  background: rgb(247, 247, 247);
+  font-weight: 700;
+  color: #000;
+}
+.dtb-hold-detail-table td.dtb-td--num,
+.dtb-hold-detail-table th.dtb-td--num {
+  text-align: right;
+}
+.dtb-hold-detail-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.dtb-hold-detail-table tfoot td {
+  border-top: 1px solid rgb(226, 226, 226);
+  border-bottom: none;
+  font-weight: 700;
+  background: rgb(247, 247, 247);
+}
+.dtb-hold-detail-total {
+  text-align: right;
+}
+
 .dtb-diff-query-panel__actions {
   grid-column: 1 / -1;
   display: flex;
@@ -4168,6 +4229,7 @@ function clampToNearestAllowedTime(value, allowed) {
 const T0_NOTIFY_TIME_MIN = '13:30';
 const T0_NOTIFY_TIME_MAX = '15:30';
 const T0_NOTIFY_TIME_STEP = 10;
+const LEND_COVER_CONTENT_MAX_TIMES = 3;
 const T0_NOTIFY_ALLOWED_TIMES = buildAllowedTimes(
   T0_NOTIFY_TIME_MIN,
   T0_NOTIFY_TIME_MAX,
@@ -4627,10 +4689,12 @@ function formatContentTimesMeta(col) {
   return `自動通知時間：${labels.join('、')}`;
 }
 
-function normalizeContentTimes(col) {
-  if (Array.isArray(col.times) && col.times.length) return col.times.map(String);
-  if (col.time) return [String(col.time)];
-  return ['13:02'];
+function normalizeContentTimes(col, maxTimes = Infinity) {
+  const list = Array.isArray(col.times) && col.times.length
+    ? col.times.map(String)
+    : (col.time ? [String(col.time)] : ['13:02']);
+  if (!Number.isFinite(maxTimes) || maxTimes <= 0) return list;
+  return list.slice(0, maxTimes);
 }
 
 function nextDefaultTime(times, stepMinutes = 30) {
@@ -5665,6 +5729,84 @@ const DTB_DAY_SELL_TABS = [
   { id: 'auto', label: '自動化通知設定' },
 ];
 
+const HOLD_COMPARE_TABLE_COLUMNS = [
+  { key: 'tradeDate', title: '成交日', numeric: false },
+  { key: 'pnr07aTotal', title: 'PNR07A 所有客戶', numeric: true },
+  { key: 'fnr23Company', title: 'FNR23 公司留置款', numeric: true },
+  { key: 'compareResult', title: '比對結果', numeric: false },
+];
+
+/** 留置款比對 mock：比對結果由 enrichHoldCompareRow 依數值即時計算（非寫死） */
+const HOLD_COMPARE_RAW_ROWS = [
+  {
+    tradeDate: '115/08/19',
+    fnr23Company: 1940535,
+    clients: [
+      { id: '025918-3', name: '盧柏瑋', holdAmount: 520000 },
+      { id: '077209-7', name: '陳新華', holdAmount: 680000 },
+      { id: '106728-1', name: '吳佩珊', holdAmount: 410535 },
+      { id: '142681-0', name: '郭書瑋', holdAmount: 330000 },
+    ],
+  },
+  {
+    // 假資料：PNR07A 合計 850,000 ≠ FNR23 820,000 → 不符
+    tradeDate: '115/08/18',
+    fnr23Company: 820000,
+    clients: [
+      { id: '088316-4', name: '林欣妤', holdAmount: 400000 },
+      { id: '094512-6', name: '許家豪', holdAmount: 450000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/15',
+    fnr23Company: 1260000,
+    clients: [
+      { id: '119835-5', name: '蔡宜君', holdAmount: 380000 },
+      { id: '153902-4', name: '潘俊橙', holdAmount: 420000 },
+      { id: '186741-5', name: '陳小美', holdAmount: 460000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/12',
+    fnr23Company: 980000,
+    clients: [
+      { id: '023498-8', name: '張茂程', holdAmount: 310000 },
+      { id: '042905-2', name: '蘇宣銘', holdAmount: 270000 },
+      { id: '100953-6', name: '翁慧婷', holdAmount: 400000 },
+    ],
+  },
+];
+
+/** 真實比對：客戶層 PNR07A＝BKR19A；彙總層 ΣPNR07A＝FNR23 → 相符，否則不符 */
+const enrichHoldCompareRow = row => {
+  const clients = (row.clients || []).map(c => {
+    const holdAmount = Number(c.holdAmount) || 0;
+    const bkr19aAmount = c.bkr19aAmount != null ? Number(c.bkr19aAmount) : holdAmount;
+    return {
+      id: c.id || '',
+      name: c.name || '',
+      holdAmount,
+      bkr19aAmount,
+      clientMatch: holdAmount === bkr19aAmount,
+    };
+  });
+  const pnr07aTotal = clients.reduce((sum, c) => sum + c.holdAmount, 0);
+  const bkr19aTotal = clients.reduce((sum, c) => sum + c.bkr19aAmount, 0);
+  const fnr23Company = Number(row.fnr23Company) || 0;
+  const clientOk = clients.every(c => c.clientMatch);
+  const aggregateOk = pnr07aTotal === bkr19aTotal && pnr07aTotal === fnr23Company;
+  return {
+    tradeDate: row.tradeDate || '',
+    clients,
+    pnr07aTotal,
+    bkr19aTotal,
+    fnr23Company,
+    compareResult: clientOk && aggregateOk ? '相符' : '不符',
+  };
+};
+
+const HOLD_COMPARE_ROWS = HOLD_COMPARE_RAW_ROWS.map(enrichHoldCompareRow);
+
 const DTB_LEND_COVER_TABS = [
   { id: 't0', label: 'T日' },
   { id: 't1', label: 'T+1日' },
@@ -5672,6 +5814,7 @@ const DTB_LEND_COVER_TABS = [
   { id: 'diff', label: '券差表單' },
   { id: 'borrowerInfo', label: '借券人資訊' },
   { id: 'tax', label: '借券明細' },
+  { id: 'holdCompare', label: '留置款比對' },
 ];
 
 function DayTradingBuyback({ state, setState }) {
@@ -5729,6 +5872,11 @@ function DayTradingBuyback({ state, setState }) {
   const [diffSort, setDiffSort] = React.useState({ key: 'no', dir: 'asc' });
   const [borrowerSort, setBorrowerSort] = React.useState({ key: 'no', dir: 'asc' });
   const [taxSort, setTaxSort] = React.useState({ key: 'account', dir: 'asc' });
+  const [holdComparePage, setHoldComparePage] = React.useState(1);
+  const [holdCompareQuery, setHoldCompareQuery] = React.useState({ tradeDateStart: '', tradeDateEnd: '' });
+  const [holdCompareApplied, setHoldCompareApplied] = React.useState({ tradeDateStart: '', tradeDateEnd: '' });
+  const [holdCompareSort, setHoldCompareSort] = React.useState({ key: 'tradeDate', dir: 'desc' });
+  const [holdDetailRow, setHoldDetailRow] = React.useState(null);
   const [lendableSort, setLendableSort] = React.useState({ key: 'rate', dir: 'asc' });
 
   const BORROW_FREEZE_THRESHOLD = 100000;
@@ -6345,10 +6493,22 @@ function DayTradingBuyback({ state, setState }) {
   });
   const sortedBorrowerRows = sortRowsBy(borrowerFilteredRows, borrowerSort, BORROWER_INFO_TABLE_COLUMNS);
   const sortedTaxRows = sortRowsBy(taxFilteredRows, taxSort, SERP3A_TABLE_COLUMNS);
+  const holdCompareFilteredRows = HOLD_COMPARE_ROWS.filter(r => {
+    const q = holdCompareApplied;
+    const tradeDateStart = parseDiffRocDate(q.tradeDateStart);
+    const tradeDateEnd = parseDiffRocDate(q.tradeDateEnd);
+    const tradeDate = parseDiffRocDate(r.tradeDate);
+    if ((tradeDateStart || tradeDateEnd) && !tradeDate) return false;
+    if (tradeDateStart && tradeDate < tradeDateStart) return false;
+    if (tradeDateEnd && tradeDate > tradeDateEnd) return false;
+    return true;
+  });
+  const sortedHoldCompareRows = sortRowsBy(holdCompareFilteredRows, holdCompareSort, HOLD_COMPARE_TABLE_COLUMNS);
   const listPaginated = paginateSlice(sortedListRows, listPage, LIST_PAGE_SIZE);
   const diffPaginated = paginateSlice(sortedDiffRows, diffPage, DIFF_PAGE_SIZE);
   const borrowerPaginated = paginateSlice(sortedBorrowerRows, borrowerInfoPage);
   const taxPaginated = paginateSlice(sortedTaxRows, taxPage);
+  const holdComparePaginated = paginateSlice(sortedHoldCompareRows, holdComparePage);
   const diffDeleteRows = diffRowsData.filter(r => diffChecked[diffRowKey(r)]);
 
   const selectedRows = rows.filter(r => selected[r.key]);
@@ -6702,6 +6862,18 @@ function DayTradingBuyback({ state, setState }) {
     setTaxSelected({});
   };
 
+  const runHoldCompareSearch = () => {
+    setHoldCompareApplied({ ...holdCompareQuery });
+    setHoldComparePage(1);
+  };
+  const clearHoldCompareSearch = () => {
+    const empty = { tradeDateStart: '', tradeDateEnd: '' };
+    setHoldCompareQuery(empty);
+    setHoldCompareApplied(empty);
+    setHoldComparePage(1);
+  };
+  const openHoldDetailModal = row => setHoldDetailRow(row);
+  const closeHoldDetailModal = () => setHoldDetailRow(null);
 
   const switchTab = id => {
     if (tab === 'auto' && id !== 'auto') revertAutoSettingsDraft();
@@ -7158,7 +7330,7 @@ function DayTradingBuyback({ state, setState }) {
       title: truncateNotifyTitle(col.title),
       text: truncateNotifyText(col.text, maxLen),
       url: col.url || '',
-      times: normalizeContentTimes(col),
+      times: normalizeContentTimes(col, LEND_COVER_CONTENT_MAX_TIMES),
     });
   };
 
@@ -7167,7 +7339,7 @@ function DayTradingBuyback({ state, setState }) {
   const confirmT2ContentEdit = () => {
     if (!t2EditDraft) return;
     const savedTitle = lendCoverContentHeadTitle(t2EditDraft);
-    const times = (t2EditDraft.times || ['10:00']).slice();
+    const times = (t2EditDraft.times || ['10:00']).slice(0, LEND_COVER_CONTENT_MAX_TIMES);
     const title = truncateNotifyTitle(t2EditDraft.title || '').trim();
     setT2ContentPreviews(list =>
       list.map(c => (c.key === t2EditDraft.key ? {
@@ -7190,7 +7362,7 @@ function DayTradingBuyback({ state, setState }) {
       title: truncateNotifyTitle(col.title),
       text: truncateNotifyText(col.text, maxLen),
       url: col.url || '',
-      times: normalizeContentTimes(col),
+      times: normalizeContentTimes(col, LEND_COVER_CONTENT_MAX_TIMES),
     });
   };
 
@@ -7199,7 +7371,7 @@ function DayTradingBuyback({ state, setState }) {
   const confirmT1ContentEdit = () => {
     if (!t1EditDraft) return;
     const savedTitle = lendCoverContentHeadTitle(t1EditDraft);
-    const times = (t1EditDraft.times || ['18:00']).slice();
+    const times = (t1EditDraft.times || ['18:00']).slice(0, LEND_COVER_CONTENT_MAX_TIMES);
     const title = truncateNotifyTitle(t1EditDraft.title || '').trim();
     setT1ContentPreviews(list =>
       list.map(c => (c.key === t1EditDraft.key ? {
@@ -7294,7 +7466,7 @@ function DayTradingBuyback({ state, setState }) {
       title: truncateNotifyTitle(col.title),
       text: truncateNotifyText(col.text, maxLen),
       url: col.url || '',
-      times: normalizeContentTimes(col).map(t =>
+      times: normalizeContentTimes(col, LEND_COVER_CONTENT_MAX_TIMES).map(t =>
         clampToNearestAllowedTime(t, T0_NOTIFY_ALLOWED_TIMES)
       ),
     });
@@ -7306,6 +7478,7 @@ function DayTradingBuyback({ state, setState }) {
     if (!t0EditDraft) return;
     const savedTitle = lendCoverContentHeadTitle(t0EditDraft);
     const times = (t0EditDraft.times || [T0_NOTIFY_TIME_MIN])
+      .slice(0, LEND_COVER_CONTENT_MAX_TIMES)
       .map(t => clampToNearestAllowedTime(t, T0_NOTIFY_ALLOWED_TIMES));
     const title = truncateNotifyTitle(t0EditDraft.title || '').trim();
     setT0ContentPreviews(list =>
@@ -8325,6 +8498,94 @@ function DayTradingBuyback({ state, setState }) {
             />
           </div>
         )}
+
+        {tab === 'holdCompare' && (
+          <div className="dtb-diff-panel dtb-serp3a-panel">
+            <div className="dtb-diff-query-panel">
+              <div className="dtb-diff-panel-title">查詢條件</div>
+              {[
+                ['tradeDateStart', '成交日起', '起日'],
+                ['tradeDateEnd', '成交日迄', '迄日'],
+              ].map(([key, label, placeholder]) => (
+                <label key={key} className="dtb-diff-query">
+                  <span>{label}</span>
+                  <DatePicker
+                    value={holdCompareQuery[key]}
+                    placeholder={placeholder}
+                    onChange={v => setHoldCompareQuery(q => ({ ...q, [key]: v }))}
+                  />
+                </label>
+              ))}
+              <div className="dtb-diff-query-panel__actions">
+                <Button variant="secondary" size="small" onClick={clearHoldCompareSearch}>清除</Button>
+                <Button variant="primary" size="small" onClick={runHoldCompareSearch}>查詢</Button>
+              </div>
+            </div>
+            <div className="dtb-table-wrap dtb-diff-table-wrap">
+              <table className="dtb-table dtb-diff-table">
+                <thead>
+                  <tr>
+                    {HOLD_COMPARE_TABLE_COLUMNS.map(col => (
+                      <th key={col.key} className={'dtb-th' + (col.numeric ? ' dtb-td--num' : '')}>
+                        <SortHeader
+                          title={col.title}
+                          sortKey={col.key}
+                          sortState={holdCompareSort}
+                          onSort={key => toggleSortState(setHoldCompareSort, key)}
+                        />
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {holdComparePaginated.items.map((r, ri) => (
+                    <tr
+                      key={r.tradeDate + '-' + ri}
+                      className={ri % 2 ? 'dtb-tr--odd' : 'dtb-tr--even'}
+                    >
+                      {HOLD_COMPARE_TABLE_COLUMNS.map(col => (
+                        <td
+                          key={col.key}
+                          className={'dtb-td' + (col.numeric ? ' dtb-td--num' : '')}
+                        >
+                          {col.key === 'pnr07aTotal' ? (
+                            <button
+                              type="button"
+                              className="dtb-diff-name-btn"
+                              onClick={() => openHoldDetailModal(r)}
+                            >
+                              {formatSerp3aAmount(r.pnr07aTotal)}
+                            </button>
+                          ) : col.key === 'fnr23Company' ? (
+                            formatSerp3aAmount(r[col.key])
+                          ) : col.key === 'compareResult' ? (
+                            <span
+                              className={
+                                'dtb-hold-compare-result'
+                                + (r.compareResult === '相符'
+                                  ? ' dtb-hold-compare-result--ok'
+                                  : ' dtb-hold-compare-result--ng')
+                              }
+                            >
+                              {r.compareResult}
+                            </span>
+                          ) : (
+                            r[col.key] || '—'
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <TablePagination
+              page={holdComparePaginated.page}
+              totalItems={sortedHoldCompareRows.length}
+              onPageChange={setHoldComparePage}
+            />
+          </div>
+        )}
           </>
         )}
         </div>
@@ -9104,6 +9365,74 @@ function DayTradingBuyback({ state, setState }) {
         </div>
       )}
 
+      {holdDetailRow && (
+        <div
+          className="dtb-edit-overlay"
+          onClick={closeHoldDetailModal}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-hold-detail-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-hold-detail-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-hold-detail-modal-title" className="dtb-edit-modal__title">客戶明細</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={closeHoldDetailModal}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body">
+              <p className="dtb-hold-detail-meta">成交日：{holdDetailRow.tradeDate || '—'}</p>
+              <div className="dtb-hold-detail-table-wrap">
+                <table className="dtb-hold-detail-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>客戶姓名</th>
+                      <th className="dtb-td--num">交易留置款</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(holdDetailRow.clients || []).map((c, ci) => (
+                      <tr key={(c.id || 'client') + '-' + ci}>
+                        <td>{c.id || '—'}</td>
+                        <td>{c.name || '—'}</td>
+                        <td className="dtb-td--num">{formatSerp3aAmount(c.holdAmount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colSpan={2} />
+                      <td className="dtb-td--num dtb-hold-detail-total">
+                        總計：{formatSerp3aAmount(holdDetailRow.pnr07aTotal)}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={closeHoldDetailModal}
+              >
+                關閉
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {submitConfirmScope && (
         <div
           className="dtb-edit-overlay"
@@ -9181,6 +9510,7 @@ function DayTradingBuyback({ state, setState }) {
                 <EditTimesList
                   times={t1EditDraft.times}
                   onChange={times => setT1EditDraft(d => ({ ...d, times }))}
+                  maxTimes={LEND_COVER_CONTENT_MAX_TIMES}
                 />
               </div>
               <NotifyChannelFields
@@ -9244,6 +9574,7 @@ function DayTradingBuyback({ state, setState }) {
                 <EditTimesList
                   times={t2EditDraft.times}
                   onChange={times => setT2EditDraft(d => ({ ...d, times }))}
+                  maxTimes={LEND_COVER_CONTENT_MAX_TIMES}
                 />
               </div>
               <NotifyChannelFields
@@ -9307,6 +9638,7 @@ function DayTradingBuyback({ state, setState }) {
                 <EditTimesList
                   times={t0EditDraft.times}
                   onChange={times => setT0EditDraft(d => ({ ...d, times }))}
+                  maxTimes={LEND_COVER_CONTENT_MAX_TIMES}
                   minTime={T0_NOTIFY_TIME_MIN}
                   maxTime={T0_NOTIFY_TIME_MAX}
                   minuteStep={T0_NOTIFY_TIME_STEP}
