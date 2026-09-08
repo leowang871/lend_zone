@@ -1560,6 +1560,50 @@ body {
   border-color: rgb(200, 201, 202);
 }
 
+.dtb-lendable-btn--ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.dtb-lendable-query__actions--list {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dtb-lendable-query__actions-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dtb-yuanta-edit-btn {
+  border: none;
+  background: transparent;
+  color: rgb(0, 120, 215);
+  text-decoration: underline;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dtb-yuanta-edit-btn:hover {
+  color: rgb(233, 84, 101);
+}
+
+.dtb-yuanta-edit-input {
+  width: 72px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid rgb(233, 84, 101);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+}
+
 .dtb-lendable-result-label {
   margin: 0 0 8px;
   font-size: 14px;
@@ -6005,10 +6049,67 @@ function DayTradingBuyback({ state, setState }) {
     URL.revokeObjectURL(url);
   };
 
+  const LIST_PAGE_SIZE = 10;
+  const DIFF_PAGE_SIZE = 10;
+
+  const INITIAL_LIST_ROWS = [
+    { key: '1', stock: '天二 6834', shares: '1張', needBorrow: 1, borrowed: 1, account: '0393528', name: '溫朝淵', id: 'J122365376', lendable: ['王小明'], phone: '0910668111', borrowAmount: 85000 },
+    { key: '2', stock: '日電貿 3090', shares: '20張', needBorrow: 20, borrowed: 20, account: '0561237', name: '李承鍵', id: 'Q124253472', lendable: ['林志豪', '黃雅婷', '劉俊宏', '吳佩珊', '鄭宇軒', '蔡宜君', '周明德', '許淑芬', '張志明', '李美華', '郭書瑋', '潘俊橙', '蔡政倫', '張歆怡', '洪秉豪', '黃奕程', '徐筱曼', '王建國', '林雅婷', '許群士'], phone: '0905725693', borrowAmount: 125000 },
+    { key: '3', stock: '華容 5328', shares: '1張', needBorrow: 1, borrowed: 0, account: '0955416', name: '許群士', id: 'A132019847', lendable: ['黃先生'], phone: '0908728910', borrowAmount: 42000 },
+    { key: '4', stock: '台積電 2330', shares: '2張', needBorrow: 2, borrowed: 2, account: '0123456', name: '王建國', id: 'A100000001', lendable: ['李大明'], phone: '0911111111', borrowAmount: 95000 },
+    { key: '5', stock: '聯發科 2454', shares: '1張', needBorrow: 1, borrowed: 0, account: '0234567', name: '林雅婷', id: 'B200000002', lendable: ['周小姐'], phone: '0922222222', borrowAmount: 38000 },
+    { key: '6', stock: '鴻海 2317', shares: '3張', needBorrow: 3, borrowed: 3, account: '0345678', name: '張志豪', id: 'C300000003', lendable: ['陳小美'], phone: '0933333333', borrowAmount: 112000 },
+    { key: '7', stock: '富邦金 2881', shares: '2張', needBorrow: 2, borrowed: 1, account: '0456789', name: '吳佩珊', id: 'D400000004', lendable: ['黃先生'], phone: '0944444444', borrowAmount: 56000, borrowCount14d: 2 },
+    { key: '8', stock: '中信金 2891', shares: '1張', needBorrow: 1, borrowed: 1, account: '0567890', name: '劉俊宏', id: 'E500000005', lendable: ['林小姐'], phone: '0955555555', borrowAmount: 72000 },
+    { key: '9', stock: '廣達 2382', shares: '4張', needBorrow: 4, borrowed: 0, account: '0678901', name: '蔡宜君', id: 'F600000006', lendable: ['郭先生'], phone: '0966666666', borrowAmount: 48000 },
+    { key: '10', stock: '仁寶 2324', shares: '2張', needBorrow: 2, borrowed: 2, account: '0789012', name: '鄭宇軒', id: 'G700000007', lendable: ['周小姐'], phone: '0977777777', borrowAmount: 88000 },
+    { key: '11', stock: '英業達 2356', shares: '1張', needBorrow: 1, borrowed: 0, account: '0890123', name: '許家豪', id: 'H800000008', lendable: ['張先生'], phone: '0988888888', borrowAmount: 35000 },
+    { key: '12', stock: '華碩 2357', shares: '1張', needBorrow: 1, borrowed: 1, account: '0901234', name: '謝欣怡', id: 'I900000009', lendable: ['林先生'], phone: '0999999999', borrowAmount: 105000 },
+    { key: '13', stock: '緯創 3231', shares: '5張', needBorrow: 5, borrowed: 2, account: '1012345', name: '郭書瑋', id: 'J100000010', lendable: ['陳小姐'], phone: '0910000010', borrowAmount: 68000 },
+    { key: '14', stock: '華邦電 2344', shares: '2張', needBorrow: 2, borrowed: 0, account: '1123456', name: '潘俊橙', id: 'K200000011', lendable: ['謝小姐'], phone: '0920000011', borrowAmount: 41000 },
+    { key: '15', stock: '長榮 2603', shares: '3張', needBorrow: 3, borrowed: 3, account: '1234567', name: '蔡政倫', id: 'L300000012', lendable: ['許先生'], phone: '0930000012', borrowAmount: 132000 },
+    { key: '16', stock: '萬海 2615', shares: '2張', needBorrow: 2, borrowed: 1, account: '1345678', name: '張歆怡', id: 'M400000013', lendable: ['王小姐'], phone: '0940000013', borrowAmount: 59000, borrowCount14d: 2 },
+    { key: '17', stock: '陽明 2609', shares: '6張', needBorrow: 6, borrowed: 6, account: '1456789', name: '洪秉豪', id: 'N500000014', lendable: ['黃先生'], phone: '0950000014', borrowAmount: 99000 },
+    { key: '18', stock: '中砂 1560', shares: '1張', needBorrow: 1, borrowed: 0, account: '1567890', name: '黃奕程', id: 'O600000015', lendable: ['趙小姐'], phone: '0960000015', borrowAmount: 76000 },
+    { key: '19', stock: '訊聯 1784', shares: '4張', needBorrow: 4, borrowed: 2, account: '1678901', name: '徐筱曼', id: 'P700000016', lendable: ['李先生'], phone: '0970000016', borrowAmount: 52000 },
+    { key: '20', stock: '立積 4968', shares: '1張', needBorrow: 1, borrowed: 1, account: '1789012', name: '王建國', id: 'Q800000017', lendable: ['吳小姐'], phone: '0980000017', borrowAmount: 108000 },
+  ];
+
+  const [listRowsData, setListRowsData] = React.useState(() => INITIAL_LIST_ROWS.map(r => ({ ...r })));
+  const [yuantaEditingKey, setYuantaEditingKey] = React.useState(null);
+  const [yuantaEditDraft, setYuantaEditDraft] = React.useState('');
+  const [listDeleteConfirmOpen, setListDeleteConfirmOpen] = React.useState(false);
+
   const listMissingShares = row => {
+    if (row.yuantaShares != null && String(row.yuantaShares).trim() !== '') {
+      const n = Number(row.yuantaShares);
+      return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+    }
     const total = row.needBorrow != null ? row.needBorrow : parseShareCount(row.shares);
     const borrowed = row.borrowed != null ? row.borrowed : 0;
     return Math.max(0, total - borrowed);
+  };
+
+  const startYuantaEdit = row => {
+    setYuantaEditingKey(row.key);
+    setYuantaEditDraft(String(listMissingShares(row)));
+  };
+
+  const cancelYuantaEdit = () => {
+    setYuantaEditingKey(null);
+    setYuantaEditDraft('');
+  };
+
+  const commitYuantaEdit = rowKey => {
+    const raw = String(yuantaEditDraft || '').trim().replace(/[^\d]/g, '');
+    const value = raw === '' ? 0 : parseInt(raw, 10);
+    const next = Number.isFinite(value) ? Math.max(0, value) : 0;
+    setListRowsData(list => list.map(r => (
+      r.key === rowKey
+        ? { ...r, yuantaShares: next }
+        : r
+    )));
+    cancelYuantaEdit();
   };
 
   const LIST_NOTIFY_BUCKET_LABELS = {
@@ -6045,32 +6146,6 @@ function DayTradingBuyback({ state, setState }) {
     setBorrowerInfoPage(1);
   };
 
-  const LIST_PAGE_SIZE = 10;
-  const DIFF_PAGE_SIZE = 10;
-
-  const allRows = [
-    { key: '1', stock: '天二 6834', shares: '1張', needBorrow: 1, borrowed: 1, account: '0393528', name: '溫朝淵', id: 'J122365376', lendable: ['王小明'], phone: '0910668111', borrowAmount: 85000 },
-    { key: '2', stock: '日電貿 3090', shares: '20張', needBorrow: 20, borrowed: 20, account: '0561237', name: '李承鍵', id: 'Q124253472', lendable: ['林志豪', '黃雅婷', '劉俊宏', '吳佩珊', '鄭宇軒', '蔡宜君', '周明德', '許淑芬', '張志明', '李美華', '郭書瑋', '潘俊橙', '蔡政倫', '張歆怡', '洪秉豪', '黃奕程', '徐筱曼', '王建國', '林雅婷', '許群士'], phone: '0905725693', borrowAmount: 125000 },
-    { key: '3', stock: '華容 5328', shares: '1張', needBorrow: 1, borrowed: 0, account: '0955416', name: '許群士', id: 'A132019847', lendable: ['黃先生'], phone: '0908728910', borrowAmount: 42000 },
-    { key: '4', stock: '台積電 2330', shares: '2張', needBorrow: 2, borrowed: 2, account: '0123456', name: '王建國', id: 'A100000001', lendable: ['李大明'], phone: '0911111111', borrowAmount: 95000 },
-    { key: '5', stock: '聯發科 2454', shares: '1張', needBorrow: 1, borrowed: 0, account: '0234567', name: '林雅婷', id: 'B200000002', lendable: ['周小姐'], phone: '0922222222', borrowAmount: 38000 },
-    { key: '6', stock: '鴻海 2317', shares: '3張', needBorrow: 3, borrowed: 3, account: '0345678', name: '張志豪', id: 'C300000003', lendable: ['陳小美'], phone: '0933333333', borrowAmount: 112000 },
-    { key: '7', stock: '富邦金 2881', shares: '2張', needBorrow: 2, borrowed: 1, account: '0456789', name: '吳佩珊', id: 'D400000004', lendable: ['黃先生'], phone: '0944444444', borrowAmount: 56000, borrowCount14d: 2 },
-    { key: '8', stock: '中信金 2891', shares: '1張', needBorrow: 1, borrowed: 1, account: '0567890', name: '劉俊宏', id: 'E500000005', lendable: ['林小姐'], phone: '0955555555', borrowAmount: 72000 },
-    { key: '9', stock: '廣達 2382', shares: '4張', needBorrow: 4, borrowed: 0, account: '0678901', name: '蔡宜君', id: 'F600000006', lendable: ['郭先生'], phone: '0966666666', borrowAmount: 48000 },
-    { key: '10', stock: '仁寶 2324', shares: '2張', needBorrow: 2, borrowed: 2, account: '0789012', name: '鄭宇軒', id: 'G700000007', lendable: ['周小姐'], phone: '0977777777', borrowAmount: 88000 },
-    { key: '11', stock: '英業達 2356', shares: '1張', needBorrow: 1, borrowed: 0, account: '0890123', name: '許家豪', id: 'H800000008', lendable: ['張先生'], phone: '0988888888', borrowAmount: 35000 },
-    { key: '12', stock: '華碩 2357', shares: '1張', needBorrow: 1, borrowed: 1, account: '0901234', name: '謝欣怡', id: 'I900000009', lendable: ['林先生'], phone: '0999999999', borrowAmount: 105000 },
-    { key: '13', stock: '緯創 3231', shares: '5張', needBorrow: 5, borrowed: 2, account: '1012345', name: '郭書瑋', id: 'J100000010', lendable: ['陳小姐'], phone: '0910000010', borrowAmount: 68000 },
-    { key: '14', stock: '華邦電 2344', shares: '2張', needBorrow: 2, borrowed: 0, account: '1123456', name: '潘俊橙', id: 'K200000011', lendable: ['謝小姐'], phone: '0920000011', borrowAmount: 41000 },
-    { key: '15', stock: '長榮 2603', shares: '3張', needBorrow: 3, borrowed: 3, account: '1234567', name: '蔡政倫', id: 'L300000012', lendable: ['許先生'], phone: '0930000012', borrowAmount: 132000 },
-    { key: '16', stock: '萬海 2615', shares: '2張', needBorrow: 2, borrowed: 1, account: '1345678', name: '張歆怡', id: 'M400000013', lendable: ['王小姐'], phone: '0940000013', borrowAmount: 59000, borrowCount14d: 2 },
-    { key: '17', stock: '陽明 2609', shares: '6張', needBorrow: 6, borrowed: 6, account: '1456789', name: '洪秉豪', id: 'N500000014', lendable: ['黃先生'], phone: '0950000014', borrowAmount: 99000 },
-    { key: '18', stock: '中砂 1560', shares: '1張', needBorrow: 1, borrowed: 0, account: '1567890', name: '黃奕程', id: 'O600000015', lendable: ['趙小姐'], phone: '0960000015', borrowAmount: 76000 },
-    { key: '19', stock: '訊聯 1784', shares: '4張', needBorrow: 4, borrowed: 2, account: '1678901', name: '徐筱曼', id: 'P700000016', lendable: ['李先生'], phone: '0970000016', borrowAmount: 52000 },
-    { key: '20', stock: '立積 4968', shares: '1張', needBorrow: 1, borrowed: 1, account: '1789012', name: '王建國', id: 'Q800000017', lendable: ['吳小姐'], phone: '0980000017', borrowAmount: 108000 },
-  ];
-
   const LIST_COLUMNS = [
     { key: 'stock', title: '未回補股票' },
     { key: 'shares', title: '股數', sortValue: r => parseShareCount(r.shares) },
@@ -6084,7 +6159,7 @@ function DayTradingBuyback({ state, setState }) {
     { key: 'downgrade', title: '是否調降', sortValue: r => isListRowDowngraded(r) ? 1 : 0 },
   ];
 
-  const rows = allRows.filter(r => {
+  const rows = listRowsData.filter(r => {
     const q = listApplied;
     const stockQ = (q.stock || '').trim().toLowerCase();
     const accountQ = (q.account || '').trim();
@@ -6281,6 +6356,25 @@ function DayTradingBuyback({ state, setState }) {
   const selectedRows = rows.filter(r => selected[r.key]);
   const selectedCount = selectedRows.length;
   const hasSelection = selectedCount > 0;
+
+  const openListDeleteConfirm = () => {
+    if (!hasSelection) return;
+    setListDeleteConfirmOpen(true);
+  };
+
+  const cancelListDelete = () => setListDeleteConfirmOpen(false);
+
+  const confirmListDelete = () => {
+    const keys = new Set(selectedRows.map(r => r.key));
+    const count = keys.size;
+    setListRowsData(list => list.filter(r => !keys.has(r.key)));
+    setSelected({});
+    setSelectAll(false);
+    setListDeleteConfirmOpen(false);
+    setYuantaEditingKey(null);
+    setYuantaEditDraft('');
+    setListNotice(`已刪除 ${count} 筆現沖賣名單資料。`);
+  };
 
   const syncListSelectAll = sel => {
     setSelectAll(rows.length > 0 && rows.every(r => sel[r.key]));
@@ -6756,6 +6850,7 @@ function DayTradingBuyback({ state, setState }) {
   );
   const [editDraft, setEditDraft] = React.useState(null);
   const [listNotice, setListNotice] = React.useState(null);
+  const listRateNextOkRef = React.useRef(true);
   const [listNotifyConfirm, setListNotifyConfirm] = React.useState(null);
   const [listNotifyDraft, setListNotifyDraft] = React.useState({
     title: '',
@@ -7024,7 +7119,13 @@ function DayTradingBuyback({ state, setState }) {
   const submitNotificationSettings = scope => {
     setSubmitConfirmScope(null);
     if (scope === 'listRate') {
-      setListNotice('設定費率已送出。');
+      const ok = listRateNextOkRef.current;
+      listRateNextOkRef.current = !ok;
+      setListNotice(
+        ok
+          ? '設定費率已送出'
+          : '連線錯誤或伺服器異常，請稍後再試'
+      );
       return;
     }
     if (scope === 'auto') {
@@ -7370,18 +7471,28 @@ function DayTradingBuyback({ state, setState }) {
                   </select>
                 </label>
               </div>
-              <div className="dtb-lendable-query__actions">
-                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--ghost" onClick={clearListQuery}>
-                  清除
-                </button>
-                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runListSearch}>
-                  查詢
-                </button>
-                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportDaySellListCsv}>
-                  匯出名單
-                </button>
-                <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportFeeRateForms}>
-                  匯出手續費率單
+              <div className="dtb-lendable-query__actions dtb-lendable-query__actions--list">
+                <div className="dtb-lendable-query__actions-main">
+                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--ghost" onClick={clearListQuery}>
+                    清除
+                  </button>
+                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runListSearch}>
+                    查詢
+                  </button>
+                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportDaySellListCsv}>
+                    匯出名單
+                  </button>
+                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportFeeRateForms}>
+                    匯出手續費率單
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="dtb-lendable-btn dtb-lendable-btn--ghost"
+                  disabled={!hasSelection}
+                  onClick={openListDeleteConfirm}
+                >
+                  刪除
                 </button>
               </div>
             </div>
@@ -7457,8 +7568,39 @@ function DayTradingBuyback({ state, setState }) {
                           查看
                         </button>
                       </td>
-                      <td className="dtb-td dtb-td--yuanta" title={'需借 ' + (r.needBorrow != null ? r.needBorrow : parseShareCount(r.shares)) + ' 張 − 已借 ' + (r.borrowed != null ? r.borrowed : 0) + ' 張'}>
-                        {yuantaSendLabel(r)}
+                      <td
+                        className="dtb-td dtb-td--yuanta"
+                        title={'需借 ' + (r.needBorrow != null ? r.needBorrow : parseShareCount(r.shares)) + ' 張 − 已借 ' + (r.borrowed != null ? r.borrowed : 0) + ' 張'}
+                      >
+                        {yuantaEditingKey === r.key ? (
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            className="dtb-yuanta-edit-input"
+                            value={yuantaEditDraft}
+                            aria-label={`${r.stock} 元大借券張數`}
+                            autoFocus
+                            onChange={e => setYuantaEditDraft(e.target.value.replace(/[^\d]/g, ''))}
+                            onBlur={() => commitYuantaEdit(r.key)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                commitYuantaEdit(r.key);
+                              } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                cancelYuantaEdit();
+                              }
+                            }}
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            className="dtb-yuanta-edit-btn"
+                            onClick={() => startYuantaEdit(r)}
+                          >
+                            {yuantaSendLabel(r)}
+                          </button>
+                        )}
                       </td>
                       <td className="dtb-td dtb-td--num">{r.phone}</td>
                       <td className="dtb-td">
@@ -8825,6 +8967,77 @@ function DayTradingBuyback({ state, setState }) {
                 type="button"
                 className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
                 onClick={confirmDeleteDiffRows}
+              >
+                刪除
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {listDeleteConfirmOpen && (
+        <div
+          className="dtb-edit-overlay"
+          onClick={cancelListDelete}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-confirm-modal dtb-diff-delete-confirm"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-list-delete-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-list-delete-modal-title" className="dtb-edit-modal__title">確認刪除</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={cancelListDelete}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+              <p className="dtb-confirm-modal__message">
+                是否確認刪除已勾選的 {selectedCount} 筆現沖賣名單資料？
+              </p>
+              <div className="dtb-diff-delete-summary">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>未回補股票</th>
+                      <th>台股帳號</th>
+                      <th>姓名</th>
+                      <th>元大借券</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedRows.map(row => (
+                      <tr key={row.key}>
+                        <td>{row.stock || '—'}</td>
+                        <td>{row.account || '—'}</td>
+                        <td>{row.name || '—'}</td>
+                        <td>{yuantaSendLabel(row)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={cancelListDelete}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                onClick={confirmListDelete}
               >
                 刪除
               </button>
