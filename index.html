@@ -5732,7 +5732,7 @@ const DTB_DAY_SELL_TABS = [
 const HOLD_COMPARE_TABLE_COLUMNS = [
   { key: 'tradeDate', title: '成交日', numeric: false },
   { key: 'pnr07aTotal', title: 'PNR07A 所有客戶', numeric: true },
-  { key: 'fnr23Company', title: 'FNR23 公司留置款', numeric: true },
+  { key: 'bkr19Company', title: 'BKR19 公司留置款', numeric: true },
   { key: 'compareResult', title: '比對結果', numeric: false },
 ];
 
@@ -5740,7 +5740,7 @@ const HOLD_COMPARE_TABLE_COLUMNS = [
 const HOLD_COMPARE_RAW_ROWS = [
   {
     tradeDate: '115/08/19',
-    fnr23Company: 1940535,
+    bkr19Company: 1940535,
     clients: [
       { id: '025918-3', name: '盧柏瑋', holdAmount: 520000 },
       { id: '077209-7', name: '陳新華', holdAmount: 680000 },
@@ -5749,9 +5749,9 @@ const HOLD_COMPARE_RAW_ROWS = [
     ],
   },
   {
-    // 假資料：PNR07A 合計 850,000 ≠ FNR23 820,000 → 不符
+    // 假資料：PNR07A 合計 850,000 ≠ BKR19 820,000 → 不符
     tradeDate: '115/08/18',
-    fnr23Company: 820000,
+    bkr19Company: 820000,
     clients: [
       { id: '088316-4', name: '林欣妤', holdAmount: 400000 },
       { id: '094512-6', name: '許家豪', holdAmount: 450000 },
@@ -5759,7 +5759,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/15',
-    fnr23Company: 1260000,
+    bkr19Company: 1260000,
     clients: [
       { id: '119835-5', name: '蔡宜君', holdAmount: 380000 },
       { id: '153902-4', name: '潘俊橙', holdAmount: 420000 },
@@ -5768,7 +5768,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/12',
-    fnr23Company: 980000,
+    bkr19Company: 980000,
     clients: [
       { id: '023498-8', name: '張茂程', holdAmount: 310000 },
       { id: '042905-2', name: '蘇宣銘', holdAmount: 270000 },
@@ -5777,7 +5777,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
 ];
 
-/** 真實比對：客戶層 PNR07A＝BKR19A；彙總層 ΣPNR07A＝FNR23 → 相符，否則不符 */
+/** 真實比對：客戶層 PNR07A＝BKR19A；彙總層 ΣPNR07A＝BKR19 → 相符，否則不符 */
 const enrichHoldCompareRow = row => {
   const clients = (row.clients || []).map(c => {
     const holdAmount = Number(c.holdAmount) || 0;
@@ -5792,15 +5792,15 @@ const enrichHoldCompareRow = row => {
   });
   const pnr07aTotal = clients.reduce((sum, c) => sum + c.holdAmount, 0);
   const bkr19aTotal = clients.reduce((sum, c) => sum + c.bkr19aAmount, 0);
-  const fnr23Company = Number(row.fnr23Company) || 0;
+  const bkr19Company = Number(row.bkr19Company) || 0;
   const clientOk = clients.every(c => c.clientMatch);
-  const aggregateOk = pnr07aTotal === bkr19aTotal && pnr07aTotal === fnr23Company;
+  const aggregateOk = pnr07aTotal === bkr19aTotal && pnr07aTotal === bkr19Company;
   return {
     tradeDate: row.tradeDate || '',
     clients,
     pnr07aTotal,
     bkr19aTotal,
-    fnr23Company,
+    bkr19Company,
     compareResult: clientOk && aggregateOk ? '相符' : '不符',
   };
 };
@@ -5873,8 +5873,8 @@ function DayTradingBuyback({ state, setState }) {
   const [borrowerSort, setBorrowerSort] = React.useState({ key: 'no', dir: 'asc' });
   const [taxSort, setTaxSort] = React.useState({ key: 'account', dir: 'asc' });
   const [holdComparePage, setHoldComparePage] = React.useState(1);
-  const [holdCompareQuery, setHoldCompareQuery] = React.useState({ tradeDateStart: '', tradeDateEnd: '' });
-  const [holdCompareApplied, setHoldCompareApplied] = React.useState({ tradeDateStart: '', tradeDateEnd: '' });
+  const [holdCompareQuery, setHoldCompareQuery] = React.useState({ tradeDateStart: '', tradeDateEnd: '', compareResult: '' });
+  const [holdCompareApplied, setHoldCompareApplied] = React.useState({ tradeDateStart: '', tradeDateEnd: '', compareResult: '' });
   const [holdCompareSort, setHoldCompareSort] = React.useState({ key: 'tradeDate', dir: 'desc' });
   const [holdDetailRow, setHoldDetailRow] = React.useState(null);
   const [lendableSort, setLendableSort] = React.useState({ key: 'rate', dir: 'asc' });
@@ -6498,9 +6498,11 @@ function DayTradingBuyback({ state, setState }) {
     const tradeDateStart = parseDiffRocDate(q.tradeDateStart);
     const tradeDateEnd = parseDiffRocDate(q.tradeDateEnd);
     const tradeDate = parseDiffRocDate(r.tradeDate);
+    const compareResultQ = (q.compareResult || '').trim();
     if ((tradeDateStart || tradeDateEnd) && !tradeDate) return false;
     if (tradeDateStart && tradeDate < tradeDateStart) return false;
     if (tradeDateEnd && tradeDate > tradeDateEnd) return false;
+    if (compareResultQ && String(r.compareResult || '') !== compareResultQ) return false;
     return true;
   });
   const sortedHoldCompareRows = sortRowsBy(holdCompareFilteredRows, holdCompareSort, HOLD_COMPARE_TABLE_COLUMNS);
@@ -6867,7 +6869,7 @@ function DayTradingBuyback({ state, setState }) {
     setHoldComparePage(1);
   };
   const clearHoldCompareSearch = () => {
-    const empty = { tradeDateStart: '', tradeDateEnd: '' };
+    const empty = { tradeDateStart: '', tradeDateEnd: '', compareResult: '' };
     setHoldCompareQuery(empty);
     setHoldCompareApplied(empty);
     setHoldComparePage(1);
@@ -7020,7 +7022,7 @@ function DayTradingBuyback({ state, setState }) {
   );
   const [editDraft, setEditDraft] = React.useState(null);
   const [listNotice, setListNotice] = React.useState(null);
-  const listRateNextOkRef = React.useRef(true);
+  const [listRateErrorModal, setListRateErrorModal] = React.useState(null);
   const [listNotifyConfirm, setListNotifyConfirm] = React.useState(null);
   const [listNotifyDraft, setListNotifyDraft] = React.useState({
     title: '',
@@ -7289,13 +7291,14 @@ function DayTradingBuyback({ state, setState }) {
   const submitNotificationSettings = scope => {
     setSubmitConfirmScope(null);
     if (scope === 'listRate') {
-      const ok = listRateNextOkRef.current;
-      listRateNextOkRef.current = !ok;
-      setListNotice(
-        ok
-          ? '設定費率已送出'
-          : '連線錯誤或伺服器異常，請稍後再試'
-      );
+      const roll = Math.random();
+      if (roll < 1 / 3) {
+        setListNotice('設定費率已送出');
+      } else if (roll < 2 / 3) {
+        setListRateErrorModal('連線錯誤或伺服器異常，請稍後再試');
+      } else {
+        setListRateErrorModal('目前人工補單中，請稍後再試');
+      }
       return;
     }
     if (scope === 'auto') {
@@ -7788,7 +7791,13 @@ function DayTradingBuyback({ state, setState }) {
                 variant="primary"
                 size="large"
                 style={{ height: 48, padding: '0 40px', minWidth: 200 }}
-                onClick={() => setSubmitConfirmScope('listRate')}
+                onClick={() => {
+                  if (!hasSelection) {
+                    setListNotice('請先勾選要送出設定費率的名單。');
+                    return;
+                  }
+                  setSubmitConfirmScope('listRate');
+                }}
               >
                 送出設定費率
               </Button>
@@ -8506,14 +8515,27 @@ function DayTradingBuyback({ state, setState }) {
               {[
                 ['tradeDateStart', '成交日起', '起日'],
                 ['tradeDateEnd', '成交日迄', '迄日'],
+                ['compareResult', '比對結果', ''],
               ].map(([key, label, placeholder]) => (
                 <label key={key} className="dtb-diff-query">
                   <span>{label}</span>
-                  <DatePicker
-                    value={holdCompareQuery[key]}
-                    placeholder={placeholder}
-                    onChange={v => setHoldCompareQuery(q => ({ ...q, [key]: v }))}
-                  />
+                  {key === 'compareResult' ? (
+                    <select
+                      className="dtb-diff-query__input"
+                      value={holdCompareQuery.compareResult}
+                      onChange={e => setHoldCompareQuery(q => ({ ...q, compareResult: e.target.value }))}
+                    >
+                      <option value="">所有</option>
+                      <option value="相符">相符</option>
+                      <option value="不符">不符</option>
+                    </select>
+                  ) : (
+                    <DatePicker
+                      value={holdCompareQuery[key]}
+                      placeholder={placeholder}
+                      onChange={v => setHoldCompareQuery(q => ({ ...q, [key]: v }))}
+                    />
+                  )}
                 </label>
               ))}
               <div className="dtb-diff-query-panel__actions">
@@ -8556,7 +8578,7 @@ function DayTradingBuyback({ state, setState }) {
                             >
                               {formatSerp3aAmount(r.pnr07aTotal)}
                             </button>
-                          ) : col.key === 'fnr23Company' ? (
+                          ) : col.key === 'bkr19Company' ? (
                             formatSerp3aAmount(r[col.key])
                           ) : col.key === 'compareResult' ? (
                             <span
@@ -9440,7 +9462,10 @@ function DayTradingBuyback({ state, setState }) {
           role="presentation"
         >
           <div
-            className="dtb-edit-modal dtb-confirm-modal"
+            className={
+              'dtb-edit-modal dtb-confirm-modal'
+              + (submitConfirmScope === 'listRate' ? ' dtb-diff-delete-confirm' : '')
+            }
             onClick={e => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -9448,7 +9473,7 @@ function DayTradingBuyback({ state, setState }) {
           >
             <div className="dtb-edit-modal__head">
               <span id="dtb-submit-settings-modal-title" className="dtb-edit-modal__title">
-                {submitConfirmScope === 'listRate' ? '送出設定費率' : '自動化通知設定'}
+                {submitConfirmScope === 'listRate' ? '確認名單' : '自動化通知設定'}
               </span>
               <button
                 type="button"
@@ -9460,7 +9485,37 @@ function DayTradingBuyback({ state, setState }) {
               </button>
             </div>
             <div className="dtb-edit-modal__body dtb-confirm-modal__body">
-              <p className="dtb-confirm-modal__message">是否確認送出</p>
+              {submitConfirmScope === 'listRate' ? (
+                <>
+                  <p className="dtb-confirm-modal__message">
+                    是否確認送出已勾選的 {selectedCount} 筆現沖賣名單設定費率？
+                  </p>
+                  <div className="dtb-diff-delete-summary">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>未回補股票</th>
+                          <th>台股帳號</th>
+                          <th>姓名</th>
+                          <th>元大借券</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedRows.map(row => (
+                          <tr key={row.key}>
+                            <td>{row.stock || '—'}</td>
+                            <td>{row.account || '—'}</td>
+                            <td>{row.name || '—'}</td>
+                            <td>{yuantaSendLabel(row)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ) : (
+                <p className="dtb-confirm-modal__message">是否確認送出</p>
+              )}
             </div>
             <div className="dtb-edit-modal__actions">
               <button
@@ -9476,6 +9531,46 @@ function DayTradingBuyback({ state, setState }) {
                 onClick={() => submitNotificationSettings(submitConfirmScope)}
               >
                 送出設定
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {listRateErrorModal && (
+        <div
+          className="dtb-edit-overlay"
+          onClick={() => setListRateErrorModal(null)}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-confirm-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-list-rate-error-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-list-rate-error-modal-title" className="dtb-edit-modal__title">送出失敗</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={() => setListRateErrorModal(null)}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+              <p className="dtb-confirm-modal__message">{listRateErrorModal}</p>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                onClick={() => setListRateErrorModal(null)}
+              >
+                確定
               </button>
             </div>
           </div>
