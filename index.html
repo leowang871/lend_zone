@@ -381,6 +381,19 @@ body {
 }
 
 /* 子 TAB：分段按鈕（名單、T日…） */
+.dtb-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.dtb-tabs-row .dtb-tabs {
+  margin-bottom: 0;
+}
+
 .dtb-tabs {
   display: inline-flex;
   align-items: stretch;
@@ -654,8 +667,8 @@ body {
   font-weight: 700;
   background: rgb(247, 247, 247);
 }
-.dtb-hold-detail-total {
-  text-align: right;
+.dtb-hold-detail-modal .dtb-pagination {
+  padding: 12px 0 0;
 }
 
 .dtb-diff-query-panel__actions {
@@ -1636,6 +1649,22 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.dtb-lendable-query__actions-side {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.dtb-match-status-message {
+  margin: 8px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  text-align: center;
+  line-height: 1.6;
 }
 
 .dtb-yuanta-edit-btn {
@@ -5737,15 +5766,29 @@ const HOLD_COMPARE_TABLE_COLUMNS = [
 ];
 
 /** 留置款比對 mock：比對結果由 enrichHoldCompareRow 依數值即時計算（非寫死） */
+const HOLD_COMPARE_PAGE_SIZE = 10;
+const HOLD_DETAIL_PAGE_SIZE = 10;
+
 const HOLD_COMPARE_RAW_ROWS = [
   {
     tradeDate: '115/08/19',
     bkr19Company: 1940535,
     clients: [
-      { id: '025918-3', name: '盧柏瑋', holdAmount: 520000 },
-      { id: '077209-7', name: '陳新華', holdAmount: 680000 },
-      { id: '106728-1', name: '吳佩珊', holdAmount: 410535 },
-      { id: '142681-0', name: '郭書瑋', holdAmount: 330000 },
+      { id: '025918-3', name: '盧柏瑋', holdAmount: 120000 },
+      { id: '077209-7', name: '陳新華', holdAmount: 180000 },
+      { id: '106728-1', name: '吳佩珊', holdAmount: 110535 },
+      { id: '142681-0', name: '郭書瑋', holdAmount: 95000 },
+      { id: '153902-4', name: '潘俊橙', holdAmount: 88000 },
+      { id: '164729-8', name: '張志明', holdAmount: 76000 },
+      { id: '175630-1', name: '李美華', holdAmount: 92000 },
+      { id: '186741-5', name: '陳小美', holdAmount: 105000 },
+      { id: '197852-9', name: '黃雅婷', holdAmount: 84000 },
+      { id: '208963-3', name: '林志豪', holdAmount: 99000 },
+      { id: '219074-7', name: '劉俊宏', holdAmount: 71000 },
+      { id: '023498-8', name: '張茂程', holdAmount: 130000 },
+      { id: '042905-2', name: '蘇宣銘', holdAmount: 145000 },
+      { id: '088316-4', name: '林欣妤', holdAmount: 155000 },
+      { id: '094512-6', name: '許家豪', holdAmount: 390000 },
     ],
   },
   {
@@ -5773,6 +5816,71 @@ const HOLD_COMPARE_RAW_ROWS = [
       { id: '023498-8', name: '張茂程', holdAmount: 310000 },
       { id: '042905-2', name: '蘇宣銘', holdAmount: 270000 },
       { id: '100953-6', name: '翁慧婷', holdAmount: 400000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/11',
+    bkr19Company: 720000,
+    clients: [
+      { id: '025918-3', name: '盧柏瑋', holdAmount: 240000 },
+      { id: '077209-7', name: '陳新華', holdAmount: 480000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/08',
+    bkr19Company: 560000,
+    clients: [
+      { id: '106728-1', name: '吳佩珊', holdAmount: 210000 },
+      { id: '142681-0', name: '郭書瑋', holdAmount: 350000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/07',
+    bkr19Company: 445000,
+    clients: [
+      { id: '119835-5', name: '蔡宜君', holdAmount: 175000 },
+      { id: '153902-4', name: '潘俊橙', holdAmount: 270000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/06',
+    bkr19Company: 910000,
+    clients: [
+      { id: '164729-8', name: '張志明', holdAmount: 310000 },
+      { id: '175630-1', name: '李美華', holdAmount: 280000 },
+      { id: '186741-5', name: '陳小美', holdAmount: 320000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/05',
+    bkr19Company: 630000,
+    clients: [
+      { id: '197852-9', name: '黃雅婷', holdAmount: 300000 },
+      { id: '208963-3', name: '林志豪', holdAmount: 330000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/04',
+    bkr19Company: 505000,
+    clients: [
+      { id: '219074-7', name: '劉俊宏', holdAmount: 205000 },
+      { id: '100953-6', name: '翁慧婷', holdAmount: 300000 },
+    ],
+  },
+  {
+    tradeDate: '115/08/01',
+    bkr19Company: 880000,
+    clients: [
+      { id: '025918-3', name: '盧柏瑋', holdAmount: 440000 },
+      { id: '042905-2', name: '蘇宣銘', holdAmount: 440000 },
+    ],
+  },
+  {
+    tradeDate: '115/07/31',
+    bkr19Company: 390000,
+    clients: [
+      { id: '088316-4', name: '林欣妤', holdAmount: 190000 },
+      { id: '094512-6', name: '許家豪', holdAmount: 200000 },
     ],
   },
 ];
@@ -5824,7 +5932,9 @@ function DayTradingBuyback({ state, setState }) {
   const [listApplied, setListApplied] = React.useState(() => ({ ...DTB_LIST_QUERY_EMPTY }));
   const [selected, setSelected] = React.useState({});
   const [selectAll, setSelectAll] = React.useState(false);
-  const [updatedAt] = React.useState('2026-05-20 15:51:27');
+  const [updatedAt, setUpdatedAt] = React.useState('2026-05-20 15:51:27');
+  const [listMatchStatusOpen, setListMatchStatusOpen] = React.useState(false);
+  const [listMatchStatusMessage, setListMatchStatusMessage] = React.useState('');
   const [viewLendable, setViewLendable] = React.useState(null);
   const [viewLenderRow, setViewLenderRow] = React.useState(null);
   const [lenderTabIdx, setLenderTabIdx] = React.useState(0);
@@ -5877,11 +5987,15 @@ function DayTradingBuyback({ state, setState }) {
   const [holdCompareApplied, setHoldCompareApplied] = React.useState({ tradeDateStart: '', tradeDateEnd: '', compareResult: '' });
   const [holdCompareSort, setHoldCompareSort] = React.useState({ key: 'tradeDate', dir: 'desc' });
   const [holdDetailRow, setHoldDetailRow] = React.useState(null);
+  const [holdDetailPage, setHoldDetailPage] = React.useState(1);
   const [lendableSort, setLendableSort] = React.useState({ key: 'rate', dir: 'asc' });
 
   const BORROW_FREEZE_THRESHOLD = 100000;
   const isListRowFrozen = r => Number(r.borrowAmount) > BORROW_FREEZE_THRESHOLD;
   const isListRowDowngraded = r => Number(r.borrowCount14d || 1) >= 2 || Number(r.borrowAmount) > BORROW_FREEZE_THRESHOLD;
+  const LIST_MATCH_STATUS_MESSAGES = ['已配對完成', '配對中，請稍等', '還沒配對'];
+  const randomListMatchStatusMessage = () =>
+    LIST_MATCH_STATUS_MESSAGES[Math.floor(Math.random() * LIST_MATCH_STATUS_MESSAGES.length)];
   const listDowngradeReason = r => {
     const reasons = [];
     if (Number(r.borrowCount14d || 1) >= 2) reasons.push('兩周內兩次借券');
@@ -6510,7 +6624,9 @@ function DayTradingBuyback({ state, setState }) {
   const diffPaginated = paginateSlice(sortedDiffRows, diffPage, DIFF_PAGE_SIZE);
   const borrowerPaginated = paginateSlice(sortedBorrowerRows, borrowerInfoPage);
   const taxPaginated = paginateSlice(sortedTaxRows, taxPage);
-  const holdComparePaginated = paginateSlice(sortedHoldCompareRows, holdComparePage);
+  const holdComparePaginated = paginateSlice(sortedHoldCompareRows, holdComparePage, HOLD_COMPARE_PAGE_SIZE);
+  const holdDetailClients = holdDetailRow?.clients || [];
+  const holdDetailPaginated = paginateSlice(holdDetailClients, holdDetailPage, HOLD_DETAIL_PAGE_SIZE);
   const diffDeleteRows = diffRowsData.filter(r => diffChecked[diffRowKey(r)]);
 
   const selectedRows = rows.filter(r => selected[r.key]);
@@ -6520,6 +6636,20 @@ function DayTradingBuyback({ state, setState }) {
   const openListDeleteConfirm = () => {
     if (!hasSelection) return;
     setListDeleteConfirmOpen(true);
+  };
+
+  const openListMatchStatus = () => {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    setUpdatedAt(
+      `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+    );
+    setListMatchStatusMessage(randomListMatchStatusMessage());
+    setListMatchStatusOpen(true);
+  };
+  const closeListMatchStatus = () => {
+    setListMatchStatusOpen(false);
+    setListMatchStatusMessage('');
   };
 
   const cancelListDelete = () => setListDeleteConfirmOpen(false);
@@ -6874,8 +7004,14 @@ function DayTradingBuyback({ state, setState }) {
     setHoldCompareApplied(empty);
     setHoldComparePage(1);
   };
-  const openHoldDetailModal = row => setHoldDetailRow(row);
-  const closeHoldDetailModal = () => setHoldDetailRow(null);
+  const openHoldDetailModal = row => {
+    setHoldDetailRow(row);
+    setHoldDetailPage(1);
+  };
+  const closeHoldDetailModal = () => {
+    setHoldDetailRow(null);
+    setHoldDetailPage(1);
+  };
 
   const switchTab = id => {
     if (tab === 'auto' && id !== 'auto') revertAutoSettingsDraft();
@@ -7554,8 +7690,19 @@ function DayTradingBuyback({ state, setState }) {
         <div className="dtb-section-panel">
         {sectionTab === 'daySell' && (
           <>
-        <div className="dtb-tabs" role="tablist" aria-label="現沖賣">
-          {DTB_DAY_SELL_TABS.map(t => tabBtn(t))}
+        <div className="dtb-tabs-row">
+          <div className="dtb-tabs" role="tablist" aria-label="現沖賣">
+            {DTB_DAY_SELL_TABS.map(t => tabBtn(t))}
+          </div>
+          {tab === 'list' && (
+            <button
+              type="button"
+              className="dtb-lendable-btn dtb-lendable-btn--primary"
+              onClick={openListMatchStatus}
+            >
+              重新整理
+            </button>
+          )}
         </div>
 
         {tab === 'list' && (
@@ -7649,14 +7796,16 @@ function DayTradingBuyback({ state, setState }) {
                     匯出手續費率單
                   </button>
                 </div>
-                <button
-                  type="button"
-                  className="dtb-lendable-btn dtb-lendable-btn--ghost"
-                  disabled={!hasSelection}
-                  onClick={openListDeleteConfirm}
-                >
-                  刪除
-                </button>
+                <div className="dtb-lendable-query__actions-side">
+                  <button
+                    type="button"
+                    className="dtb-lendable-btn dtb-lendable-btn--ghost"
+                    disabled={!hasSelection}
+                    onClick={openListDeleteConfirm}
+                  >
+                    刪除
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -8604,6 +8753,7 @@ function DayTradingBuyback({ state, setState }) {
             <TablePagination
               page={holdComparePaginated.page}
               totalItems={sortedHoldCompareRows.length}
+              pageSize={HOLD_COMPARE_PAGE_SIZE}
               onPageChange={setHoldComparePage}
             />
           </div>
@@ -9316,6 +9466,46 @@ function DayTradingBuyback({ state, setState }) {
         </div>
       )}
 
+      {listMatchStatusOpen && (
+        <div
+          className="dtb-edit-overlay"
+          onClick={closeListMatchStatus}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-confirm-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-list-match-status-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-list-match-status-modal-title" className="dtb-edit-modal__title">配對狀態</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={closeListMatchStatus}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+              <p className="dtb-match-status-message">{listMatchStatusMessage}</p>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={closeListMatchStatus}
+              >
+                關閉
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {taxEmailConfirmOpen && (
         <div
           className="dtb-edit-overlay"
@@ -9423,7 +9613,7 @@ function DayTradingBuyback({ state, setState }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {(holdDetailRow.clients || []).map((c, ci) => (
+                    {holdDetailPaginated.items.map((c, ci) => (
                       <tr key={(c.id || 'client') + '-' + ci}>
                         <td>{c.id || '—'}</td>
                         <td>{c.name || '—'}</td>
@@ -9441,6 +9631,12 @@ function DayTradingBuyback({ state, setState }) {
                   </tfoot>
                 </table>
               </div>
+              <TablePagination
+                page={holdDetailPaginated.page}
+                totalItems={holdDetailClients.length}
+                pageSize={HOLD_DETAIL_PAGE_SIZE}
+                onPageChange={setHoldDetailPage}
+              />
             </div>
             <div className="dtb-edit-modal__actions">
               <button
