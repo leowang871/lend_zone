@@ -1682,16 +1682,51 @@ body {
   color: rgb(233, 84, 101);
 }
 
-.dtb-yuanta-edit-input {
-  width: 72px;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid rgb(233, 84, 101);
-  border-radius: 6px;
+.dtb-yuanta-edit-modal.dtb-confirm-modal {
+  max-width: 360px;
+}
+
+.dtb-yuanta-edit-modal .dtb-confirm-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 24px 8px;
+  text-align: left;
+}
+
+.dtb-yuanta-edit-meta {
+  margin: 0;
+  font-size: 13px;
+  color: rgb(113, 112, 113);
+  line-height: 1.55;
+}
+
+.dtb-yuanta-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dtb-yuanta-edit-field > span {
   font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.dtb-yuanta-edit-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgb(200, 201, 202);
+  border-radius: 6px;
+  font-size: 15px;
   font-family: inherit;
   box-sizing: border-box;
   outline: none;
+}
+
+.dtb-yuanta-edit-input:focus {
+  border-color: rgb(233, 84, 101);
 }
 
 .dtb-lendable-result-label {
@@ -6338,7 +6373,7 @@ function DayTradingBuyback({ state, setState }) {
   ];
 
   const [listRowsData, setListRowsData] = React.useState(() => INITIAL_LIST_ROWS.map(r => ({ ...r })));
-  const [yuantaEditingKey, setYuantaEditingKey] = React.useState(null);
+  const [yuantaEditRow, setYuantaEditRow] = React.useState(null);
   const [yuantaEditDraft, setYuantaEditDraft] = React.useState('');
   const [listDeleteConfirmOpen, setListDeleteConfirmOpen] = React.useState(false);
 
@@ -6353,16 +6388,18 @@ function DayTradingBuyback({ state, setState }) {
   };
 
   const startYuantaEdit = row => {
-    setYuantaEditingKey(row.key);
+    setYuantaEditRow(row);
     setYuantaEditDraft(String(listMissingShares(row)));
   };
 
   const cancelYuantaEdit = () => {
-    setYuantaEditingKey(null);
+    setYuantaEditRow(null);
     setYuantaEditDraft('');
   };
 
-  const commitYuantaEdit = rowKey => {
+  const commitYuantaEdit = () => {
+    if (!yuantaEditRow) return;
+    const rowKey = yuantaEditRow.key;
     const raw = String(yuantaEditDraft || '').trim().replace(/[^\d]/g, '');
     const value = raw === '' ? 0 : parseInt(raw, 10);
     const next = Number.isFinite(value) ? Math.max(0, value) : 0;
@@ -6661,7 +6698,7 @@ function DayTradingBuyback({ state, setState }) {
     setSelected({});
     setSelectAll(false);
     setListDeleteConfirmOpen(false);
-    setYuantaEditingKey(null);
+    setYuantaEditRow(null);
     setYuantaEditDraft('');
     setListNotice(`已刪除 ${count} 筆現沖賣名單資料。`);
   };
@@ -7815,17 +7852,8 @@ function DayTradingBuyback({ state, setState }) {
               </div>
               <div className="dtb-list-meta">
                 <span style={{ fontSize: 13, color: PKT.red, fontWeight: 500, whiteSpace: 'nowrap' }}>※每日初始檔案於13:00產出</span>
-                <span style={{ fontSize: 13, color: '#000', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 13, color: '#000', whiteSpace: 'nowrap' }}>
                   資料更新時間：{updatedAt}
-                  <button
-                    type="button"
-                    title="重新整理"
-                    onClick={() => setListNotice('已重新載入名單資料。')}
-                    style={{
-                      width: 22, height: 22, border: 'none', background: 'transparent',
-                      cursor: 'pointer', padding: 0, fontSize: 16, lineHeight: 1,
-                    }}
-                  >↻</button>
                 </span>
               </div>
             </div>
@@ -7884,35 +7912,13 @@ function DayTradingBuyback({ state, setState }) {
                         className="dtb-td dtb-td--yuanta"
                         title={'需借 ' + (r.needBorrow != null ? r.needBorrow : parseShareCount(r.shares)) + ' 張 − 已借 ' + (r.borrowed != null ? r.borrowed : 0) + ' 張'}
                       >
-                        {yuantaEditingKey === r.key ? (
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            className="dtb-yuanta-edit-input"
-                            value={yuantaEditDraft}
-                            aria-label={`${r.stock} 元大借券張數`}
-                            autoFocus
-                            onChange={e => setYuantaEditDraft(e.target.value.replace(/[^\d]/g, ''))}
-                            onBlur={() => commitYuantaEdit(r.key)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                commitYuantaEdit(r.key);
-                              } else if (e.key === 'Escape') {
-                                e.preventDefault();
-                                cancelYuantaEdit();
-                              }
-                            }}
-                          />
-                        ) : (
-                          <button
-                            type="button"
-                            className="dtb-yuanta-edit-btn"
-                            onClick={() => startYuantaEdit(r)}
-                          >
-                            {yuantaSendLabel(r)}
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          className="dtb-yuanta-edit-btn"
+                          onClick={() => startYuantaEdit(r)}
+                        >
+                          {yuantaSendLabel(r)}
+                        </button>
                       </td>
                       <td className="dtb-td dtb-td--num">{r.phone}</td>
                       <td className="dtb-td">
@@ -9460,6 +9466,85 @@ function DayTradingBuyback({ state, setState }) {
                 onClick={confirmListDelete}
               >
                 刪除
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {yuantaEditRow && (
+        <div
+          className="dtb-edit-overlay"
+          onClick={cancelYuantaEdit}
+          role="presentation"
+        >
+          <div
+            className="dtb-edit-modal dtb-confirm-modal dtb-yuanta-edit-modal"
+            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dtb-yuanta-edit-modal-title"
+          >
+            <div className="dtb-edit-modal__head">
+              <span id="dtb-yuanta-edit-modal-title" className="dtb-edit-modal__title">編輯元大借券</span>
+              <button
+                type="button"
+                className="dtb-edit-modal__close"
+                onClick={cancelYuantaEdit}
+                aria-label="關閉"
+              >
+                ×
+              </button>
+            </div>
+            <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+              <p className="dtb-yuanta-edit-meta">
+                {yuantaEditRow.stock || '—'}
+                {' · '}
+                {yuantaEditRow.name || '—'}
+                {'（'}
+                {yuantaEditRow.account || '—'}
+                {'）'}
+                <br />
+                需借 {(yuantaEditRow.needBorrow != null ? yuantaEditRow.needBorrow : parseShareCount(yuantaEditRow.shares))} 張
+                {' − '}
+                已借 {(yuantaEditRow.borrowed != null ? yuantaEditRow.borrowed : 0)} 張
+              </p>
+              <label className="dtb-yuanta-edit-field">
+                <span>元大借券張數</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="dtb-yuanta-edit-input"
+                  value={yuantaEditDraft}
+                  aria-label="元大借券張數"
+                  autoFocus
+                  onChange={e => setYuantaEditDraft(e.target.value.replace(/[^\d]/g, ''))}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      commitYuantaEdit();
+                    } else if (e.key === 'Escape') {
+                      e.preventDefault();
+                      cancelYuantaEdit();
+                    }
+                  }}
+                />
+              </label>
+            </div>
+            <div className="dtb-edit-modal__actions">
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                onClick={cancelYuantaEdit}
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                onClick={commitYuantaEdit}
+              >
+                儲存
               </button>
             </div>
           </div>
