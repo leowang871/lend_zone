@@ -610,6 +610,10 @@ body {
   padding: 0;
 }
 
+.dtb-diff-name-btn--mismatch {
+  color: rgb(220, 38, 38);
+}
+
 .dtb-hold-compare-result {
   font-weight: 700;
 }
@@ -621,7 +625,7 @@ body {
 }
 
 .dtb-hold-detail-modal {
-  width: min(640px, 94vw);
+  width: min(720px, 94vw);
   max-height: 86vh;
 }
 .dtb-hold-detail-modal .dtb-edit-modal__body {
@@ -1656,6 +1660,98 @@ body {
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.dtb-lendable-source {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+.dtb-lendable-source--manual {
+  background: rgb(232, 244, 255);
+  color: rgb(26, 115, 180);
+}
+.dtb-lendable-source--online {
+  background: rgb(245, 245, 246);
+  color: rgb(113, 112, 113);
+}
+
+.dtb-lendable-td--actions {
+  white-space: nowrap;
+  text-align: center;
+}
+.dtb-lendable-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dtb-lendable-row-actions .dtb-lendable-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.dtb-manual-order-modal.dtb-edit-modal {
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+}
+.dtb-manual-order-modal .dtb-edit-modal__body {
+  overflow: auto;
+}
+.dtb-manual-order-form__hint {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: rgb(113, 112, 113);
+}
+.dtb-manual-order-form__grid {
+  display: grid;
+  grid-template-columns: 140px 1fr 140px 1fr;
+  gap: 12px 16px;
+  align-items: center;
+  font-size: 14px;
+}
+.dtb-manual-order-form__label {
+  color: rgb(62, 58, 57);
+  line-height: 1.4;
+}
+.dtb-manual-order-form__label small {
+  display: block;
+  font-size: 12px;
+  color: rgb(113, 112, 113);
+  font-weight: 400;
+}
+.dtb-manual-order-form__value {
+  font-weight: 500;
+  color: #000;
+}
+.dtb-manual-order-form__input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgb(220, 220, 221);
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+.dtb-manual-order-form__input:focus {
+  outline: none;
+  border-color: rgb(26, 115, 180);
+}
+.dtb-manual-order-form__input:disabled,
+.dtb-manual-order-form__input.is-locked {
+  background: rgb(245, 245, 246);
+  color: rgb(62, 58, 57);
+}
+.dtb-manual-order-form__error {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  color: rgb(200, 40, 40);
 }
 
 .dtb-match-status-message {
@@ -5795,8 +5891,8 @@ const DTB_DAY_SELL_TABS = [
 
 const HOLD_COMPARE_TABLE_COLUMNS = [
   { key: 'tradeDate', title: '成交日', numeric: false },
-  { key: 'pnr07aTotal', title: 'PNR07A 所有客戶', numeric: true },
-  { key: 'bkr19Company', title: 'BKR19 公司留置款', numeric: true },
+  { key: 'pnr07aTotal', title: 'PNR07 當日留置', numeric: true },
+  { key: 'fnr23Company', title: 'FNR23 交割彙總', numeric: true },
   { key: 'compareResult', title: '比對結果', numeric: false },
 ];
 
@@ -5807,7 +5903,7 @@ const HOLD_DETAIL_PAGE_SIZE = 10;
 const HOLD_COMPARE_RAW_ROWS = [
   {
     tradeDate: '115/08/19',
-    bkr19Company: 1940535,
+    fnr23Company: 1940535,
     clients: [
       { id: '025918-3', name: '盧柏瑋', holdAmount: 120000 },
       { id: '077209-7', name: '陳新華', holdAmount: 180000 },
@@ -5827,17 +5923,17 @@ const HOLD_COMPARE_RAW_ROWS = [
     ],
   },
   {
-    // 假資料：PNR07A 合計 850,000 ≠ BKR19 820,000 → 不符
+    // 假資料：PNR07A 合計 850,000 ≠ FNR23 820,000 → 不符；客戶層亦有 BKR19 差異
     tradeDate: '115/08/18',
-    bkr19Company: 820000,
+    fnr23Company: 820000,
     clients: [
-      { id: '088316-4', name: '林欣妤', holdAmount: 400000 },
-      { id: '094512-6', name: '許家豪', holdAmount: 450000 },
+      { id: '088316-4', name: '林欣妤', holdAmount: 400000, bkr19aAmount: 400000 },
+      { id: '094512-6', name: '許家豪', holdAmount: 450000, bkr19aAmount: 420000 },
     ],
   },
   {
     tradeDate: '115/08/15',
-    bkr19Company: 1260000,
+    fnr23Company: 1260000,
     clients: [
       { id: '119835-5', name: '蔡宜君', holdAmount: 380000 },
       { id: '153902-4', name: '潘俊橙', holdAmount: 420000 },
@@ -5846,7 +5942,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/12',
-    bkr19Company: 980000,
+    fnr23Company: 980000,
     clients: [
       { id: '023498-8', name: '張茂程', holdAmount: 310000 },
       { id: '042905-2', name: '蘇宣銘', holdAmount: 270000 },
@@ -5855,7 +5951,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/11',
-    bkr19Company: 720000,
+    fnr23Company: 720000,
     clients: [
       { id: '025918-3', name: '盧柏瑋', holdAmount: 240000 },
       { id: '077209-7', name: '陳新華', holdAmount: 480000 },
@@ -5863,7 +5959,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/08',
-    bkr19Company: 560000,
+    fnr23Company: 560000,
     clients: [
       { id: '106728-1', name: '吳佩珊', holdAmount: 210000 },
       { id: '142681-0', name: '郭書瑋', holdAmount: 350000 },
@@ -5871,7 +5967,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/07',
-    bkr19Company: 445000,
+    fnr23Company: 445000,
     clients: [
       { id: '119835-5', name: '蔡宜君', holdAmount: 175000 },
       { id: '153902-4', name: '潘俊橙', holdAmount: 270000 },
@@ -5879,7 +5975,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/06',
-    bkr19Company: 910000,
+    fnr23Company: 910000,
     clients: [
       { id: '164729-8', name: '張志明', holdAmount: 310000 },
       { id: '175630-1', name: '李美華', holdAmount: 280000 },
@@ -5888,7 +5984,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/05',
-    bkr19Company: 630000,
+    fnr23Company: 630000,
     clients: [
       { id: '197852-9', name: '黃雅婷', holdAmount: 300000 },
       { id: '208963-3', name: '林志豪', holdAmount: 330000 },
@@ -5896,7 +5992,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/04',
-    bkr19Company: 505000,
+    fnr23Company: 505000,
     clients: [
       { id: '219074-7', name: '劉俊宏', holdAmount: 205000 },
       { id: '100953-6', name: '翁慧婷', holdAmount: 300000 },
@@ -5904,7 +6000,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/08/01',
-    bkr19Company: 880000,
+    fnr23Company: 880000,
     clients: [
       { id: '025918-3', name: '盧柏瑋', holdAmount: 440000 },
       { id: '042905-2', name: '蘇宣銘', holdAmount: 440000 },
@@ -5912,7 +6008,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
   {
     tradeDate: '115/07/31',
-    bkr19Company: 390000,
+    fnr23Company: 390000,
     clients: [
       { id: '088316-4', name: '林欣妤', holdAmount: 190000 },
       { id: '094512-6', name: '許家豪', holdAmount: 200000 },
@@ -5920,7 +6016,7 @@ const HOLD_COMPARE_RAW_ROWS = [
   },
 ];
 
-/** 真實比對：客戶層 PNR07A＝BKR19A；彙總層 ΣPNR07A＝BKR19 → 相符，否則不符 */
+/** 真實比對：客戶層 PNR07A＝BKR19；彙總層 ΣPNR07A＝FNR23 → 相符，否則不符 */
 const enrichHoldCompareRow = row => {
   const clients = (row.clients || []).map(c => {
     const holdAmount = Number(c.holdAmount) || 0;
@@ -5935,15 +6031,16 @@ const enrichHoldCompareRow = row => {
   });
   const pnr07aTotal = clients.reduce((sum, c) => sum + c.holdAmount, 0);
   const bkr19aTotal = clients.reduce((sum, c) => sum + c.bkr19aAmount, 0);
-  const bkr19Company = Number(row.bkr19Company) || 0;
+  const fnr23Company = Number(row.fnr23Company) || 0;
   const clientOk = clients.every(c => c.clientMatch);
-  const aggregateOk = pnr07aTotal === bkr19aTotal && pnr07aTotal === bkr19Company;
+  const aggregateOk = pnr07aTotal === bkr19aTotal && pnr07aTotal === fnr23Company;
   return {
     tradeDate: row.tradeDate || '',
     clients,
     pnr07aTotal,
     bkr19aTotal,
-    bkr19Company,
+    fnr23Company,
+    clientOk,
     compareResult: clientOk && aggregateOk ? '相符' : '不符',
   };
 };
@@ -6156,28 +6253,90 @@ function DayTradingBuyback({ state, setState }) {
   };
 
   const LENDABLE_DETAIL_POOL = [
-    { parentKey: '1', key: 'ld-1-1', id: 'A123456789', name: '王小明', account: '0411223', phone: '0910123456', stock: '天二 6834', lendableShares: '2張', contactAt: '2026/05/18 14:30', rate: '2%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-1', id: 'M123456789', name: '林志豪', account: '0522334', phone: '0933445566', stock: '日電貿 3090', lendableShares: '5張', contactAt: '2026/05/17 16:45', rate: '4%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-2', id: 'D456789012', name: '黃雅婷', account: '0678456', phone: '0955667788', stock: '日電貿 3090', lendableShares: '3張', contactAt: '2026/05/20 10:20', rate: '1%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-3', id: 'E567890123', name: '劉俊宏', account: '0712345', phone: '0966123456', stock: '日電貿 3090', lendableShares: '2張', contactAt: '2026/05/20 10:40', rate: '2%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-4', id: 'F678901234', name: '吳佩珊', account: '0823456', phone: '0977234567', stock: '日電貿 3090', lendableShares: '2張', contactAt: '2026/05/20 11:05', rate: '5%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-5', id: 'G789012345', name: '鄭宇軒', account: '0934567', phone: '0988345678', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 11:30', rate: '3%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-6', id: 'H890123456', name: '蔡宜君', account: '1045678', phone: '0911456789', stock: '日電貿 3090', lendableShares: '2張', contactAt: '2026/05/20 13:10', rate: '6%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-7', id: 'I901234567', name: '周明德', account: '1156789', phone: '0922567890', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 13:35', rate: '2%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-8', id: 'J012345678', name: '許淑芬', account: '1267890', phone: '0933678901', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 14:00', rate: '7%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-9', id: 'K123450987', name: '張志明', account: '1378901', phone: '0944789012', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 14:25', rate: '4%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-10', id: 'L234560987', name: '李美華', account: '1489012', phone: '0955890123', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 14:50', rate: '1%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-11', id: 'N345670987', name: '郭書瑋', account: '1590123', phone: '0966901234', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:05', rate: '5%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-12', id: 'O456780987', name: '潘俊橙', account: '1601234', phone: '0977012345', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:20', rate: '6%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-13', id: 'P567890987', name: '蔡政倫', account: '1712345', phone: '0988123456', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:35', rate: '3%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-14', id: 'R678900987', name: '張歆怡', account: '1823456', phone: '0919234567', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:50', rate: '2%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-15', id: 'S789010987', name: '洪秉豪', account: '1934567', phone: '0920345678', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:05', rate: '7%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-16', id: 'T890120987', name: '黃奕程', account: '2045678', phone: '0931456789', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:20', rate: '1%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-17', id: 'U901230987', name: '徐筱曼', account: '2156789', phone: '0942567890', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:35', rate: '4%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-18', id: 'V012340987', name: '王建國', account: '2267890', phone: '0953678901', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:50', rate: '2%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-19', id: 'W123450876', name: '林雅婷', account: '2378901', phone: '0964789012', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 17:05', rate: '5%', shares: '1張' },
-    { parentKey: '2', key: 'ld-2-20', id: 'X234560876', name: '許群士', account: '2489012', phone: '0975890123', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 17:20', rate: '6%', shares: '1張' },
+    { parentKey: '1', key: 'ld-1-1', id: 'A123456789', name: '王小明', account: '0411223', phone: '0910123456', stock: '天二 6834', lendableShares: '2張', contactAt: '2026/05/18 14:30', rate: '2%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-1', id: 'M123456789', name: '林志豪', account: '0522334', phone: '0933445566', stock: '日電貿 3090', lendableShares: '5張', contactAt: '2026/05/17 16:45', rate: '4%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-2', id: 'D456789012', name: '黃雅婷', account: '0678456', phone: '0955667788', stock: '日電貿 3090', lendableShares: '3張', contactAt: '2026/05/20 10:20', rate: '1%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-3', id: 'E567890123', name: '劉俊宏', account: '0712345', phone: '0966123456', stock: '日電貿 3090', lendableShares: '2張', contactAt: '2026/05/20 10:40', rate: '2%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-4', id: 'F678901234', name: '吳佩珊', account: '0823456', phone: '0977234567', stock: '日電貿 3090', lendableShares: '2張', contactAt: '2026/05/20 11:05', rate: '5%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-5', id: 'G789012345', name: '鄭宇軒', account: '0934567', phone: '0988345678', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 11:30', rate: '3%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-6', id: 'H890123456', name: '蔡宜君', account: '1045678', phone: '0911456789', stock: '日電貿 3090', lendableShares: '2張', contactAt: '2026/05/20 13:10', rate: '6%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-7', id: 'I901234567', name: '周明德', account: '1156789', phone: '0922567890', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 13:35', rate: '2%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-8', id: 'J012345678', name: '許淑芬', account: '1267890', phone: '0933678901', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 14:00', rate: '7%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-9', id: 'K123450987', name: '張志明', account: '1378901', phone: '0944789012', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 14:25', rate: '4%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-10', id: 'L234560987', name: '李美華', account: '1489012', phone: '0955890123', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 14:50', rate: '1%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-11', id: 'N345670987', name: '郭書瑋', account: '1590123', phone: '0966901234', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:05', rate: '5%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-12', id: 'O456780987', name: '潘俊橙', account: '1601234', phone: '0977012345', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:20', rate: '6%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-13', id: 'P567890987', name: '蔡政倫', account: '1712345', phone: '0988123456', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:35', rate: '3%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-14', id: 'R678900987', name: '張歆怡', account: '1823456', phone: '0919234567', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 15:50', rate: '2%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-15', id: 'S789010987', name: '洪秉豪', account: '1934567', phone: '0920345678', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:05', rate: '7%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-16', id: 'T890120987', name: '黃奕程', account: '2045678', phone: '0931456789', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:20', rate: '1%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-17', id: 'U901230987', name: '徐筱曼', account: '2156789', phone: '0942567890', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:35', rate: '4%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-18', id: 'V012340987', name: '王建國', account: '2267890', phone: '0953678901', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 16:50', rate: '2%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-19', id: 'W123450876', name: '林雅婷', account: '2378901', phone: '0964789012', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 17:05', rate: '5%', shares: '1張', source: 'online' },
+    { parentKey: '2', key: 'ld-2-20', id: 'X234560876', name: '許群士', account: '2489012', phone: '0975890123', stock: '日電貿 3090', lendableShares: '1張', contactAt: '2026/05/20 17:20', rate: '6%', shares: '1張', source: 'online' },
   ];
+
+  const [lendablePoolData, setLendablePoolData] = React.useState(() =>
+    LENDABLE_DETAIL_POOL.map(r => ({ ...r, source: r.source || 'online' }))
+  );
+  const [borrowerInfoRows, setBorrowerInfoRows] = React.useState(() =>
+    BORROWER_INFO_ROWS.map(r => ({
+      ...r,
+      lenders: Array.isArray(r.lenders)
+        ? r.lenders.map(l => ({ ...l, source: l.source || (String(l.lenderName || '').includes('元大') ? 'yuanta' : 'online') }))
+        : r.lenders,
+    }))
+  );
+  const [manualOrderMode, setManualOrderMode] = React.useState(null);
+  const [manualOrderDraft, setManualOrderDraft] = React.useState(null);
+  const [manualOrderError, setManualOrderError] = React.useState('');
+  const [manualOrderConfirmOpen, setManualOrderConfirmOpen] = React.useState(false);
+  const [manualOrderLookupHint, setManualOrderLookupHint] = React.useState('');
+  const [manualDeleteKey, setManualDeleteKey] = React.useState(null);
+  const manualOrderSeqRef = React.useRef(1);
+
+  const MANUAL_LENDER_DIRECTORY = [
+    { name: '黎兆倫', account: '9801778', id: 'A223344556', phone: '0955060501' },
+    { name: '周明德', account: '3344556', id: 'B334455667', phone: '0933123456' },
+    { name: '鄭雅云', account: '0212146', id: 'C445566778', phone: '0988123366' },
+    { name: '王小明', account: '0411223', id: 'A123456789', phone: '0910123456' },
+    { name: '林志豪', account: '0522334', id: 'M123456789', phone: '0933445566' },
+    { name: '黃雅婷', account: '0678456', id: 'D456789012', phone: '0955667788' },
+    { name: '劉俊宏', account: '0712345', id: 'E567890123', phone: '0966123456' },
+  ];
+
+  const formatTodayDate = () => {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
+  };
+
+  const formatNowContactAt = () => {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const isManualLendableRow = row => String(row?.source || '') === 'manual';
+
+  const emptyManualOrderDraft = parent => {
+    const today = formatTodayDate();
+    return {
+      applyDate: today,
+      clientName: '',
+      clientAccount: '',
+      clientId: '',
+      phone: '',
+      stock: parent?.stock || '',
+      lendRateDigits: '3',
+      lendSharesDigits: '1',
+      lenderFeeRate: '0.1',
+      lenderMinFee: '2000',
+      enableDate: today,
+      rateAfterDigits: '3',
+      editKey: null,
+    };
+  };
 
   const LENDABLE_FALLBACK_NAMES = [
     '李大明', '陳小美', '黃先生', '林小姐', '周小姐',
@@ -6202,13 +6361,28 @@ function DayTradingBuyback({ state, setState }) {
       contactAt: `2026/05/${String(18 + (nameIndex % 10)).padStart(2, '0')} ${String(9 + (nameIndex % 8)).padStart(2, '0')}:${String((nameIndex * 7) % 60).padStart(2, '0')}`,
       rate: `${1 + (nameIndex % 7)}%`,
       shares: `${shareCount}張`,
+      source: 'online',
     }];
+  };
+
+  const materializeLendablePoolForParent = (row, pool) => {
+    if (!row) return pool;
+    if (pool.some(d => d.parentKey === row.key)) return pool;
+    return [...pool, ...buildFallbackLendableDetails(row)];
   };
 
   const lendableDetailsForRow = row => {
     if (!row) return [];
-    const pool = LENDABLE_DETAIL_POOL.filter(d => d.parentKey === row.key);
+    const pool = lendablePoolData.filter(d => d.parentKey === row.key);
     return pool.length ? pool : buildFallbackLendableDetails(row);
+  };
+
+  const closeManualOrderModal = () => {
+    setManualOrderMode(null);
+    setManualOrderDraft(null);
+    setManualOrderError('');
+    setManualOrderConfirmOpen(false);
+    setManualOrderLookupHint('');
   };
 
   const closeLendableModal = () => {
@@ -6221,26 +6395,387 @@ function DayTradingBuyback({ state, setState }) {
     setLendableNotice(null);
     setLendableRateAlertOpen(false);
     closeLendableNotifyConfirm();
+    closeManualOrderModal();
+    setManualDeleteKey(null);
     setLendablePage(1);
   };
 
   const openLendableModal = row => {
+    setLendablePoolData(pool => {
+      const next = materializeLendablePoolForParent(row, pool);
+      const detail = next.filter(d => d.parentKey === row.key);
+      const edits = {};
+      detail.forEach(d => { edits[d.key] = { rate: d.rate, shares: d.shares }; });
+      setLendableEdits(edits);
+      return next;
+    });
     setViewLendable(row);
     setLendableQuery({ id: '', account: '', stock: '' });
     setLendableApplied({ id: '', account: '', stock: '' });
     setLendableSelected({});
     setLendableSelectAll(false);
-    const pool = lendableDetailsForRow(row);
-    const edits = {};
-    pool.forEach(d => { edits[d.key] = { rate: d.rate, shares: d.shares }; });
-    pool.forEach(d => {
-      const cap = shareCapForLendableRow(d, pool, edits, row);
-      edits[d.key].shares = clampSharesForRecord(edits[d.key].shares, cap);
-    });
     setLendableNotice(null);
     closeLendableNotifyConfirm();
-    setLendableEdits(edits);
+    closeManualOrderModal();
+    setManualDeleteKey(null);
     setLendablePage(1);
+  };
+
+  const openManualOrderCreate = () => {
+    if (!viewLendable) return;
+    setManualOrderMode('create');
+    setManualOrderDraft(emptyManualOrderDraft(viewLendable));
+    setManualOrderError('');
+    setManualOrderConfirmOpen(false);
+    setManualOrderLookupHint('');
+  };
+
+  const openManualOrderEdit = row => {
+    if (!isManualLendableRow(row)) return;
+    const rateDigits = parseLendableRateDigits(row.rate) || '3';
+    setManualOrderMode('edit');
+    setManualOrderDraft({
+      applyDate: row.applyDate || formatTodayDate(),
+      clientName: row.name || '',
+      clientAccount: row.account || '',
+      clientId: row.id || '',
+      phone: row.phone || '',
+      stock: row.stock || viewLendable?.stock || '',
+      lendRateDigits: rateDigits,
+      lendSharesDigits: parseLendableShareDigits(row.shares) || '1',
+      lenderFeeRate: row.lenderFeeRate != null && String(row.lenderFeeRate).trim() !== '' ? String(row.lenderFeeRate) : '0.1',
+      lenderMinFee: row.lenderMinFee != null && String(row.lenderMinFee).trim() !== '' ? String(row.lenderMinFee) : '2000',
+      enableDate: row.enableDate || row.applyDate || formatTodayDate(),
+      rateAfterDigits: parseLendableRateDigits(row.rateAfter || row.rate) || rateDigits,
+      editKey: row.key,
+    });
+    setManualOrderError('');
+    setManualOrderConfirmOpen(false);
+    setManualOrderLookupHint('');
+  };
+
+  const collectManualLenderDirectory = () => {
+    const seen = new Set();
+    const list = [];
+    const push = r => {
+      const key = `${r.account}|${r.id}|${r.phone}|${r.name}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      list.push(r);
+    };
+    MANUAL_LENDER_DIRECTORY.forEach(push);
+    lendablePoolData.forEach(d => push({
+      name: d.name,
+      account: d.account,
+      id: d.id,
+      phone: d.phone,
+    }));
+    return list;
+  };
+
+  const lookupManualLender = (field, rawValue) => {
+    const q = String(rawValue || '').trim();
+    if (!q) return null;
+    const qLower = q.toLowerCase();
+    const qPhone = q.replace(/\D/g, '');
+    const directory = collectManualLenderDirectory();
+    return directory.find(r => {
+      if (field === 'clientName') {
+        const name = String(r.name || '').toLowerCase();
+        return name === qLower || name.includes(qLower);
+      }
+      if (field === 'clientAccount') return String(r.account || '') === q;
+      if (field === 'clientId') return String(r.id || '').toLowerCase() === qLower;
+      if (field === 'phone') {
+        const phone = String(r.phone || '').replace(/\D/g, '');
+        return phone && qPhone && (phone === qPhone || phone.endsWith(qPhone) || qPhone.endsWith(phone));
+      }
+      return false;
+    }) || null;
+  };
+
+  const applyManualLenderLookup = field => {
+    setManualOrderDraft(d => {
+      if (!d) return d;
+      const hit = lookupManualLender(field, d[field]);
+      if (!hit) {
+        setManualOrderLookupHint('查無相符客戶，請改試其他欄位或確認資料。');
+        return d;
+      }
+      setManualOrderLookupHint('已帶入客戶資料。');
+      return {
+        ...d,
+        clientName: hit.name || '',
+        clientAccount: hit.account || '',
+        clientId: hit.id || '',
+        phone: hit.phone || '',
+      };
+    });
+  };
+
+  const setManualLendRateDigits = digits => {
+    const next = String(digits || '').replace(/\D/g, '').slice(0, 1);
+    setManualOrderDraft(d => (d ? { ...d, lendRateDigits: next, rateAfterDigits: next || d.rateAfterDigits } : d));
+  };
+
+  const syncBorrowerAndYuantaAfterPoolChange = (parentKey, nextPool) => {
+    const parent = listRowsData.find(r => r.key === parentKey) || (viewLendable?.key === parentKey ? viewLendable : null);
+    if (!parent) return;
+    const poolForParent = nextPool.filter(d => d.parentKey === parentKey);
+    const assigned = poolForParent.reduce((sum, d) => sum + parseShareCount(d.shares), 0);
+    const need = parent.needBorrow != null ? parent.needBorrow : parseShareCount(parent.shares);
+    const yuantaGap = Math.max(0, need - assigned);
+
+    setListRowsData(list => list.map(r => (
+      r.key === parentKey
+        ? {
+            ...r,
+            borrowed: assigned,
+            yuantaShares: yuantaGap,
+            lendable: poolForParent.map(d => d.name),
+          }
+        : r
+    )));
+    if (viewLendable?.key === parentKey) {
+      setViewLendable(v => v ? {
+        ...v,
+        borrowed: assigned,
+        yuantaShares: yuantaGap,
+        lendable: poolForParent.map(d => d.name),
+      } : v);
+    }
+
+    const lenders = poolForParent.map(d => ({
+      lenderName: d.name,
+      lenderAccount: d.account,
+      lenderPhone: d.phone,
+      lenderContactTime: String(d.contactAt || '').split(/\s+/).pop() || '',
+      lenderFeeRate: d.lenderFeeRate != null && String(d.lenderFeeRate).trim() !== '' ? d.lenderFeeRate : '0.1',
+      lenderMinFee: d.lenderMinFee != null ? d.lenderMinFee : '',
+      lendShares: String(parseShareCount(d.shares)),
+      lendRate: d.rate,
+      rateBefore: '—',
+      rateAfter: d.rateAfter || d.rate,
+      enableDate: d.enableDate || d.applyDate || formatTodayDate(),
+      source: d.source || 'online',
+      lendableKey: d.key,
+      fillRecord: d.contactAt || '',
+    }));
+    if (yuantaGap > 0) {
+      lenders.push({
+        lenderName: '元大證金',
+        lenderAccount: '',
+        lenderPhone: '',
+        lenderContactTime: '',
+        lenderFeeRate: '0.1',
+        lenderMinFee: '2000',
+        lendShares: String(yuantaGap),
+        lendRate: '—',
+        rateBefore: '—',
+        rateAfter: '—',
+        enableDate: formatTodayDate(),
+        source: 'yuanta',
+      });
+    }
+    const primary = lenders.find(l => l.source !== 'yuanta') || lenders[0] || {};
+    const totalLendShares = poolForParent.reduce((s, d) => s + parseShareCount(d.shares), 0);
+
+    setBorrowerInfoRows(rows => {
+      const idx = rows.findIndex(r =>
+        String(r.borrowerAccount) === String(parent.account)
+        && String(r.stock) === String(parent.stock)
+      );
+      const base = {
+        borrowerName: parent.name,
+        borrowerAccount: parent.account,
+        maxRate: '0.01',
+        minFee: '2000',
+        date: formatTodayDate(),
+        borrowerPhone: parent.phone,
+        borrowerContactTime: idx >= 0 ? (rows[idx].borrowerContactTime || '') : '',
+        stock: parent.stock,
+        borrowShares: String(need),
+        borrowSource: '客戶',
+        sourceCount: String(lenders.length),
+        lenderName: primary.lenderName || '',
+        lenderAccount: primary.lenderAccount || '',
+        lenderPhone: primary.lenderPhone || '',
+        lenderContactTime: primary.lenderContactTime || '',
+        lenderFeeRate: primary.lenderFeeRate || '0.1',
+        lenderMinFee: primary.lenderMinFee || '',
+        rateBefore: '—',
+        rateAfter: primary.rateAfter || primary.lendRate || '',
+        enableDate: primary.enableDate || formatTodayDate(),
+        lendShares: String(totalLendShares + yuantaGap),
+        lendRate: primary.lendRate || '',
+        lenders,
+        note: idx >= 0 ? (rows[idx].note || '') : '',
+        no: idx >= 0 ? rows[idx].no : String(rows.length + 1),
+      };
+      let nextRows;
+      if (idx >= 0) {
+        nextRows = rows.map((r, i) => (i === idx ? { ...r, ...base } : r));
+      } else {
+        nextRows = [...rows, base];
+      }
+      setViewLenderRow(prev => {
+        if (!prev) return prev;
+        if (String(prev.borrowerAccount) === String(parent.account) && String(prev.stock) === String(parent.stock)) {
+          return nextRows.find(r =>
+            String(r.borrowerAccount) === String(parent.account)
+            && String(r.stock) === String(parent.stock)
+          ) || prev;
+        }
+        return prev;
+      });
+      return nextRows;
+    });
+  };
+
+  const validateManualOrderDraft = () => {
+    if (!viewLendable || !manualOrderDraft) return false;
+    const account = String(manualOrderDraft.clientAccount || '').trim();
+    const name = String(manualOrderDraft.clientName || '').trim();
+    const rateN = normalizeLendableRateInput(manualOrderDraft.lendRateDigits);
+    const sharesN = parseInt(String(manualOrderDraft.lendSharesDigits || '').replace(/\D/g, ''), 10);
+    if (!account && !name && !String(manualOrderDraft.clientId || '').trim() && !String(manualOrderDraft.phone || '').trim()) {
+      setManualOrderError('請輸入客戶姓名、帳號、身分證或連絡電話以帶入資料。');
+      return false;
+    }
+    if (!account) {
+      setManualOrderError('請先帶入出借人台股帳號。');
+      return false;
+    }
+    if (!name) {
+      setManualOrderError('請先帶入出借人客戶姓名。');
+      return false;
+    }
+    if (rateN === null) {
+      setManualOrderError(LENDABLE_RATE_ALERT_MSG);
+      return false;
+    }
+    if (!Number.isFinite(sharesN) || sharesN < 1) {
+      setManualOrderError('出借數量須為至少 1 的整數。');
+      return false;
+    }
+    setManualOrderError('');
+    return true;
+  };
+
+  const requestManualOrderCommit = () => {
+    if (!validateManualOrderDraft()) return;
+    setManualOrderConfirmOpen(true);
+  };
+
+  const commitManualOrder = () => {
+    if (!viewLendable || !manualOrderDraft) return;
+    if (!validateManualOrderDraft()) {
+      setManualOrderConfirmOpen(false);
+      return;
+    }
+    const account = String(manualOrderDraft.clientAccount || '').trim();
+    const name = String(manualOrderDraft.clientName || '').trim();
+    const phone = String(manualOrderDraft.phone || '').trim();
+    const clientId = String(manualOrderDraft.clientId || '').trim();
+    const rateN = normalizeLendableRateInput(manualOrderDraft.lendRateDigits);
+    const sharesN = parseInt(String(manualOrderDraft.lendSharesDigits || '').replace(/\D/g, ''), 10);
+    const rate = formatLendableRate(String(rateN));
+    const rateAfter = rate;
+    const shares = `${sharesN}張`;
+    const contactAt = formatNowContactAt();
+    const applyDate = formatTodayDate();
+    const enableDate = applyDate;
+    const lenderFeeRate = String(manualOrderDraft.lenderFeeRate || '0.1').trim() || '0.1';
+    const lenderMinFee = String(manualOrderDraft.lenderMinFee || '2000').trim() || '2000';
+    const stock = viewLendable.stock;
+    const parentKey = viewLendable.key;
+    const isEdit = manualOrderMode === 'edit' && manualOrderDraft.editKey;
+
+    setLendablePoolData(pool => {
+      let next = materializeLendablePoolForParent(viewLendable, pool);
+      if (isEdit) {
+        next = next.map(d => (
+          d.key === manualOrderDraft.editKey
+            ? {
+                ...d,
+                id: clientId || d.id,
+                name,
+                account,
+                phone: phone || d.phone,
+                stock,
+                lendableShares: shares,
+                contactAt,
+                rate,
+                shares,
+                source: 'manual',
+                applyDate,
+                enableDate,
+                rateAfter,
+                lenderFeeRate,
+                lenderMinFee,
+              }
+            : d
+        ));
+      } else {
+        const key = `ld-manual-${parentKey}-${manualOrderSeqRef.current++}`;
+        next = [...next, {
+          parentKey,
+          key,
+          id: clientId || `M${String(Date.now()).slice(-9)}`,
+          name,
+          account,
+          phone: phone || '—',
+          stock,
+          lendableShares: shares,
+          contactAt,
+          rate,
+          shares,
+          source: 'manual',
+          applyDate,
+          enableDate,
+          rateAfter,
+          lenderFeeRate,
+          lenderMinFee,
+        }];
+      }
+      const edits = { ...lendableEdits };
+      next.filter(d => d.parentKey === parentKey).forEach(d => {
+        edits[d.key] = { rate: d.rate, shares: d.shares };
+      });
+      setLendableEdits(edits);
+      syncBorrowerAndYuantaAfterPoolChange(parentKey, next);
+      return next;
+    });
+
+    setLendableNotice(
+      isEdit
+        ? '已更新人工建單出借人，並已同步至借券人資訊。'
+        : '已新增人工建單出借人，並已同步至借券人資訊。'
+    );
+    closeManualOrderModal();
+  };
+
+  const confirmManualDelete = () => {
+    if (!viewLendable || !manualDeleteKey) return;
+    const parentKey = viewLendable.key;
+    const delKey = manualDeleteKey;
+    setLendablePoolData(pool => {
+      const next = pool.filter(d => d.key !== delKey);
+      setLendableEdits(edits => {
+        const copy = { ...edits };
+        delete copy[delKey];
+        return copy;
+      });
+      setLendableSelected(sel => {
+        const copy = { ...sel };
+        delete copy[delKey];
+        return copy;
+      });
+      syncBorrowerAndYuantaAfterPoolChange(parentKey, next);
+      return next;
+    });
+    setManualDeleteKey(null);
+    setLendableNotice('已刪除人工建單出借人。');
   };
 
   const lendablePoolForParent = viewLendable
@@ -6288,6 +6823,7 @@ function DayTradingBuyback({ state, setState }) {
       title: '張數',
       sortValue: r => parseShareCount((lendableEdits[r.key] || { shares: r.shares }).shares),
     },
+    { key: 'actions', title: '操作', sortable: false },
   ];
 
   const lendableSortedRows = sortRowsBy(lendableFiltered, lendableSort, LENDABLE_TABLE_COLUMNS);
@@ -6636,7 +7172,7 @@ function DayTradingBuyback({ state, setState }) {
   const borrowerNameQ = String(borrowerApplied.borrowerName || '').trim().toLowerCase();
   const borrowerAccountQ = String(borrowerApplied.borrowerAccount || '').trim().toLowerCase();
   const borrowerStockQ = String(borrowerApplied.stock || '').trim().toLowerCase();
-  const borrowerFilteredRows = BORROWER_INFO_ROWS.filter(r => {
+  const borrowerFilteredRows = borrowerInfoRows.filter(r => {
     if (borrowerNameQ && !String(r.borrowerName || '').toLowerCase().includes(borrowerNameQ)) return false;
     if (borrowerAccountQ && !String(r.borrowerAccount || '').toLowerCase().includes(borrowerAccountQ)) return false;
     if (borrowerStockQ && !String(r.stock || '').toLowerCase().includes(borrowerStockQ)) return false;
@@ -6966,7 +7502,7 @@ function DayTradingBuyback({ state, setState }) {
   };
 
   const exportBorrowerCsv = () => {
-    const csv = buildBorrowerInfoCsv(BORROWER_INFO_ROWS);
+    const csv = buildBorrowerInfoCsv(borrowerInfoRows);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -8728,12 +9264,15 @@ function DayTradingBuyback({ state, setState }) {
                           {col.key === 'pnr07aTotal' ? (
                             <button
                               type="button"
-                              className="dtb-diff-name-btn"
+                              className={
+                                'dtb-diff-name-btn'
+                                + (r.clientOk === false ? ' dtb-diff-name-btn--mismatch' : '')
+                              }
                               onClick={() => openHoldDetailModal(r)}
                             >
                               {formatSerp3aAmount(r.pnr07aTotal)}
                             </button>
-                          ) : col.key === 'bkr19Company' ? (
+                          ) : col.key === 'fnr23Company' ? (
                             formatSerp3aAmount(r[col.key])
                           ) : col.key === 'compareResult' ? (
                             <span
@@ -8996,16 +9535,27 @@ function DayTradingBuyback({ state, setState }) {
                     />
                   </label>
                 </div>
-                <div className="dtb-lendable-query__actions">
-                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--ghost" onClick={clearLendableQuery}>
-                    清除
-                  </button>
-                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runLendableSearch}>
-                    查詢
-                  </button>
-                  <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportLendableCsv}>
-                    匯出
-                  </button>
+                <div className="dtb-lendable-query__actions dtb-lendable-query__actions--list">
+                  <div className="dtb-lendable-query__actions-main">
+                    <button type="button" className="dtb-lendable-btn dtb-lendable-btn--ghost" onClick={clearLendableQuery}>
+                      清除
+                    </button>
+                    <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={runLendableSearch}>
+                      查詢
+                    </button>
+                    <button type="button" className="dtb-lendable-btn dtb-lendable-btn--primary" onClick={exportLendableCsv}>
+                      匯出
+                    </button>
+                  </div>
+                  <div className="dtb-lendable-query__actions-side">
+                    <button
+                      type="button"
+                      className="dtb-lendable-btn dtb-lendable-btn--primary"
+                      onClick={openManualOrderCreate}
+                    >
+                      人工建單
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -9029,7 +9579,7 @@ function DayTradingBuyback({ state, setState }) {
                             + (['rate', 'assignedShares'].includes(col.key) ? ' dtb-lendable-th--field' : '')
                           }
                         >
-                          {col.sortable === false ? (
+                          {col.key === 'check' ? (
                             <div className="dtb-table__check-wrap">
                               <Checkbox
                                 checked={lendableSelectAll && lendableSortedRows.length > 0}
@@ -9037,6 +9587,8 @@ function DayTradingBuyback({ state, setState }) {
                                 label=""
                               />
                             </div>
+                          ) : col.sortable === false ? (
+                            col.title
                           ) : (
                             <SortHeader
                               title={col.title}
@@ -9053,7 +9605,7 @@ function DayTradingBuyback({ state, setState }) {
                   <tbody>
                     {lendableSortedRows.length === 0 ? (
                       <tr>
-                        <td colSpan={10} className="dtb-lendable-td dtb-lendable-td--empty">
+                        <td colSpan={11} className="dtb-lendable-td dtb-lendable-td--empty">
                           查無符合條件的資料
                         </td>
                       </tr>
@@ -9064,6 +9616,7 @@ function DayTradingBuyback({ state, setState }) {
                           rate: r.rate,
                           shares: clampSharesForRecord(r.shares, shareMax),
                         };
+                        const manual = isManualLendableRow(r);
                         return (
                           <tr key={r.key} className={ri % 2 ? 'dtb-lendable-tr--odd' : 'dtb-lendable-tr--even'}>
                             <td className="dtb-lendable-td dtb-lendable-td--check">
@@ -9076,7 +9629,12 @@ function DayTradingBuyback({ state, setState }) {
                               </div>
                             </td>
                             <td className="dtb-lendable-td dtb-lendable-td--num">{r.id}</td>
-                            <td className="dtb-lendable-td">{r.name}</td>
+                            <td className="dtb-lendable-td">
+                              {r.name}
+                              <span className={'dtb-lendable-source ' + (manual ? 'dtb-lendable-source--manual' : 'dtb-lendable-source--online')}>
+                                {manual ? '人工' : '線上'}
+                              </span>
+                            </td>
                             <td className="dtb-lendable-td dtb-lendable-td--num">{r.account}</td>
                             <td className="dtb-lendable-td dtb-lendable-td--num">{r.phone}</td>
                             <td className="dtb-lendable-td">{r.stock}</td>
@@ -9087,6 +9645,28 @@ function DayTradingBuyback({ state, setState }) {
                             </td>
                             <td className="dtb-lendable-td dtb-lendable-td--num">
                               {edit.shares || r.shares || '—'}
+                            </td>
+                            <td className="dtb-lendable-td dtb-lendable-td--actions">
+                              {manual ? (
+                                <div className="dtb-lendable-row-actions">
+                                  <button
+                                    type="button"
+                                    className="dtb-lendable-btn dtb-lendable-btn--outline"
+                                    onClick={() => openManualOrderEdit(r)}
+                                  >
+                                    編輯
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="dtb-lendable-btn dtb-lendable-btn--ghost"
+                                    onClick={() => setManualDeleteKey(r.key)}
+                                  >
+                                    刪除
+                                  </button>
+                                </div>
+                              ) : (
+                                <span style={{ color: 'rgb(113, 112, 113)', fontSize: 13 }}>—</span>
+                              )}
                             </td>
                           </tr>
                         );
@@ -9214,6 +9794,288 @@ function DayTradingBuyback({ state, setState }) {
                   }}
                 >
                   確認發送
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {manualOrderDraft && (
+          <div
+            className="dtb-edit-overlay dtb-edit-overlay--stack"
+            onClick={closeManualOrderModal}
+            role="presentation"
+          >
+            <div
+              className="dtb-edit-modal dtb-manual-order-modal"
+              onClick={e => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="dtb-manual-order-modal-title"
+            >
+              <div className="dtb-edit-modal__head">
+                <span id="dtb-manual-order-modal-title" className="dtb-edit-modal__title">
+                  {manualOrderMode === 'edit' ? '編輯人工建單' : '人工建單'}
+                </span>
+                <button
+                  type="button"
+                  className="dtb-edit-modal__close"
+                  onClick={closeManualOrderModal}
+                  aria-label="關閉"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="dtb-edit-modal__body">
+                <p className="dtb-manual-order-form__hint">
+                  未回補客戶：{viewLendable?.name}（{viewLendable?.id}）· {viewLendable?.stock}
+                  {' · '}未回補 {parentUnreturnedShares(viewLendable)} 張
+                </p>
+                <p className="dtb-lender-form__apply-date">申請日期 {manualOrderDraft.applyDate}</p>
+                <h3 className="dtb-lender-form__title">{LENDER_INFO_FORM_TITLE}</h3>
+                <hr className="dtb-lender-form__divider" />
+                <div className="dtb-manual-order-form__grid">
+                  <span className="dtb-manual-order-form__label">客戶姓名</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input"
+                    value={manualOrderDraft.clientName}
+                    onChange={e => {
+                      setManualOrderLookupHint('');
+                      setManualOrderDraft(d => ({ ...d, clientName: e.target.value }));
+                    }}
+                    onBlur={() => applyManualLenderLookup('clientName')}
+                    placeholder="輸入後帶入相關欄位"
+                  />
+                  <span className="dtb-manual-order-form__label">客戶帳號</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input"
+                    value={manualOrderDraft.clientAccount}
+                    maxLength={7}
+                    onChange={e => {
+                      setManualOrderLookupHint('');
+                      setManualOrderDraft(d => ({ ...d, clientAccount: e.target.value.replace(/\D/g, '').slice(0, 7) }));
+                    }}
+                    onBlur={() => applyManualLenderLookup('clientAccount')}
+                    placeholder="台股帳號 7 碼"
+                  />
+                  <span className="dtb-manual-order-form__label">身分證字號</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input"
+                    value={manualOrderDraft.clientId}
+                    onChange={e => {
+                      setManualOrderLookupHint('');
+                      setManualOrderDraft(d => ({ ...d, clientId: e.target.value }));
+                    }}
+                    onBlur={() => applyManualLenderLookup('clientId')}
+                    placeholder="輸入後帶入相關欄位"
+                  />
+                  <span className="dtb-manual-order-form__label">連絡電話</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input"
+                    value={manualOrderDraft.phone}
+                    onChange={e => {
+                      setManualOrderLookupHint('');
+                      setManualOrderDraft(d => ({ ...d, phone: e.target.value }));
+                    }}
+                    onBlur={() => applyManualLenderLookup('phone')}
+                    placeholder="輸入後帶入相關欄位"
+                  />
+                  <span className="dtb-manual-order-form__label">證券代號名稱</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input is-locked"
+                    value={manualOrderDraft.stock}
+                    disabled
+                    readOnly
+                  />
+                  <span className="dtb-manual-order-form__label">出借費率</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input"
+                    value={manualOrderDraft.lendRateDigits}
+                    onChange={e => setManualLendRateDigits(e.target.value)}
+                    placeholder="1～7"
+                    aria-label="出借費率百分比"
+                  />
+                  <span className="dtb-manual-order-form__label">出借數量</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input"
+                    value={manualOrderDraft.lendSharesDigits}
+                    onChange={e => setManualOrderDraft(d => ({ ...d, lendSharesDigits: e.target.value.replace(/\D/g, '').slice(0, 3) }))}
+                    placeholder="張數"
+                  />
+                  <span className="dtb-manual-order-form__label">
+                    出借人手續費費率
+                    <small>(10%須寫上0.1)</small>
+                  </span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input is-locked"
+                    value={manualOrderDraft.lenderFeeRate}
+                    disabled
+                    readOnly
+                  />
+                  <span className="dtb-manual-order-form__label">出借人最低手續費</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input is-locked"
+                    value={manualOrderDraft.lenderMinFee}
+                    disabled
+                    readOnly
+                  />
+                  <span className="dtb-manual-order-form__label">啟用日期</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input is-locked"
+                    value={manualOrderDraft.enableDate}
+                    disabled
+                    readOnly
+                  />
+                  <span className="dtb-manual-order-form__label">變更後費率</span>
+                  <input
+                    type="text"
+                    className="dtb-manual-order-form__input is-locked"
+                    value={manualOrderDraft.rateAfterDigits ? `${manualOrderDraft.rateAfterDigits}%` : '—'}
+                    disabled
+                    readOnly
+                  />
+                  {manualOrderLookupHint ? (
+                    <p className="dtb-manual-order-form__hint" style={{ gridColumn: '1 / -1', margin: 0 }} role="status">
+                      {manualOrderLookupHint}
+                    </p>
+                  ) : null}
+                  {manualOrderError ? (
+                    <p className="dtb-manual-order-form__error" role="alert">{manualOrderError}</p>
+                  ) : null}
+                </div>
+              </div>
+              <div className="dtb-edit-modal__actions">
+                <button
+                  type="button"
+                  className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                  onClick={closeManualOrderModal}
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                  onClick={requestManualOrderCommit}
+                >
+                  {manualOrderMode === 'edit' ? '儲存' : '確認建單'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {manualOrderConfirmOpen && manualOrderDraft && (
+          <div
+            className="dtb-edit-overlay dtb-edit-overlay--stack"
+            onClick={() => setManualOrderConfirmOpen(false)}
+            role="presentation"
+          >
+            <div
+              className="dtb-edit-modal dtb-confirm-modal"
+              onClick={e => e.stopPropagation()}
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="dtb-manual-order-confirm-title"
+            >
+              <div className="dtb-edit-modal__head">
+                <span id="dtb-manual-order-confirm-title" className="dtb-edit-modal__title">
+                  {manualOrderMode === 'edit' ? '確認儲存人工建單' : '確認人工建單'}
+                </span>
+                <button
+                  type="button"
+                  className="dtb-edit-modal__close"
+                  onClick={() => setManualOrderConfirmOpen(false)}
+                  aria-label="關閉"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+                <p className="dtb-confirm-modal__message">
+                  {manualOrderMode === 'edit' ? '確定儲存此人工建單？' : '確定新增此人工建單？'}
+                  <br />
+                  出借人：{manualOrderDraft.clientName || '—'}（{manualOrderDraft.clientAccount || '—'}）
+                  <br />
+                  標的：{manualOrderDraft.stock || '—'}
+                  <br />
+                  出借 {manualOrderDraft.lendSharesDigits || '—'} 張 · 費率 {manualOrderDraft.lendRateDigits || '—'}%
+                  <br />
+                  確認後將重算元大借券並同步至借券人資訊。
+                </p>
+              </div>
+              <div className="dtb-edit-modal__actions">
+                <button
+                  type="button"
+                  className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                  onClick={() => setManualOrderConfirmOpen(false)}
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                  onClick={commitManualOrder}
+                >
+                  確認
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {manualDeleteKey && (
+          <div
+            className="dtb-edit-overlay dtb-edit-overlay--stack"
+            onClick={() => setManualDeleteKey(null)}
+            role="presentation"
+          >
+            <div
+              className="dtb-edit-modal dtb-confirm-modal"
+              onClick={e => e.stopPropagation()}
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="dtb-manual-delete-title"
+            >
+              <div className="dtb-edit-modal__head">
+                <span id="dtb-manual-delete-title" className="dtb-edit-modal__title">刪除人工建單</span>
+                <button
+                  type="button"
+                  className="dtb-edit-modal__close"
+                  onClick={() => setManualDeleteKey(null)}
+                  aria-label="關閉"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="dtb-edit-modal__body dtb-confirm-modal__body">
+                <p className="dtb-confirm-modal__message">
+                  確定刪除此人工建單出借人？刪除後將重算元大借券並同步借券人資訊。
+                </p>
+              </div>
+              <div className="dtb-edit-modal__actions">
+                <button
+                  type="button"
+                  className="dtb-edit-modal__btn dtb-edit-modal__btn--cancel"
+                  onClick={() => setManualDeleteKey(null)}
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  className="dtb-edit-modal__btn dtb-edit-modal__btn--confirm"
+                  onClick={confirmManualDelete}
+                >
+                  確認刪除
                 </button>
               </div>
             </div>
@@ -9694,7 +10556,9 @@ function DayTradingBuyback({ state, setState }) {
                     <tr>
                       <th>ID</th>
                       <th>客戶姓名</th>
-                      <th className="dtb-td--num">交易留置款</th>
+                      <th className="dtb-td--num">BKR19 留置款</th>
+                      <th className="dtb-td--num">PNR07A 留置款</th>
+                      <th>比對結果</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -9702,7 +10566,20 @@ function DayTradingBuyback({ state, setState }) {
                       <tr key={(c.id || 'client') + '-' + ci}>
                         <td>{c.id || '—'}</td>
                         <td>{c.name || '—'}</td>
+                        <td className="dtb-td--num">{formatSerp3aAmount(c.bkr19aAmount)}</td>
                         <td className="dtb-td--num">{formatSerp3aAmount(c.holdAmount)}</td>
+                        <td>
+                          <span
+                            className={
+                              'dtb-hold-compare-result'
+                              + (c.clientMatch
+                                ? ' dtb-hold-compare-result--ok'
+                                : ' dtb-hold-compare-result--ng')
+                            }
+                          >
+                            {c.clientMatch ? '相符' : '不符'}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -9710,8 +10587,12 @@ function DayTradingBuyback({ state, setState }) {
                     <tr>
                       <td colSpan={2} />
                       <td className="dtb-td--num dtb-hold-detail-total">
+                        總計：{formatSerp3aAmount(holdDetailRow.bkr19aTotal)}
+                      </td>
+                      <td className="dtb-td--num dtb-hold-detail-total">
                         總計：{formatSerp3aAmount(holdDetailRow.pnr07aTotal)}
                       </td>
+                      <td />
                     </tr>
                   </tfoot>
                 </table>
