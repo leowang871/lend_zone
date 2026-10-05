@@ -1638,7 +1638,9 @@ body {
   border-color: rgb(200, 201, 202);
 }
 
-.dtb-lendable-btn--ghost:disabled {
+.dtb-lendable-btn--ghost:disabled,
+.dtb-lendable-btn--primary:disabled,
+.dtb-lendable-btn--outline:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
@@ -7051,6 +7053,13 @@ function DayTradingBuyback({ state, setState }) {
     return Math.max(0, total - borrowed);
   };
 
+  /** 出借的客戶：僅元大借券 ≠ 0 時可按人工建單 */
+  const canCreateManualOrder = (() => {
+    if (!viewLendable) return false;
+    const parentRow = listRowsData.find(r => r.key === viewLendable.key) || viewLendable;
+    return listMissingShares(parentRow) > 0;
+  })();
+
   const startYuantaEdit = row => {
     setYuantaEditRow(row);
     setYuantaEditDraft(String(listMissingShares(row)));
@@ -9621,9 +9630,6 @@ function DayTradingBuyback({ state, setState }) {
                 未回補客戶：{viewLendable.name}（{viewLendable.id}）· {viewLendable.stock}
                 {' · '}未回補 {parentUnreturnedShares(viewLendable)} 張
                 {' · '}出借合計 {lendableAssignedTotal(lendablePoolForParent, lendableEdits)} 張
-                {lendableAssignedTotal(lendablePoolForParent, lendableEdits) !== parentUnreturnedShares(viewLendable) && (
-                  <span style={{ color: PKT.red }}>（出借張數須等於未回補股數）</span>
-                )}
               </p>
               {listRowFrozen && (
                 <p className="dtb-lendable-freeze-notice" role="status">
@@ -9680,6 +9686,8 @@ function DayTradingBuyback({ state, setState }) {
                       type="button"
                       className="dtb-lendable-btn dtb-lendable-btn--primary"
                       onClick={openManualOrderCreate}
+                      disabled={!canCreateManualOrder}
+                      title={canCreateManualOrder ? '人工建單' : '元大借券為 0 時不可人工建單'}
                     >
                       人工建單
                     </button>
