@@ -1696,11 +1696,14 @@ body {
 }
 
 .dtb-manual-order-modal.dtb-edit-modal {
-  width: min(720px, calc(100vw - 32px));
-  max-height: calc(100vh - 48px);
+  width: min(1080px, calc(100vw - 48px));
+  max-width: min(1080px, calc(100vw - 48px));
+  max-height: calc(100vh - 40px);
 }
 .dtb-manual-order-modal .dtb-edit-modal__body {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 20px 32px 12px;
 }
 .dtb-manual-order-form__hint {
   margin: 0 0 16px;
@@ -1709,8 +1712,8 @@ body {
 }
 .dtb-manual-order-form__grid {
   display: grid;
-  grid-template-columns: 140px 1fr 140px 1fr;
-  gap: 12px 16px;
+  grid-template-columns: 132px minmax(220px, 1fr) 132px minmax(220px, 1fr);
+  gap: 14px 24px;
   align-items: center;
   font-size: 14px;
 }
@@ -1752,6 +1755,37 @@ body {
   margin: 0;
   font-size: 13px;
   color: rgb(200, 40, 40);
+}
+
+.dtb-manual-order-form__fill-time {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+.dtb-manual-order-form__fill-time .dtb-manual-order-form__input {
+  flex: 0 0 118px;
+  width: 118px;
+  min-width: 118px;
+}
+.dtb-manual-order-form__fill-time .dtb-time-picker {
+  flex: 0 0 200px;
+  width: 200px;
+  max-width: 200px;
+  min-width: 200px;
+}
+.dtb-manual-order-form__fill-time .dtb-time-picker__trigger {
+  width: 200px;
+  box-sizing: border-box;
+  height: 36px;
+}
+.dtb-manual-order-modal .dtb-time-picker__panel,
+.dtb-manual-order-modal .dtb-time-picker__panel--top {
+  width: 228px !important;
+  min-width: 228px !important;
+  max-width: 228px !important;
 }
 
 .dtb-match-status-message {
@@ -2222,6 +2256,11 @@ input[type=number] {
   border-radius: 4px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
   overflow: hidden;
+}
+
+.dtb-time-picker__panel--top {
+  top: auto;
+  bottom: calc(100% + 4px);
 }
 
 .dtb-time-picker__col {
@@ -4396,12 +4435,14 @@ const T0_NOTIFY_ALLOWED_TIMES = buildAllowedTimes(
   T0_NOTIFY_TIME_STEP
 );
 
-function TimePicker({ value, onChange, minTime, maxTime, minuteStep }) {
+function TimePicker({ value, onChange, minTime, maxTime, minuteStep, placement = 'bottom' }) {
   const allowed = (minTime && maxTime && minuteStep)
     ? buildAllowedTimes(minTime, maxTime, minuteStep)
     : null;
   const [open, setOpen] = React.useState(false);
   const wrapRef = React.useRef(null);
+  const panelRef = React.useRef(null);
+  const [panelPos, setPanelPos] = React.useState(null);
   const [parts, setParts] = React.useState(() => time24ToParts(
     allowed ? clampToNearestAllowedTime(value, allowed) : value
   ));
@@ -4411,10 +4452,42 @@ function TimePicker({ value, onChange, minTime, maxTime, minuteStep }) {
     setParts(time24ToParts(nextValue));
   }, [value, minTime, maxTime, minuteStep]);
 
+  React.useLayoutEffect(() => {
+    if (!open || placement !== 'top' || !wrapRef.current) {
+      setPanelPos(null);
+      return undefined;
+    }
+    const updatePos = () => {
+      const rect = wrapRef.current.getBoundingClientRect();
+      const panelWidth = 228;
+      const left = Math.min(
+        Math.max(8, rect.left),
+        Math.max(8, window.innerWidth - panelWidth - 8)
+      );
+      setPanelPos({
+        position: 'fixed',
+        left,
+        width: panelWidth,
+        bottom: Math.max(8, window.innerHeight - rect.top + 4),
+        top: 'auto',
+        zIndex: 12000,
+      });
+    };
+    updatePos();
+    window.addEventListener('resize', updatePos);
+    window.addEventListener('scroll', updatePos, true);
+    return () => {
+      window.removeEventListener('resize', updatePos);
+      window.removeEventListener('scroll', updatePos, true);
+    };
+  }, [open, placement]);
+
   React.useEffect(() => {
     if (!open) return undefined;
     const onDoc = e => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+      const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
+      if (!inWrap && !inPanel) setOpen(false);
     };
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
@@ -4484,7 +4557,7 @@ function TimePicker({ value, onChange, minTime, maxTime, minuteStep }) {
   const label = `${parts.period} ${parts.hour} : ${parts.minute}`;
 
   return (
-    <div className="dtb-time-picker" ref={wrapRef}>
+    <div className={'dtb-time-picker' + (placement === 'top' ? ' dtb-time-picker--drop-up' : '')} ref={wrapRef}>
       <button
         type="button"
         className="dtb-time-picker__trigger"
@@ -4496,7 +4569,12 @@ function TimePicker({ value, onChange, minTime, maxTime, minuteStep }) {
         <span className="dtb-time-picker__clock" aria-hidden="true">🕐</span>
       </button>
       {open && (
-        <div className="dtb-time-picker__panel" role="listbox">
+        <div
+          ref={panelRef}
+          className={'dtb-time-picker__panel' + (placement === 'top' ? ' dtb-time-picker__panel--top' : '')}
+          style={panelPos || undefined}
+          role="listbox"
+        >
           {column(periods, parts.period, p => update({ ...parts, period: p }))}
           {column(hours, parts.hour, h => update({ ...parts, hour: h }))}
           {column(minutes, parts.minute, m => update({ ...parts, minute: m }))}
@@ -5125,7 +5203,7 @@ const lenderDetailFromSlice = (row, lender) => ({
   rateAfter: lender.rateAfter || lender.lendRate || '—',
   notifyPhone: lender.lenderPhone || '—',
   notifyTime: lender.lenderContactTime || '—',
-  fillRecord: lender.fillRecord || row.fillRecord || `${String(row.date || '—').replace(/\//g, ':')} ${lender.lenderContactTime || row.lenderContactTime || '—'}`,
+  fillRecord: lender.fillRecord || row.fillRecord || `${String(row.date || '—').replace(/:/g, '/')} ${lender.lenderContactTime || row.lenderContactTime || '—'}`,
   sendingZhongfeiRecord: lender.sendingZhongfeiRecord || row.sendingZhongfeiRecord || '尚無傳送中菲紀錄',
 });
 
@@ -6317,12 +6395,32 @@ function DayTradingBuyback({ state, setState }) {
     return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   };
 
+  const formatNowTime24 = () => {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  /** 填寫紀錄格式：2026/05/22 14:51 */
+  const formatManualFillRecord = (dateText, time24) => {
+    const datePart = String(dateText || formatTodayDate()).replace(/:/g, '/');
+    const timePart = String(time24 || '00:00').trim() || '00:00';
+    return `${datePart} ${timePart}`;
+  };
+
+  const parseFillTimeFromRecord = text => {
+    const m = String(text || '').match(/(\d{1,2}):(\d{2})\s*$/);
+    if (!m) return formatNowTime24();
+    return `${String(parseInt(m[1], 10)).padStart(2, '0')}:${m[2]}`;
+  };
+
   const isManualLendableRow = row => String(row?.source || '') === 'manual';
 
   const emptyManualOrderDraft = parent => {
     const today = formatTodayDate();
     return {
       applyDate: today,
+      fillTime: formatNowTime24(),
       clientName: '',
       clientAccount: '',
       clientId: '',
@@ -6433,9 +6531,11 @@ function DayTradingBuyback({ state, setState }) {
   const openManualOrderEdit = row => {
     if (!isManualLendableRow(row)) return;
     const rateDigits = parseLendableRateDigits(row.rate) || '3';
+    const today = formatTodayDate();
     setManualOrderMode('edit');
     setManualOrderDraft({
-      applyDate: row.applyDate || formatTodayDate(),
+      applyDate: today,
+      fillTime: parseFillTimeFromRecord(row.fillRecord || row.contactAt),
       clientName: row.name || '',
       clientAccount: row.account || '',
       clientId: row.id || '',
@@ -6445,7 +6545,7 @@ function DayTradingBuyback({ state, setState }) {
       lendSharesDigits: parseLendableShareDigits(row.shares) || '1',
       lenderFeeRate: row.lenderFeeRate != null && String(row.lenderFeeRate).trim() !== '' ? String(row.lenderFeeRate) : '0.1',
       lenderMinFee: row.lenderMinFee != null && String(row.lenderMinFee).trim() !== '' ? String(row.lenderMinFee) : '2000',
-      enableDate: row.enableDate || row.applyDate || formatTodayDate(),
+      enableDate: row.enableDate || today,
       rateAfterDigits: parseLendableRateDigits(row.rateAfter || row.rate) || rateDigits,
       editKey: row.key,
     });
@@ -6473,36 +6573,56 @@ function DayTradingBuyback({ state, setState }) {
     return list;
   };
 
+  /** 姓名／帳號／身分證／連絡電話：輸入任一欄，帶入其餘欄位 */
+  const MANUAL_IDENTITY_LOOKUP_FIELDS = ['clientName', 'clientAccount', 'clientId', 'phone'];
+
   const lookupManualLender = (field, rawValue) => {
     const q = String(rawValue || '').trim();
     if (!q) return null;
     const qLower = q.toLowerCase();
     const qPhone = q.replace(/\D/g, '');
     const directory = collectManualLenderDirectory();
+    const exact = directory.find(r => {
+      if (field === 'clientName') return String(r.name || '').toLowerCase() === qLower;
+      if (field === 'clientAccount') return String(r.account || '') === q;
+      if (field === 'clientId') return String(r.id || '').toLowerCase() === qLower;
+      if (field === 'phone') {
+        const phone = String(r.phone || '').replace(/\D/g, '');
+        return phone && qPhone && phone === qPhone;
+      }
+      return false;
+    });
+    if (exact) return exact;
     return directory.find(r => {
       if (field === 'clientName') {
         const name = String(r.name || '').toLowerCase();
-        return name === qLower || name.includes(qLower);
+        return name.includes(qLower);
       }
       if (field === 'clientAccount') return String(r.account || '') === q;
       if (field === 'clientId') return String(r.id || '').toLowerCase() === qLower;
       if (field === 'phone') {
         const phone = String(r.phone || '').replace(/\D/g, '');
-        return phone && qPhone && (phone === qPhone || phone.endsWith(qPhone) || qPhone.endsWith(phone));
+        return phone && qPhone && (phone.endsWith(qPhone) || qPhone.endsWith(phone));
       }
       return false;
     }) || null;
   };
 
   const applyManualLenderLookup = field => {
+    if (!MANUAL_IDENTITY_LOOKUP_FIELDS.includes(field)) return;
     setManualOrderDraft(d => {
       if (!d) return d;
-      const hit = lookupManualLender(field, d[field]);
-      if (!hit) {
-        setManualOrderLookupHint('查無相符客戶，請改試其他欄位或確認資料。');
+      const raw = String(d[field] || '').trim();
+      if (!raw) {
+        setManualOrderLookupHint('');
         return d;
       }
-      setManualOrderLookupHint('已帶入客戶資料。');
+      const hit = lookupManualLender(field, raw);
+      if (!hit) {
+        setManualOrderLookupHint('查無相符客戶');
+        return d;
+      }
+      setManualOrderLookupHint('');
       return {
         ...d,
         clientName: hit.name || '',
@@ -6545,22 +6665,26 @@ function DayTradingBuyback({ state, setState }) {
       } : v);
     }
 
-    const lenders = poolForParent.map(d => ({
-      lenderName: d.name,
-      lenderAccount: d.account,
-      lenderPhone: d.phone,
-      lenderContactTime: String(d.contactAt || '').split(/\s+/).pop() || '',
-      lenderFeeRate: d.lenderFeeRate != null && String(d.lenderFeeRate).trim() !== '' ? d.lenderFeeRate : '0.1',
-      lenderMinFee: d.lenderMinFee != null ? d.lenderMinFee : '',
-      lendShares: String(parseShareCount(d.shares)),
-      lendRate: d.rate,
-      rateBefore: '—',
-      rateAfter: d.rateAfter || d.rate,
-      enableDate: d.enableDate || d.applyDate || formatTodayDate(),
-      source: d.source || 'online',
-      lendableKey: d.key,
-      fillRecord: d.contactAt || '',
-    }));
+    const lenders = poolForParent.map(d => {
+      const fillRecord = d.fillRecord
+        || (d.contactAt ? String(d.contactAt).replace(/:/g, '/') : '');
+      return {
+        lenderName: d.name,
+        lenderAccount: d.account,
+        lenderPhone: d.phone,
+        lenderContactTime: String(fillRecord || d.contactAt || '').split(/\s+/).pop() || '',
+        lenderFeeRate: d.lenderFeeRate != null && String(d.lenderFeeRate).trim() !== '' ? d.lenderFeeRate : '0.1',
+        lenderMinFee: d.lenderMinFee != null ? d.lenderMinFee : '',
+        lendShares: String(parseShareCount(d.shares)),
+        lendRate: d.rate,
+        rateBefore: '—',
+        rateAfter: d.rateAfter || d.rate,
+        enableDate: d.enableDate || d.applyDate || formatTodayDate(),
+        source: d.source || 'online',
+        lendableKey: d.key,
+        fillRecord,
+      };
+    });
     if (yuantaGap > 0) {
       lenders.push({
         lenderName: '元大證金',
@@ -6682,8 +6806,10 @@ function DayTradingBuyback({ state, setState }) {
     const rate = formatLendableRate(String(rateN));
     const rateAfter = rate;
     const shares = `${sharesN}張`;
-    const contactAt = formatNowContactAt();
     const applyDate = formatTodayDate();
+    const fillTime = String(manualOrderDraft.fillTime || formatNowTime24()).trim() || formatNowTime24();
+    const fillRecord = formatManualFillRecord(applyDate, fillTime);
+    const contactAt = `${applyDate} ${fillTime}`;
     const enableDate = applyDate;
     const lenderFeeRate = String(manualOrderDraft.lenderFeeRate || '0.1').trim() || '0.1';
     const lenderMinFee = String(manualOrderDraft.lenderMinFee || '2000').trim() || '2000';
@@ -6705,6 +6831,7 @@ function DayTradingBuyback({ state, setState }) {
                 stock,
                 lendableShares: shares,
                 contactAt,
+                fillRecord,
                 rate,
                 shares,
                 source: 'manual',
@@ -6728,6 +6855,7 @@ function DayTradingBuyback({ state, setState }) {
           stock,
           lendableShares: shares,
           contactAt,
+          fillRecord,
           rate,
           shares,
           source: 'manual',
@@ -9845,7 +9973,7 @@ function DayTradingBuyback({ state, setState }) {
                       setManualOrderDraft(d => ({ ...d, clientName: e.target.value }));
                     }}
                     onBlur={() => applyManualLenderLookup('clientName')}
-                    placeholder="輸入後帶入相關欄位"
+                    placeholder="請輸入客戶姓名"
                   />
                   <span className="dtb-manual-order-form__label">客戶帳號</span>
                   <input
@@ -9858,7 +9986,7 @@ function DayTradingBuyback({ state, setState }) {
                       setManualOrderDraft(d => ({ ...d, clientAccount: e.target.value.replace(/\D/g, '').slice(0, 7) }));
                     }}
                     onBlur={() => applyManualLenderLookup('clientAccount')}
-                    placeholder="台股帳號 7 碼"
+                    placeholder="請輸入客戶帳號"
                   />
                   <span className="dtb-manual-order-form__label">身分證字號</span>
                   <input
@@ -9870,7 +9998,7 @@ function DayTradingBuyback({ state, setState }) {
                       setManualOrderDraft(d => ({ ...d, clientId: e.target.value }));
                     }}
                     onBlur={() => applyManualLenderLookup('clientId')}
-                    placeholder="輸入後帶入相關欄位"
+                    placeholder="請輸入身分證字號"
                   />
                   <span className="dtb-manual-order-form__label">連絡電話</span>
                   <input
@@ -9882,7 +10010,7 @@ function DayTradingBuyback({ state, setState }) {
                       setManualOrderDraft(d => ({ ...d, phone: e.target.value }));
                     }}
                     onBlur={() => applyManualLenderLookup('phone')}
-                    placeholder="輸入後帶入相關欄位"
+                    placeholder="請輸入連絡電話"
                   />
                   <span className="dtb-manual-order-form__label">證券代號名稱</span>
                   <input
@@ -9944,8 +10072,24 @@ function DayTradingBuyback({ state, setState }) {
                     disabled
                     readOnly
                   />
+                  <span className="dtb-manual-order-form__label">填寫時間</span>
+                  <div className="dtb-manual-order-form__fill-time">
+                    <input
+                      type="text"
+                      className="dtb-manual-order-form__input is-locked"
+                      value={String(manualOrderDraft.applyDate || '').replace(/:/g, '/')}
+                      disabled
+                      readOnly
+                      aria-label="填寫日期（當日，不可更改）"
+                    />
+                    <TimePicker
+                      placement="top"
+                      value={manualOrderDraft.fillTime || formatNowTime24()}
+                      onChange={t => setManualOrderDraft(d => (d ? { ...d, fillTime: t } : d))}
+                    />
+                  </div>
                   {manualOrderLookupHint ? (
-                    <p className="dtb-manual-order-form__hint" style={{ gridColumn: '1 / -1', margin: 0 }} role="status">
+                    <p className="dtb-manual-order-form__error" role="alert">
                       {manualOrderLookupHint}
                     </p>
                   ) : null}
@@ -10010,7 +10154,9 @@ function DayTradingBuyback({ state, setState }) {
                   <br />
                   出借 {manualOrderDraft.lendSharesDigits || '—'} 張 · 費率 {manualOrderDraft.lendRateDigits || '—'}%
                   <br />
-                  確認後將重算元大借券並同步至借券人資訊。
+                  填寫時間：{formatManualFillRecord(manualOrderDraft.applyDate, manualOrderDraft.fillTime)}
+                  <br />
+                  確認後將重算元大借券並同步至借券人資訊（含填寫紀錄）。
                 </p>
               </div>
               <div className="dtb-edit-modal__actions">
