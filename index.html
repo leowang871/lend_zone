@@ -5259,8 +5259,9 @@ const DIFF_FORM_DATE_KEYS = [
 ];
 
 const DIFF_FORM_TIME_KEYS = ['notifyTime'];
-const DIFF_CONTROL_REASON_OPTIONS = ['成交金額超過10萬', '兩周內發生券差2次', '其他'];
+const DIFF_CONTROL_REASON_OPTIONS = ['成交金額超過10萬', '券差2次以上', '其他'];
 const DIFF_CONTROL_REASON_OTHER = '其他';
+const DIFF_DOWNGRADE_REASON_OPTIONS = ['券差費用超過十萬', '兩周內發生兩次券差以上'];
 const DIFF_NOTIFY_METHOD_OPTIONS = ['電話', '簡訊', 'line'];
 
 const DIFF_FORM_COL_CLASS = {
@@ -5374,8 +5375,8 @@ const parseDiffControlReasonParts = value => {
   if (raw === '成交金額超過10萬' || raw === '單次券差金額超過10萬元') {
     return { option: '成交金額超過10萬', otherText: '' };
   }
-  if (raw === '兩周內發生券差2次' || raw === '2次以上') {
-    return { option: '兩周內發生券差2次', otherText: '' };
+  if (raw === '券差2次以上' || raw === '兩周內發生券差2次' || raw === '2次以上') {
+    return { option: '券差2次以上', otherText: '' };
   }
   if (raw === DIFF_CONTROL_REASON_OTHER || raw.startsWith(`${DIFF_CONTROL_REASON_OTHER}：`) || raw.startsWith(`${DIFF_CONTROL_REASON_OTHER}:`)) {
     const otherText = raw.replace(/^其他[：:]\s*/, '').replace(/^其他$/, '').trim();
@@ -5403,9 +5404,23 @@ const normalizeDiffControlReason = row => {
   return '';
 };
 
+const normalizeDiffDowngradeReason = value => {
+  const raw = String(value || '').trim();
+  if (!raw || raw === '-') return '';
+  if (DIFF_DOWNGRADE_REASON_OPTIONS.includes(raw)) return raw;
+  if (raw.includes('十萬') || raw.includes('10萬') || raw.includes('金額超過')) {
+    return '券差費用超過十萬';
+  }
+  if (raw.includes('兩次') || raw.includes('2次') || raw.includes('兩周') || raw.includes('二次')) {
+    return '兩周內發生兩次券差以上';
+  }
+  return '';
+};
+
 const normalizeDiffRow = row => ({
   ...row,
   controlReason: normalizeDiffControlReason(row),
+  downgradeReason: normalizeDiffDowngradeReason(row?.downgradeReason),
   freezeDate: row?.diffDate || '',
 });
 
@@ -10745,6 +10760,17 @@ function DayTradingBuyback({ state, setState }) {
                       >
                         <option value="">請選擇</option>
                         {DIFF_NOTIFY_METHOD_OPTIONS.map(option => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    ) : key === 'downgradeReason' ? (
+                      <select
+                        className="dtb-diff-query__input"
+                        value={normalizeDiffDowngradeReason(diffDetailDraft[key]) || ''}
+                        onChange={e => setDiffDetailDraft(d => ({ ...d, [key]: e.target.value }))}
+                      >
+                        <option value="">請選擇</option>
+                        {DIFF_DOWNGRADE_REASON_OPTIONS.map(option => (
                           <option key={option} value={option}>{option}</option>
                         ))}
                       </select>
