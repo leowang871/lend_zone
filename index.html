@@ -2128,9 +2128,37 @@ input[type=number] {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+/* 券差日期起迄：緊湊並列，避免被 1fr 欄位拉開 */
+.dtb-lendable-query__date-pair {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+.dtb-lendable-query__date-pair .dtb-lendable-query__field {
+  flex: 0 1 148px;
+  max-width: 160px;
+  min-width: 0;
+}
+.dtb-lendable-query__date-sep {
+  flex: 0 0 auto;
+  padding-bottom: 10px;
+  font-size: 13px;
+  color: rgb(113, 112, 113);
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .dtb-lendable-query__fields {
     grid-template-columns: 1fr;
+  }
+  .dtb-lendable-query__date-pair {
+    flex-wrap: wrap;
+  }
+  .dtb-lendable-query__date-pair .dtb-lendable-query__field {
+    flex: 1 1 140px;
+    max-width: none;
   }
 }
 
@@ -3982,7 +4010,8 @@ function compareSortValues(a, b) {
 
 function sortRowsBy(rows, sortState, columns = []) {
   if (!sortState?.key) return rows;
-  const col = columns.find(c => c.key === sortState.key) || {};
+  const col = columns.find(c => c.key === sortState.key);
+  if (!col || col.sortable === false) return rows;
   const dir = sortState.dir === 'desc' ? -1 : 1;
   return [...rows].sort((a, b) => {
     const av = col.sortValue ? col.sortValue(a) : a[sortState.key];
@@ -5287,12 +5316,26 @@ const DIFF_FORM_COL_CLASS = {
   phone: 'dtb-diff-col--phone',
 };
 
-const DIFF_FORM_TABLE_COLUMNS = DIFF_FORM_EXPORT_KEYS.filter(key => key !== 'no').map(key => ({
-  key,
-  title: DIFF_FORM_EXPORT_HEADERS[DIFF_FORM_EXPORT_KEYS.indexOf(key)],
-  numeric: ['account', 'stockCode', 'shares', 'phone', 'ext'].includes(key),
-  colClass: DIFF_FORM_COL_CLASS[key] || '',
-}));
+const DIFF_FORM_SORTABLE_KEYS = new Set(['diffDate', 'stockCode', 'shares', 'amount']);
+
+const DIFF_FORM_TABLE_COLUMNS = DIFF_FORM_EXPORT_KEYS.filter(key => key !== 'no').map(key => {
+  const col = {
+    key,
+    title: DIFF_FORM_EXPORT_HEADERS[DIFF_FORM_EXPORT_KEYS.indexOf(key)],
+    numeric: ['account', 'stockCode', 'shares', 'phone', 'ext'].includes(key),
+    colClass: DIFF_FORM_COL_CLASS[key] || '',
+    sortable: DIFF_FORM_SORTABLE_KEYS.has(key),
+  };
+  if (key === 'diffDate') {
+    col.sortValue = r => {
+      const d = parseDiffRocDate(r.diffDate);
+      return d ? d.getTime() : 0;
+    };
+  } else if (key === 'shares' || key === 'amount') {
+    col.sortValue = r => Number(String(r[key] || '').replace(/,/g, '')) || 0;
+  }
+  return col;
+});
 
 const DIFF_FORM_ROWS = [
   { no: "1", diffDate: "113-05-10", account: "215392", name: "侯俊宇", stockCode: "8163", stockName: "達方", shares: "1", amount: "3,498", controlReason: "", freezeDate: "", unfreezeDate: "", notifyMethod: "", downgradeReason: "", processStatus: "", contactSummary: "", notifyDate: "", notifyTime: "", ext: "", reapplyDate: "", controlSetDate: "", controlUnsetDate: "", phone: "" },
@@ -5564,14 +5607,33 @@ const BORROWER_INFO_EXPORT_HEADERS = [
 ];
 
 const BORROWER_INFO_TABLE_COLUMNS = [
-  { key: 'date', title: '券差日期', numeric: true, nowrap: true },
-  { key: 'borrowerName', title: '借券人' },
-  { key: 'borrowerAccount', title: '客戶帳號', numeric: true },
-  { key: 'stock', title: '證券' },
-  { key: 'borrowShares', title: '借券張數', numeric: true },
-  { key: 'borrowerPhone', title: '聯絡電話', numeric: true },
-  { key: 'lenderName', title: '出借人' },
-  { key: 'lendShares', title: '出借張數', numeric: true },
+  {
+    key: 'date',
+    title: '券差日期',
+    numeric: true,
+    nowrap: true,
+    sortValue: r => {
+      const d = parseBorrowerInfoDate(r.date);
+      return d ? d.getTime() : 0;
+    },
+  },
+  { key: 'borrowerName', title: '借券人', sortable: false },
+  { key: 'borrowerAccount', title: '客戶帳號', numeric: true, sortable: false },
+  { key: 'stock', title: '證券', sortValue: r => stockCodeFromLabel(r.stock) || r.stock },
+  {
+    key: 'borrowShares',
+    title: '借券張數',
+    numeric: true,
+    sortValue: r => Number(String(r.borrowShares || '').replace(/[^\d.-]/g, '')) || 0,
+  },
+  { key: 'borrowerPhone', title: '聯絡電話', numeric: true, sortable: false },
+  { key: 'lenderName', title: '出借人', sortValue: r => lendersFromBorrowerRow(r).length },
+  {
+    key: 'lendShares',
+    title: '出借張數',
+    numeric: true,
+    sortValue: r => Number(String(r.lendShares || '').replace(/[^\d.-]/g, '')) || 0,
+  },
 ];
 
 const parseBorrowerInfoDate = text => {
@@ -5788,11 +5850,26 @@ const SERP3A_NUMERIC_KEYS = new Set([
   'sellAmount', 'buyAmount', 'borrowFee', 'lendBorrowFee', 'negotiatedFee', 'otherFee', 'penalty', 'netAmount',
 ]);
 
-const SERP3A_TABLE_COLUMNS = SERP3A_EXPORT_KEYS.map((key, i) => ({
-  key,
-  title: SERP3A_EXPORT_HEADERS[i],
-  numeric: SERP3A_NUMERIC_KEYS.has(key),
-})).filter(col => col.key !== 'matchNo');
+const SERP3A_SORTABLE_KEYS = new Set([
+  'calcDate', 'tradeDate', 'sellAmount', 'buyAmount', 'borrowFee', 'lendBorrowFee',
+  'negotiatedFee', 'otherFee', 'penalty', 'netAmount',
+]);
+
+const SERP3A_TABLE_COLUMNS = SERP3A_EXPORT_KEYS.map((key, i) => {
+  const col = {
+    key,
+    title: SERP3A_EXPORT_HEADERS[i],
+    numeric: SERP3A_NUMERIC_KEYS.has(key),
+    sortable: SERP3A_SORTABLE_KEYS.has(key),
+  };
+  if (key === 'calcDate' || key === 'tradeDate') {
+    col.sortValue = r => {
+      const d = parseDiffRocDate(r[key]);
+      return d ? d.getTime() : 0;
+    };
+  }
+  return col;
+}).filter(col => col.key !== 'matchNo');
 
 const SERP3A_ROWS = [
   { calcDate: '115/04/21', companyCode: '0', account: '023498-8', clientName: '張茂程', category: '出借', tradeDate: '115/04/16', orderNo: '0', matchNo: '0', sellAmount: '3,040', buyAmount: '304', borrowFee: '0', lendBorrowFee: '0', negotiatedFee: '0', otherFee: '0', penalty: '0', netAmount: '-2,736' },
@@ -5925,10 +6002,18 @@ const DTB_DAY_SELL_TABS = [
 ];
 
 const HOLD_COMPARE_TABLE_COLUMNS = [
-  { key: 'tradeDate', title: '成交日', numeric: false },
+  {
+    key: 'tradeDate',
+    title: '成交日',
+    numeric: false,
+    sortValue: r => {
+      const d = parseDiffRocDate(r.tradeDate);
+      return d ? d.getTime() : 0;
+    },
+  },
   { key: 'pnr07aTotal', title: 'PNR07 當日留置', numeric: true },
   { key: 'fnr23Company', title: 'FNR23 交割彙總', numeric: true },
-  { key: 'compareResult', title: '比對結果', numeric: false },
+  { key: 'compareResult', title: '比對結果', numeric: false, sortable: false },
 ];
 
 /** 留置款比對 mock：比對結果由 enrichHoldCompareRow 依數值即時計算（非寫死） */
@@ -6152,9 +6237,9 @@ function DayTradingBuyback({ state, setState }) {
     tradeDateEnd: '',
   });
   const [listSort, setListSort] = React.useState({ key: 'stock', dir: 'asc' });
-  const [diffSort, setDiffSort] = React.useState({ key: 'no', dir: 'asc' });
-  const [borrowerSort, setBorrowerSort] = React.useState({ key: 'no', dir: 'asc' });
-  const [taxSort, setTaxSort] = React.useState({ key: 'account', dir: 'asc' });
+  const [diffSort, setDiffSort] = React.useState({ key: 'diffDate', dir: 'asc' });
+  const [borrowerSort, setBorrowerSort] = React.useState({ key: 'date', dir: 'asc' });
+  const [taxSort, setTaxSort] = React.useState({ key: 'calcDate', dir: 'asc' });
   const [holdComparePage, setHoldComparePage] = React.useState(1);
   const [holdCompareQuery, setHoldCompareQuery] = React.useState({ tradeDateStart: '', tradeDateEnd: '', compareResult: '' });
   const [holdCompareApplied, setHoldCompareApplied] = React.useState({ tradeDateStart: '', tradeDateEnd: '', compareResult: '' });
@@ -6956,13 +7041,13 @@ function DayTradingBuyback({ state, setState }) {
 
   const LENDABLE_TABLE_COLUMNS = [
     { key: 'check', title: '', sortable: false },
-    { key: 'id', title: 'ID' },
-    { key: 'name', title: '姓名' },
-    { key: 'account', title: '台股帳號' },
-    { key: 'phone', title: '連絡電話' },
-    { key: 'stock', title: '股票' },
+    { key: 'id', title: 'ID', sortable: false },
+    { key: 'name', title: '姓名', sortable: false },
+    { key: 'account', title: '台股帳號', sortable: false },
+    { key: 'phone', title: '連絡電話', sortable: false },
+    { key: 'stock', title: '股票', sortValue: r => stockCodeFromLabel(r.stock) || r.stock },
     { key: 'lendableShares', title: '股票張數', sortValue: r => parseLendableShareMax(r.lendableShares) },
-    { key: 'contactAt', title: '聯絡紀錄', sortValue: r => parseLendableContactAt(r.contactAt) },
+    { key: 'contactAt', title: '出借時間', sortValue: r => parseLendableContactAt(r.contactAt) },
     {
       key: 'rate',
       title: '費率',
@@ -7014,7 +7099,7 @@ function DayTradingBuyback({ state, setState }) {
   };
 
   const exportLendableCsv = () => {
-    const headers = ['ID', '姓名', '台股帳號', '連絡電話', '股票', '股票張數', '聯絡紀錄', '費率', '張數'];
+    const headers = ['ID', '姓名', '台股帳號', '連絡電話', '股票', '股票張數', '出借時間', '費率', '張數'];
     const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const lines = lendableSortedRows.map(r => {
       const e = lendableEdits[r.key] || { rate: r.rate, shares: r.shares };
@@ -7214,16 +7299,16 @@ function DayTradingBuyback({ state, setState }) {
   };
 
   const LIST_COLUMNS = [
-    { key: 'stock', title: '未回補股票' },
+    { key: 'stock', title: '未回補股票', sortValue: r => stockCodeFromLabel(r.stock) || r.stock },
     { key: 'shares', title: '股數', sortValue: r => parseShareCount(r.shares) },
-    { key: 'account', title: '台股帳號' },
-    { key: 'name', title: '姓名' },
-    { key: 'id', title: 'ID' },
-    { key: 'lendable', title: '出借的客戶', sortValue: r => lendableDetailsForRow(r).length },
+    { key: 'account', title: '台股帳號', sortable: false },
+    { key: 'name', title: '姓名', sortable: false },
+    { key: 'id', title: 'ID', sortable: false },
+    { key: 'lendable', title: '出借的客戶', sortable: false },
     { key: 'yuanta', title: '元大借券', sortValue: r => listMissingShares(r) },
-    { key: 'phone', title: '連絡電話' },
-    { key: 'frozen', title: '是否凍結', sortValue: r => isListRowFrozen(r) ? 1 : 0 },
-    { key: 'downgrade', title: '是否調降', sortValue: r => isListRowDowngraded(r) ? 1 : 0 },
+    { key: 'phone', title: '連絡電話', sortable: false },
+    { key: 'frozen', title: '是否凍結', sortable: false },
+    { key: 'downgrade', title: '是否調降', sortable: false },
   ];
 
   const rows = listRowsData.filter(r => {
@@ -7504,7 +7589,7 @@ function DayTradingBuyback({ state, setState }) {
 
   const buildDaySellSheetAoA = listRows => {
     const unmetHeaders = ['未回補股票', '股數', '台股帳號', '姓名', 'ID', '元大借券', '連絡電話', '是否凍結', '是否調降'];
-    const lendHeaders = ['ID', '姓名', '台股帳號', '連絡電話', '股票', '股票張數', '聯絡紀錄', '費率', '張數'];
+    const lendHeaders = ['ID', '姓名', '台股帳號', '連絡電話', '股票', '股票張數', '出借時間', '費率', '張數'];
     const unmetLines = listRows.map(r => [
       r.stock,
       r.shares,
@@ -8913,12 +8998,14 @@ function DayTradingBuyback({ state, setState }) {
                     </th>
                     {LIST_COLUMNS.map(col => (
                       <th key={col.key} className="dtb-th">
-                        <SortHeader
-                          title={col.title}
-                          sortKey={col.key}
-                          sortState={listSort}
-                          onSort={key => toggleSortState(setListSort, key)}
-                        />
+                        {col.sortable === false ? col.title : (
+                          <SortHeader
+                            title={col.title}
+                            sortKey={col.key}
+                            sortState={listSort}
+                            onSort={key => toggleSortState(setListSort, key)}
+                          />
+                        )}
                       </th>
                     ))}
                   </tr>
@@ -9474,12 +9561,14 @@ function DayTradingBuyback({ state, setState }) {
                             + (['no', 'diffDate', 'account', 'name'].includes(col.key) ? ' dtb-diff-sticky dtb-diff-sticky--' + (col.key === 'diffDate' ? 'date' : col.key) : '')
                           }
                         >
-                          <SortHeader
-                            title={col.title}
-                            sortKey={col.key}
-                            sortState={diffSort}
-                            onSort={key => toggleSortState(setDiffSort, key)}
-                          />
+                          {col.sortable === false ? col.title : (
+                            <SortHeader
+                              title={col.title}
+                              sortKey={col.key}
+                              sortState={diffSort}
+                              onSort={key => toggleSortState(setDiffSort, key)}
+                            />
+                          )}
                         </th>
                       ))}
                     </tr>
@@ -9543,24 +9632,27 @@ function DayTradingBuyback({ state, setState }) {
             <div className="dtb-lendable-query dtb-lendable-query--list">
               <span className="dtb-lendable-query__title">查詢條件</span>
               <div className="dtb-lendable-query__fields">
-                <label className="dtb-lendable-query__field">
-                  <span>券差日期起</span>
-                  <DatePicker
-                    value={borrowerSearch.dateStart}
-                    placeholder="起日"
-                    formatDate={formatDiffFormRocDate}
-                    onChange={v => setBorrowerSearch(q => ({ ...q, dateStart: v }))}
-                  />
-                </label>
-                <label className="dtb-lendable-query__field">
-                  <span>券差日期迄</span>
-                  <DatePicker
-                    value={borrowerSearch.dateEnd}
-                    placeholder="迄日"
-                    formatDate={formatDiffFormRocDate}
-                    onChange={v => setBorrowerSearch(q => ({ ...q, dateEnd: v }))}
-                  />
-                </label>
+                <div className="dtb-lendable-query__date-pair">
+                  <label className="dtb-lendable-query__field">
+                    <span>券差日期起</span>
+                    <DatePicker
+                      value={borrowerSearch.dateStart}
+                      placeholder="起日"
+                      formatDate={formatDiffFormRocDate}
+                      onChange={v => setBorrowerSearch(q => ({ ...q, dateStart: v }))}
+                    />
+                  </label>
+                  <span className="dtb-lendable-query__date-sep" aria-hidden="true">～</span>
+                  <label className="dtb-lendable-query__field">
+                    <span>券差日期迄</span>
+                    <DatePicker
+                      value={borrowerSearch.dateEnd}
+                      placeholder="迄日"
+                      formatDate={formatDiffFormRocDate}
+                      onChange={v => setBorrowerSearch(q => ({ ...q, dateEnd: v }))}
+                    />
+                  </label>
+                </div>
                 <label className="dtb-lendable-query__field">
                   <span>借券人</span>
                   <input
@@ -9608,12 +9700,14 @@ function DayTradingBuyback({ state, setState }) {
                   <tr>
                     {BORROWER_INFO_TABLE_COLUMNS.map(col => (
                       <th key={col.key} className="dtb-th">
-                        <SortHeader
-                          title={col.title}
-                          sortKey={col.key}
-                          sortState={borrowerSort}
-                          onSort={key => toggleSortState(setBorrowerSort, key)}
-                        />
+                        {col.sortable === false ? col.title : (
+                          <SortHeader
+                            title={col.title}
+                            sortKey={col.key}
+                            sortState={borrowerSort}
+                            onSort={key => toggleSortState(setBorrowerSort, key)}
+                          />
+                        )}
                       </th>
                     ))}
                   </tr>
@@ -9723,12 +9817,14 @@ function DayTradingBuyback({ state, setState }) {
                     </th>
                     {SERP3A_TABLE_COLUMNS.map(col => (
                       <th key={col.key} className={'dtb-th' + (col.numeric ? ' dtb-td--num' : '')}>
-                        <SortHeader
-                          title={col.title}
-                          sortKey={col.key}
-                          sortState={taxSort}
-                          onSort={key => toggleSortState(setTaxSort, key)}
-                        />
+                        {col.sortable === false ? col.title : (
+                          <SortHeader
+                            title={col.title}
+                            sortKey={col.key}
+                            sortState={taxSort}
+                            onSort={key => toggleSortState(setTaxSort, key)}
+                          />
+                        )}
                       </th>
                     ))}
                   </tr>
@@ -9809,12 +9905,14 @@ function DayTradingBuyback({ state, setState }) {
                   <tr>
                     {HOLD_COMPARE_TABLE_COLUMNS.map(col => (
                       <th key={col.key} className={'dtb-th' + (col.numeric ? ' dtb-td--num' : '')}>
-                        <SortHeader
-                          title={col.title}
-                          sortKey={col.key}
-                          sortState={holdCompareSort}
-                          onSort={key => toggleSortState(setHoldCompareSort, key)}
-                        />
+                        {col.sortable === false ? col.title : (
+                          <SortHeader
+                            title={col.title}
+                            sortKey={col.key}
+                            sortState={holdCompareSort}
+                            onSort={key => toggleSortState(setHoldCompareSort, key)}
+                          />
+                        )}
                       </th>
                     ))}
                   </tr>
